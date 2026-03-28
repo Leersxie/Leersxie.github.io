@@ -20,11 +20,11 @@ jobs:
           version: 10.22.0
           run_install: false
 
-      # 安装 Node.js
+      # 安装 Node.js（升级到 Astro 支持的版本）
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22  # 从 20 升级到 22，满足 Astro >=22.12.0 的要求
           cache: 'pnpm'
 
       # 安装依赖
