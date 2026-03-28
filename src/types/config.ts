@@ -7,13 +7,13 @@ import type {
 } from "../constants/constants";
 
 export interface SiteConfig {
-	title: string;
-	subtitle: string;
-	siteURL: string; // 站点URL，以斜杠结尾，例如：https://mizuki.mysqil.com/
-	keywords?: string[]; // 站点关键词，用于生成 <meta name="keywords">
-	siteStartDate?: string; // 站点开始日期，格式：YYYY-MM-DD，用于计算运行天数
-
-	timeZone:
+  title: "Leersxie's Blog",
+  subtitle: "A beautiful Astro-powered blog",
+  siteURL: "https://leersxie.github.io/", // 注意最后必须加 /
+  keywords: ["Leersxie", "博客", "Astro", "Mizuki"],
+  siteStartDate: "2026-03-28", // 这里加个逗号！
+  timeZone: "+8" // 中国是东八区（UTC+8），填这个就对了
+}
 		| -12
 		| -11
 		| -10
