@@ -13,31 +13,35 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 👉 先安装 pnpm
+      # 安装 pnpm（与项目版本完全一致）
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.22.0
           run_install: false
 
-      # 👉 再设置 Node.js（此时 pnpm 已存在，缓存可以正常工作）
+      # 安装 Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
 
+      # 安装依赖
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # 构建 Astro 站点
       - name: Build site
         run: pnpm run build
 
+      # 上传构建产物
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
+  # 部署到 GitHub Pages
   deploy:
     needs: build
     runs-on: ubuntu-latest
