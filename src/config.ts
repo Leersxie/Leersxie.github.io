@@ -223,25 +223,31 @@ export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,
 		LinkPreset.Archive,
-		{{
-  name: "个人链接",
-  url: "/links/",
-  icon: "material-symbols:link",
-  children: [
-    {
-      name: "GitHub",
-      url: "https://github.com/leersxie",
-      external: true,
-      icon: "fa7-brands:github",
-    },
-    {
-      name: "Bilibili",
-      url: "https://space.bilibili.com/691200956",
-      external: true,
-      icon: "fa7-brands:bilibili",
-    },
-  ],
-},
+		{
+			name: "个人链接",
+			url: "/links/",
+			icon: "material-symbols:link",
+			children: [
+				{
+					name: "GitHub",
+					url: "https://github.com/leersxie",
+					external: true,
+					icon: "fa7-brands:github",
+				},
+				{
+					name: "Bilibili",
+					url: "https://space.bilibili.com/691200956",
+					external: true,
+					icon: "fa7-brands:bilibili",
+				},
+				{
+					name: "CCW个人主页",
+					url: "https://www.ccw.site/student/6162bd6e7f390575815ec12c",
+					external: true,
+					icon: "material-symbols:public",
+				},
+			],
+		},
 		{
 			name: "关于",
 			url: "/about/",
@@ -264,17 +270,17 @@ export const profileConfig: ProfileConfig = {
 		speed: 80,
 	},
 	links: [
-  {
-    name: "GitHub",
-    icon: "fa7-brands:github",
-    url: "https://github.com/leersxie",
-  },
-  {
-    name: "Bilibili",
-    icon: "fa7-brands:bilibili",
-    url: "https://space.bilibili.com/691200956",
-  },
-],
+		{
+			name: "GitHub",
+			icon: "fa7-brands:github",
+			url: "https://github.com/leersxie",
+		},
+		{
+			name: "Bilibili",
+			icon: "fa7-brands:bilibili",
+			url: "https://space.bilibili.com/691200956",
+		},
+	],
 };
 
 export const licenseConfig: LicenseConfig = {
