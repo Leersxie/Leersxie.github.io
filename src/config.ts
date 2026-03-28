@@ -262,7 +262,7 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "/assets/images/avatar.jpg",
+	avatar: "/assets/images/avatar.webp",
 	name: "Leersxie",
 	bio: "神秘苦逼高中生一个，喜欢吃咸咸的东西",
 	typewriter: {
