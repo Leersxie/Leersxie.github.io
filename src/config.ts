@@ -25,7 +25,7 @@ const SITE_TIMEZONE = "+8";
 
 export const siteConfig: SiteConfig = {
 	title: "Leersxie's Blog",
-	subtitle: "基于 Astro 的 Mizuki 主题博客",
+	subtitle: "基于 Astro 的 Mizuki 个人博客",
 	siteURL: "https://leersxie.github.io/",
 	siteStartDate: "2026-03-28",
 
@@ -136,9 +136,9 @@ export const siteConfig: SiteConfig = {
 			enable: true,
 			title: "欢迎来到我的博客",
 			subtitle: [
-				"生活点滴，技术分享",
+				"横扫饥饿，做回自己",
 				"基于 Astro + Mizuki 构建",
-				"保持热爱，奔赴山海",
+				"心灵终结3.3.7什么时候更新...",
 			],
 			typewriter: {
 				enable: true,
@@ -223,19 +223,25 @@ export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,
 		LinkPreset.Archive,
-		{
-			name: "链接",
-			url: "/links/",
-			icon: "material-symbols:link",
-			children: [
-				{
-					name: "GitHub",
-					url: "https://github.com/leersxie",
-					external: true,
-					icon: "fa7-brands:github",
-				},
-			],
-		},
+		{{
+  name: "个人链接",
+  url: "/links/",
+  icon: "material-symbols:link",
+  children: [
+    {
+      name: "GitHub",
+      url: "https://github.com/leersxie",
+      external: true,
+      icon: "fa7-brands:github",
+    },
+    {
+      name: "Bilibili",
+      url: "https://space.bilibili.com/691200956",
+      external: true,
+      icon: "fa7-brands:bilibili",
+    },
+  ],
+},
 		{
 			name: "关于",
 			url: "/about/",
@@ -252,18 +258,23 @@ export const navBarConfig: NavBarConfig = {
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/avatar.webp",
 	name: "Leersxie",
-	bio: "热爱技术，喜欢分享",
+	bio: "神秘苦逼高中生一个，喜欢吃咸咸的东西",
 	typewriter: {
 		enable: true,
 		speed: 80,
 	},
 	links: [
-		{
-			name: "GitHub",
-			icon: "fa7-brands:github",
-			url: "https://github.com/leersxie",
-		},
-	],
+  {
+    name: "GitHub",
+    icon: "fa7-brands:github",
+    url: "https://github.com/leersxie",
+  },
+  {
+    name: "Bilibili",
+    icon: "fa7-brands:bilibili",
+    url: "https://space.bilibili.com/691200956",
+  },
+],
 };
 
 export const licenseConfig: LicenseConfig = {
@@ -311,7 +322,7 @@ export const shareConfig: ShareConfig = {
 
 export const announcementConfig: AnnouncementConfig = {
 	title: "",
-	content: "欢迎访问我的博客！",
+	content: "欢迎来到我的博客！",
 	closable: true,
 	link: {
 		enable: false,
