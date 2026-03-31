@@ -134,11 +134,12 @@ export const siteConfig: SiteConfig = {
 
 		homeText: {
 			enable: true,
-			title: "欢迎来到我的博客",
+			title: "欢迎来到LX博客呀",
 			subtitle: [
 				"横扫饥饿，做回自己",
 				"基于 Astro + Mizuki 构建",
 				"心灵终结3.3.7什么时候更新...",
+				"跑得好远，好累好累~",
 			],
 			typewriter: {
 				enable: true,
@@ -199,14 +200,18 @@ export const siteConfig: SiteConfig = {
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 	src: {
 		desktop: [
-			"/assets/desktop-banner/1.webp",
-			"/assets/desktop-banner/2.webp",
 			"/assets/desktop-banner/3.webp",
+			"/assets/desktop-banner/4.webp",
+			"/assets/desktop-banner/5.webp",
+			"/assets/desktop-banner/6.webp",
 		],
 		mobile: [
 			"/assets/mobile-banner/1.webp",
 			"/assets/mobile-banner/2.webp",
 			"/assets/mobile-banner/3.webp",
+			"/assets/mobile-banner/4.webp",
+			"/assets/mobile-banner/5.webp",
+			"/assets/mobile-banner/6.webp",
 		],
 	},
 	position: "center",
@@ -241,7 +246,7 @@ export const navBarConfig: NavBarConfig = {
 					icon: "fa7-brands:bilibili",
 				},
 				{
-					name: "CCW个人主页",
+					name: "CCW主页",
 					url: "https://www.ccw.site/student/6162bd6e7f390575815ec12c",
 					external: true,
 					icon: "material-symbols:public",
@@ -249,7 +254,7 @@ export const navBarConfig: NavBarConfig = {
 			],
 		},
 		{
-			name: "关于",
+			name: "关于我",
 			url: "/about/",
 			icon: "material-symbols:info",
 		},
@@ -264,7 +269,7 @@ export const navBarConfig: NavBarConfig = {
 export const profileConfig: ProfileConfig = {
 	avatar: "/assets/images/avatar.webp",
 	name: "Leersxie",
-	bio: "神秘苦逼高中生一个，喜欢吃咸咸的东西",
+	bio: "神秘苦逼高中生一个，喜欢吃咸咸的东西，总会离奇失踪",
 	typewriter: {
 		enable: true,
 		speed: 80,
@@ -328,7 +333,7 @@ export const shareConfig: ShareConfig = {
 
 export const announcementConfig: AnnouncementConfig = {
 	title: "",
-	content: "欢迎来到我的博客！",
+	content: "不经常在线正在与可恶的数学题作斗争。",
 	closable: true,
 	link: {
 		enable: false,
