@@ -364,15 +364,15 @@ export const announcementConfig: AnnouncementConfig = {
 };
 
 // ======================
-// ✅ 音乐播放器已开启
+// ✅ 已帮你改成网易云歌单
 // ======================
 export const musicPlayerConfig: MusicPlayerConfig = {
 	enable: true,
 	showFloatingPlayer: true,
 	floatingEntryMode: "fab",
-	mode: "local",
-	meting_api: "",
-	id: "",
+	mode: "meting",
+	meting_api: "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&auth=:auth&r=:r",
+	id: "17866970079",
 	server: "netease",
 	type: "playlist",
 };
@@ -383,7 +383,7 @@ export const footerConfig: FooterConfig = {
 };
 
 // ======================
-// ✅ 站点统计 + 日历 已添加
+// ✅ 统计 + 日历 已开启
 // ======================
 export const sidebarLayoutConfig: SidebarLayoutConfig = {
 	properties: [
@@ -518,5 +518,5 @@ export const widgetConfigs = {
 	pio: pioConfig,
 	share: shareConfig,
 	relatedPosts: relatedPostsConfig,
-	randomPosts: randomPostsConfig,
+	random: randomPostsConfig,
 } as const;
