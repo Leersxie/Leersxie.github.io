@@ -246,6 +246,18 @@ export const navBarConfig: NavBarConfig = {
 					icon: "fa7-brands:bilibili",
 				},
 				{
+					name: "YouTube",
+					url: "https://www.youtube.com/@%E8%90%B1%E7%87%95%E4%B9%A6%E5%88%991145",
+					external: true,
+					icon: "fa7-brands:youtube",
+				},
+				{
+					name: "Discord",
+					url: "https://discord.gg/S64Xa7rvcH",
+					external: true,
+					icon: "fa7-brands:discord",
+				},
+				{
 					name: "CCW主页",
 					url: "https://www.ccw.site/student/6162bd6e7f390575815ec12c",
 					external: true,
@@ -284,6 +296,16 @@ export const profileConfig: ProfileConfig = {
 			name: "Bilibili",
 			icon: "fa7-brands:bilibili",
 			url: "https://space.bilibili.com/691200956",
+		},
+		{
+			name: "YouTube",
+			icon: "fa7-brands:youtube",
+			url: "https://www.youtube.com/@%E8%90%B1%E7%87%95%E4%B9%A6%E5%88%991145",
+		},
+		{
+			name: "Discord",
+			icon: "fa7-brands:discord",
+			url: "https://discord.gg/S64Xa7rvcH",
 		},
 	],
 };
@@ -455,7 +477,6 @@ export const pioConfig: import("./types/config").PioConfig = {
 		],
 		home: "Click here to go back to homepage!",
 		skin: ["Want to see my new outfit?", "The new outfit looks great~"],
-		close: "QWQ See you next time~",
 		link: "https://github.com/matsuzaka-yuki/Mizuki",
 	},
 };
