@@ -137,6 +137,7 @@ export const siteConfig: SiteConfig = {
 				"基于 Astro + Mizuki 构建",
 				"心灵终结3.3.7什么时候更新...",
 				"跑得好远，好累好累~",
+				"点击下方链接查看大结局",
 			],
 			typewriter: {
 				enable: true,
