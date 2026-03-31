@@ -253,7 +253,7 @@ export const navBarConfig: NavBarConfig = {
 				},
 				{
 					name: "Discord",
-					url: "https://discord.gg/S64Xa7rvcH",
+					url: "https://discord.gg/2sSQGACjQf",
 					external: true,
 					icon: "fa7-brands:discord",
 				},
