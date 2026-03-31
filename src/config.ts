@@ -18,9 +18,7 @@ import type {
 } from "./types/config";
 import { LinkPreset } from "./types/config";
 
-// 定义站点语言（改为中文）
 const SITE_LANG = "zh_CN";
-// 中国时区（字符串格式，符合类型要求）
 const SITE_TIMEZONE = "+8";
 
 export const siteConfig: SiteConfig = {
@@ -30,7 +28,6 @@ export const siteConfig: SiteConfig = {
 	siteStartDate: "2026-03-28",
 
 	timeZone: SITE_TIMEZONE,
-
 	lang: SITE_LANG,
 
 	themeColor: {
@@ -197,6 +194,7 @@ export const siteConfig: SiteConfig = {
 		clarityId: "",
 	},
 };
+
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 	src: {
 		desktop: [
@@ -253,7 +251,7 @@ export const navBarConfig: NavBarConfig = {
 				},
 				{
 					name: "Discord",
-					url: "https://discord.gg/2sSQGACjQf",
+					url: "https://discord.gg/S64Xa7rvcH",
 					external: true,
 					icon: "fa7-brands:discord",
 				},
@@ -365,9 +363,12 @@ export const announcementConfig: AnnouncementConfig = {
 	},
 };
 
+// ======================
+// ✅ 音乐播放器已开启
+// ======================
 export const musicPlayerConfig: MusicPlayerConfig = {
-	enable: false,
-	showFloatingPlayer: false,
+	enable: true,
+	showFloatingPlayer: true,
 	floatingEntryMode: "fab",
 	mode: "local",
 	meting_api: "",
@@ -381,6 +382,9 @@ export const footerConfig: FooterConfig = {
 	customHtml: "",
 };
 
+// ======================
+// ✅ 站点统计 + 日历 已添加
+// ======================
 export const sidebarLayoutConfig: SidebarLayoutConfig = {
 	properties: [
 		{
@@ -394,6 +398,18 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			position: "top",
 			class: "onload-animation",
 			animationDelay: 50,
+		},
+		{
+			type: "site-stats",
+			position: "top",
+			class: "onload-animation",
+			animationDelay: 100,
+		},
+		{
+			type: "calendar",
+			position: "top",
+			class: "onload-animation",
+			animationDelay: 150,
 		},
 		{
 			type: "tags",
@@ -413,9 +429,9 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 	],
 
 	components: {
-		left: ["profile", "announcement", "tags", "card-toc"],
+		left: ["profile", "announcement", "site-stats", "calendar", "tags", "card-toc"],
 		right: [],
-		drawer: ["profile", "announcement", "tags"],
+		drawer: ["profile", "announcement", "site-stats", "calendar", "tags"],
 	},
 
 	defaultAnimation: {
@@ -477,6 +493,7 @@ export const pioConfig: import("./types/config").PioConfig = {
 		],
 		home: "Click here to go back to homepage!",
 		skin: ["Want to see my new outfit?", "The new outfit looks great~"],
+		close: "QWQ See you next time~",
 		link: "https://github.com/matsuzaka-yuki/Mizuki",
 	},
 };
