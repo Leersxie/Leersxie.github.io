@@ -363,7 +363,7 @@ export const announcementConfig: AnnouncementConfig = {
 	},
 };
 
-//歌单
+// 网易云歌单
 export const musicPlayerConfig: MusicPlayerConfig = {
 	enable: true,
 	showFloatingPlayer: true,
@@ -380,7 +380,7 @@ export const footerConfig: FooterConfig = {
 	customHtml: "",
 };
 
-// 统计 + 日历 
+// 统计+日历
 export const sidebarLayoutConfig: SidebarLayoutConfig = {
 	properties: [
 		{
@@ -494,12 +494,12 @@ export const pioConfig: import("./types/config").PioConfig = {
 	},
 };
 
-export const randomPostsConfig: RandomPostsConfig = {
+export const relatedPostsConfig: RelatedPostsConfig = {
 	enable: true,
 	maxCount: 5,
 };
 
-export const randomPostsConfig = {
+export const randomPostsConfig: RandomPostsConfig = {
 	enable: true,
 	maxCount: 5,
 };
