@@ -19,7 +19,7 @@ import type {
 import { LinkPreset } from "./types/config";
 
 const SITE_LANG = "zh_CN";
-const SITE_TIMEZONE = 8;
+const SITE_TIMEZONE = "+8";
 
 export const siteConfig: SiteConfig = {
 	title: "Leersxie's Blog",
