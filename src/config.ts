@@ -19,7 +19,7 @@ import type {
 import { LinkPreset } from "./types/config";
 
 const SITE_LANG = "zh_CN";
-const SITE_TIMEZONE = "+8";
+const SITE_TIMEZONE = 8;
 
 export const siteConfig: SiteConfig = {
 	title: "Leersxie's Blog",
@@ -494,7 +494,7 @@ export const pioConfig: import("./types/config").PioConfig = {
 	},
 };
 
-export const relatedPostsConfig: RelatedPostsConfig = {
+export const randomPostsConfig: RandomPostsConfig = {
 	enable: true,
 	maxCount: 5,
 };
