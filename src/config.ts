@@ -363,9 +363,7 @@ export const announcementConfig: AnnouncementConfig = {
 	},
 };
 
-
 //歌单
-
 export const musicPlayerConfig: MusicPlayerConfig = {
 	enable: true,
 	showFloatingPlayer: true,
@@ -382,11 +380,9 @@ export const footerConfig: FooterConfig = {
 	customHtml: "",
 };
 
-
 // 统计 + 日历 
-
 export const sidebarLayoutConfig: SidebarLayoutConfig = {
-	properties: \[
+	properties: [
 		{
 			type: "profile",
 			position: "top",
@@ -426,12 +422,12 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			class: "onload-animation",
 			animationDelay: 150,
 		},
-	\],
+	],
 
 	components: {
-		left: \["profile", "announcement", "tags", "card-toc"\],
-		right: \["site-stats", "calendar"\],
-		drawer: \["profile", "announcement", "site-stats", "calendar", "tags"\],
+		left: ["profile", "announcement", "tags", "card-toc"],
+		right: ["site-stats", "calendar"],
+		drawer: ["profile", "announcement", "site-stats", "calendar", "tags"],
 	},
 
 	defaultAnimation: {
@@ -503,7 +499,7 @@ export const relatedPostsConfig: RelatedPostsConfig = {
 	maxCount: 5,
 };
 
-export const randomPostsConfig: RandomPostsConfig = {
+export const randomPostsConfig = {
 	enable: true,
 	maxCount: 5,
 };
