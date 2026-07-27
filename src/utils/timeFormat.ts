@@ -14,8 +14,9 @@ export function formatRelativeTime(
 	daysAgo: string,
 ): string {
 	let timeGap = 8; // Default UTC+8
-	if (siteConfig.timeZone >= -12 && siteConfig.timeZone <= 12) {
-		timeGap = siteConfig.timeZone;
+	
+	if (Number(siteConfig.timeZone) >= -12 && Number(siteConfig.timeZone) <= 12) {
+		timeGap = Number(siteConfig.timeZone);
 	}
 
 	const now = new Date();
