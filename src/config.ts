@@ -387,7 +387,7 @@ export const footerConfig: FooterConfig = {
 // ✅ 统计 + 日历 已开启
 // ======================
 export const sidebarLayoutConfig: SidebarLayoutConfig = {
-	properties: [
+	properties: \[
 		{
 			type: "profile",
 			position: "top",
@@ -399,18 +399,6 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			position: "top",
 			class: "onload-animation",
 			animationDelay: 50,
-		},
-		{
-			type: "site-stats",
-			position: "top",
-			class: "onload-animation",
-			animationDelay: 100,
-		},
-		{
-			type: "calendar",
-			position: "top",
-			class: "onload-animation",
-			animationDelay: 150,
 		},
 		{
 			type: "tags",
@@ -427,12 +415,24 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			class: "onload-animation",
 			animationDelay: 200,
 		},
-	],
+		{
+			type: "site-stats",
+			position: "top",
+			class: "onload-animation",
+			animationDelay: 100,
+		},
+		{
+			type: "calendar",
+			position: "top",
+			class: "onload-animation",
+			animationDelay: 150,
+		},
+	\],
 
 	components: {
-		left: ["profile", "announcement", "site-stats", "calendar", "tags", "card-toc"],
-		right: [],
-		drawer: ["profile", "announcement", "site-stats", "calendar", "tags"],
+		left: \["profile", "announcement", "tags", "card-toc"\],
+		right: \["site-stats", "calendar"\],
+		drawer: \["profile", "announcement", "site-stats", "calendar", "tags"\],
 	},
 
 	defaultAnimation: {
