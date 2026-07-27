@@ -131,10 +131,9 @@ export const siteConfig: SiteConfig = {
 
 		homeText: {
 			enable: true,
-			title: "欢迎来到LX博客呀",
+			title: "欢迎查看LX的博客",
 			subtitle: [
 				"横扫饥饿，做回自己",
-				"基于 Astro + Mizuki 构建",
 				"心灵终结3.3.7什么时候更新...",
 				"跑得好远，好累好累~",
 				"点击下方链接查看大结局",
@@ -280,7 +279,7 @@ export const navBarConfig: NavBarConfig = {
 export const profileConfig: ProfileConfig = {
 	avatar: "/assets/images/avatar.webp",
 	name: "Leersxie",
-	bio: "神秘苦逼高中生一个，喜欢吃咸咸的东西，总会离奇失踪",
+	bio: "神秘高中生，总会离奇失踪",
 	typewriter: {
 		enable: true,
 		speed: 80,
@@ -354,7 +353,7 @@ export const shareConfig: ShareConfig = {
 
 export const announcementConfig: AnnouncementConfig = {
 	title: "",
-	content: "不经常在线正在与可恶的数学题作斗争。",
+	content: "不经常在线。",
 	closable: true,
 	link: {
 		enable: false,
@@ -364,9 +363,9 @@ export const announcementConfig: AnnouncementConfig = {
 	},
 };
 
-// ======================
-// ✅ 已帮你改成网易云歌单
-// ======================
+
+//歌单
+
 export const musicPlayerConfig: MusicPlayerConfig = {
 	enable: true,
 	showFloatingPlayer: true,
@@ -383,9 +382,9 @@ export const footerConfig: FooterConfig = {
 	customHtml: "",
 };
 
-// ======================
-// ✅ 统计 + 日历 已开启
-// ======================
+
+// 统计 + 日历 
+
 export const sidebarLayoutConfig: SidebarLayoutConfig = {
 	properties: \[
 		{
