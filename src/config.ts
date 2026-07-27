@@ -264,7 +264,7 @@ export const navBarConfig: NavBarConfig = {
 			],
 		},
 		{
-			name: "关于我",
+			name: "关于介绍",
 			url: "/about/",
 			icon: "material-symbols:info",
 		},
