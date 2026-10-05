@@ -12,6 +12,19 @@ interface Props {
 	fetchpriority?: "high" | "low" | "auto";
 	widths?: number[];
 	sizes?: string;
+	/**
+	 * 可选：把 <img> 包进 <picture>，并添加一个仅在指定媒体条件下命中的
+	 * 1×1 透明占位图。
+	 *
+	 * 用途：同一位置存在「桌面一套 + 移动一套」两张图、但实际只会展示其中一张时
+	 * （如 Banner），用 `display:none` 隐藏并不能阻止 eager 图片被下载，
+	 * 只有 <picture> 的媒体查询才能真正避免多余请求。
+	 *
+	 * 例：placeholderMedia="(min-width: 768px)"
+	 *      → 桌面视口下只加载占位图，移动端才加载真实图片。
+	 *      未匹配到 media 时浏览器回退到 <img>，行为与原先一致。
+	 */
+	placeholderMedia?: string;
 }
 
 import { Image as AstroImage } from "astro:assets";
@@ -28,8 +41,13 @@ const {
 	fetchpriority,
 	widths,
 	sizes,
+	placeholderMedia,
 } = Astro.props;
 const className = Astro.props.class;
+
+/** 1×1 全透明 GIF，作为不适用视口的占位，不产生任何网络请求 */
+const TRANSPARENT_PIXEL =
+	"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
 const isLocal = !(
 	src.startsWith("/") ||
@@ -89,7 +107,24 @@ const referrerPolicy = !isLocal && isBilibiliImage ? "no-referrer" : undefined;
 		)
 	}
 	{
-		!isLocal && (
+		!isLocal && placeholderMedia && (
+			<picture class="block h-full w-full">
+				<source media={placeholderMedia} srcset={TRANSPARENT_PIXEL} />
+				<img
+					src={isPublic ? url(src) : src}
+					alt={alt || ""}
+					class={imageClass}
+					style={imageStyle}
+					loading={loading}
+					referrerpolicy={referrerPolicy}
+					crossorigin={isBilibiliImage ? "anonymous" : undefined}
+					fetchpriority={fetchpriority}
+				/>
+			</picture>
+		)
+	}
+	{
+		!isLocal && !placeholderMedia && (
 			<img
 				src={isPublic ? url(src) : src}
 				alt={alt || ""}

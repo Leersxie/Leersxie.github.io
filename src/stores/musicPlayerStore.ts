@@ -113,6 +113,11 @@ class MusicPlayerStore {
 		}
 
 		this.audio = new Audio();
+		// 关键：Audio 默认 preload="auto"，会在初始化时就请求整首音频。
+		// Meting 歌单返回的是完整音频文件（实测单曲可达 3 MB），
+		// 而初始化阶段并不会播放，等于每次打开页面都白拉一整首歌。
+		// 设为 none 后，只有用户真正点击播放（或触发自动播放）时才开始请求音频数据。
+		this.audio.preload = "none";
 		this.setupAudioListeners();
 		this.loadVolumeFromStorage();
 		this.registerInteractionHandler();
@@ -349,11 +354,14 @@ class MusicPlayerStore {
 		}
 		if (song.url !== this.state.currentSong.url) {
 			this.state.currentSong = { ...song };
-			if (song.url) {
-				this.state.isLoading = true;
-			} else {
-				this.state.isLoading = false;
-			}
+			// 用歌单自带的时长先占位。state.duration 原先只在 loadeddata 时赋值，
+			// 而 preload="none" 下不播放就不会加载，进度条会恒为 0。
+			this.state.duration = song.duration ?? 0;
+			this.state.currentTime = 0;
+			// 只有即将自动播放时才进入 loading 态：
+			// preload="none" 下不播放就不拉取数据、loadeddata 不触发，
+			// 若仍标记 loading，播放器会一直显示「加载中」。
+			this.state.isLoading = Boolean(song.url) && autoPlay;
 		}
 		this.state.willAutoPlay = autoPlay;
 		if (this.audio) {
@@ -362,6 +370,18 @@ class MusicPlayerStore {
 			}
 			this.audio.src = getAssetPath(song.url);
 			this.audio.load();
+			// preload="none" 时 load() 不会真正拉取媒体，loadeddata 也不会触发，
+			// 而原来的自动播放链路是 loadeddata → handleAudioLoaded() → play()。
+			// 所以需要自动播放的场景必须在这里显式发起，否则切歌后会停住不播。
+			if (autoPlay && song.url) {
+				const playPromise = this.audio.play();
+				if (playPromise !== undefined) {
+					playPromise.catch(() => {
+						this.state.autoplayFailed = true;
+						this.state.isPlaying = false;
+					});
+				}
+			}
 		}
 		this.broadcastState();
 	}

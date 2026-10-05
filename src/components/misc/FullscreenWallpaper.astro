@@ -68,8 +68,17 @@ const positionClass = (() => {
 	}
 })();
 
-const renderGroups = [
-	{
+/**
+ * 全屏壁纸在「默认壁纸模式不是 fullscreen」时是隐藏的（例如当前配置为 banner）。
+ * 注意 display:none 并不能阻止 eager 图片下载，所以此前每个页面都会白白拉取
+ * 桌面 + 移动两套壁纸（实测桌面 595 KB、移动 380 KB，合计近 1 MB）。
+ * 因此只有当默认模式就是 fullscreen 时才提前 eager 加载首图，
+ * 其余情况一律 lazy —— 隐藏时不会下载，用户切换为 fullscreen 后可见再加载。
+ */
+const wallpaperVisibleByDefault =
+	(siteConfig.wallpaperMode?.defaultMode ?? "banner") === "fullscreen";
+
+const renderGroups = [	{
 		key: 'desktop',
 		images: imageSources.desktop,
 		containerClass: "hidden md:block",
@@ -113,15 +122,15 @@ const renderGroups = [
 						data-carousel-item={index}
 						style={`transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''}; opacity: ${index === 0 ? 1 : 0};`}
 						decoding="async"
-						loading={index === 0 ? "eager" : "lazy"}
-						fetchpriority={index === 0 ? "high" : undefined}
+						loading={wallpaperVisibleByDefault && index === 0 ? "eager" : "lazy"}
+						fetchpriority={wallpaperVisibleByDefault && index === 0 ? "high" : undefined}
 					/>
 				))}
 			</div>
 		))
 	) : (
 		<div id="wallpaper-single-container" class="w-full h-full relative">
-			<script is:inline define:vars={{ desktopImages: imageSources.desktop, mobileImages: imageSources.mobile, positionClass, blurAmount }}>
+			<script is:inline define:vars={{ desktopImages: imageSources.desktop, mobileImages: imageSources.mobile, positionClass, blurAmount, wallpaperEager: wallpaperVisibleByDefault }}>
 				(function() {
 					const getRandomImage = (images, storageKey) => {
 						if (images.length === 0) {return null;}
@@ -154,8 +163,8 @@ const renderGroups = [
 								class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${positionClass}"
 								style="transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''} opacity: 1;"
 								decoding="async"
-								loading="eager"
-								fetchpriority="high"
+								loading="${wallpaperEager ? 'eager' : 'lazy'}"
+								fetchpriority="${wallpaperEager ? 'high' : 'auto'}"
 							/>
 						`;
 						container.appendChild(desktopDiv);
@@ -172,8 +181,8 @@ const renderGroups = [
 								class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${positionClass}"
 								style="transform: translateZ(0); backface-visibility: hidden; will-change: opacity; ${blurAmount > 0 ? `filter: blur(${blurAmount}px);` : ''} opacity: 1;"
 								decoding="async"
-								loading="eager"
-								fetchpriority="high"
+								loading="${wallpaperEager ? 'eager' : 'lazy'}"
+								fetchpriority="${wallpaperEager ? 'high' : 'auto'}"
 							/>
 						`;
 						container.appendChild(mobileDiv);
