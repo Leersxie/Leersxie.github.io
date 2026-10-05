@@ -339,21 +339,29 @@ export const expressiveCodeConfig: ExpressiveCodeConfig = {
 };
 
 export const commentConfig: CommentConfig = {
-	enable: false,
-	system: "twikoo",
+	enable: true,
+	system: "giscus",
+	// 未启用 Twikoo，保留占位配置以免类型报错；如需切换评论系统再填 envId
 	twikoo: {
 		envId: "https://twikoo.vercel.app",
 		lang: SITE_LANG,
 	},
 	giscus: {
-		repo: "",
-		repoId: "",
+		// 评论存放在本仓库的 GitHub Discussions 中。
+		// 前提：仓库需为 public、已开启 Discussions，并安装 giscus GitHub App。
+		repo: "Leersxie/Leersxie.github.io",
+		repoId: "R_kgDORy5vYQ",
+		// Announcements 类型只有维护者能开新帖，可避免访客误建讨论；
+		// 其余分类：General / Ideas / Polls / Q&A / Show and tell
 		category: "Announcements",
-		categoryId: "",
+		categoryId: "DIC_kwDORy5vYc4DHE69",
+		// pathname：一篇文章对应一条 Discussion。
+		// 上线后请勿再改动页面路径结构，否则会找不到既有评论（评论本身不会丢失）。
 		mapping: "pathname",
 		strict: "0",
 		reactionsEnabled: "1",
 		emitMetadata: "0",
+		// "top" 为评论框在上、评论列表在下；想反过来改成 "bottom"
 		inputPosition: "top",
 		theme: "preferred_color_scheme",
 		lang: SITE_LANG,
