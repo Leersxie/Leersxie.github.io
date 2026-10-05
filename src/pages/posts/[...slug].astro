@@ -104,6 +104,13 @@ const relatedPosts = relatedPostsConfig.enable
 	? await getRelatedPosts(entry, relatedPostsConfig.maxCount)
 	: [];
 
+// 图片模块映射：仅收集 src 下的图片资源。
+// 早期实现使用 `../../**` 会匹配 src 下全部文件，导致 Vite 模块图随内容增长而膨胀、拖慢构建。
+const imageModules = import.meta.glob<ImageMetadata>(
+	"../../**/*.{png,jpg,jpeg,gif,webp,avif,svg}",
+	{ import: "default" },
+);
+
 // Process cover image for SharePoster
 let posterCoverUrl = entry.data.image;
 if (entry.data.image) {
@@ -115,13 +122,10 @@ if (entry.data.image) {
 	);
 	if (isLocal) {
 		const basePath = getFileDirFromPath(entry.filePath || "");
-		const files = import.meta.glob<ImageMetadata>("../../**", {
-			import: "default",
-		});
 		const normalizedPath = path
 			.normalize(path.join("../../", basePath, entry.data.image))
 			.replace(/\\/g, "/");
-		const file = files[normalizedPath];
+		const file = imageModules[normalizedPath];
 		if (file) {
 			const img = await file();
 			posterCoverUrl = img.src;
@@ -150,13 +154,10 @@ if (profileConfig.avatar) {
 		profileConfig.avatar.startsWith("data:")
 	);
 	if (isLocal) {
-		const files = import.meta.glob<ImageMetadata>("../../**", {
-			import: "default",
-		});
 		const normalizedPath = path
 			.normalize(path.join("../../", profileConfig.avatar))
 			.replace(/\\/g, "/");
-		const file = files[normalizedPath];
+		const file = imageModules[normalizedPath];
 		if (file) {
 			const img = await file();
 			posterAvatarUrl = img.src;
@@ -167,22 +168,36 @@ if (profileConfig.avatar) {
 // 判断是否为加密文章
 const isEncrypted = !!(entry.data.encrypted && entry.data.password);
 
+// JSON-LD 结构化数据的封面图：跳过 base64 内联图，其余补全为绝对地址
+const jsonLdImage = (() => {
+	const candidate = entry.data.image ? posterCoverUrl : "";
+	if (!candidate || candidate.startsWith("data:")) {
+		return undefined;
+	}
+	return /^https?:\/\//.test(candidate)
+		? candidate
+		: new URL(candidate, Astro.site).href;
+})();
+
 const jsonLd = {
 	"@context": "https://schema.org",
 	"@type": "BlogPosting",
 	headline: entry.data.title,
 	description: entry.data.description || entry.data.title,
 	keywords: entry.data.tags,
+	...(jsonLdImage ? { image: [jsonLdImage] } : {}),
 	author: {
 		"@type": "Person",
 		name: profileConfig.name,
 		url: Astro.site,
 	},
 	datePublished: formatDateToYYYYMMDD(entry.data.published),
+	dateModified: formatDateToYYYYMMDD(
+		entry.data.updated || entry.data.published,
+	),
 	inLanguage: entry.data.lang
 		? entry.data.lang.replace("_", "-")
 		: siteConfig.lang.replace("_", "-"),
-	// TODO include cover image here
 };
 ---
 
@@ -191,6 +206,7 @@ const jsonLd = {
 	title={entry.data.title}
 	description={entry.data.description}
 	lang={entry.data.lang}
+	keywords={entry.data.tags}
 	setOGTypeArticle={true}
 	postSlug={entry.id}
 	headings={headings}
@@ -235,7 +251,7 @@ const jsonLd = {
 
 			<!-- title -->
 			<div class="relative onload-animation">
-				<div
+				<h1
 					data-pagefind-body
 					data-pagefind-weight="10"
 					data-pagefind-meta="title"
@@ -246,7 +262,7 @@ const jsonLd = {
                     before:absolute before:top-[0.75rem] before:left-[-1.125rem]"
 				>
 					{entry.data.title}
-				</div>
+				</h1>
 			</div>
 
 			<!-- metadata -->

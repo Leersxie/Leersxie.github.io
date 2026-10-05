@@ -21,6 +21,12 @@ interface Props {
 	// SEO
 	title: string;
 	description?: string;
+	/** 页面级关键词；未传时回退到 siteConfig.keywords */
+	keywords?: string[];
+	/** 规范链接；未传时由当前页面 URL 推导 */
+	canonicalURL?: string;
+	/** 标记为不参与索引（如 404 页、已停用的功能页） */
+	noindex?: boolean;
 
 	// Open Graph
 	ogImageUrl?: string;
@@ -33,13 +39,27 @@ interface Props {
 const {
 	title,
 	description,
+	keywords,
+	canonicalURL,
+	noindex = false,
 	ogImageUrl,
 	setOGTypeArticle = false,
 	configHue,
 } = Astro.props;
 
-// 关键词
-const keywords = siteConfig.keywords;
+// 关键词：页面级优先，其次站点级
+const effectiveKeywords = keywords?.length
+	? keywords
+	: (siteConfig.keywords ?? []);
+
+// 规范链接：去掉查询串与哈希，仅保留路径
+const canonical = (() => {
+	if (canonicalURL) {
+		return new URL(canonicalURL, Astro.site ?? Astro.url).href;
+	}
+	const base = Astro.site ?? Astro.url;
+	return new URL(Astro.url.pathname, base).href;
+})();
 
 // Favicons
 const favicons: Favicon[] =
@@ -50,15 +70,17 @@ const favicons: Favicon[] =
 <title>{title}</title>
 <meta name="description" content={description || title} />
 {
-	keywords && keywords.length > 0 && (
-		<meta name="keywords" content={keywords.join(", ")} />
+	effectiveKeywords.length > 0 && (
+		<meta name="keywords" content={effectiveKeywords.join(", ")} />
 	)
 }
 <meta name="author" content={profileConfig.name} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
 
 <!-- Open Graph Tags -->
 <meta property="og:site_name" content={siteConfig.title} />
-<meta property="og:url" content={Astro.url} />
+<meta property="og:url" content={canonical} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description || title} />
 {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
@@ -72,7 +94,7 @@ const favicons: Favicon[] =
 
 <!-- Twitter Card Tags -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={Astro.url} />
+<meta property="twitter:url" content={canonical} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description || title} />
 

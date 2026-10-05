@@ -32,6 +32,9 @@ interface Props {
 	setOGTypeArticle?: boolean;
 	postSlug?: string;
 	headings?: MarkdownHeading[];
+	keywords?: string[];
+	canonicalURL?: string;
+	noindex?: boolean;
 }
 
 // 获取 banner 图片
@@ -45,6 +48,9 @@ const {
 	setOGTypeArticle,
 	postSlug,
 	headings = [],
+	keywords,
+	canonicalURL,
+	noindex,
 } = Astro.props;
 const hasBannerCredit = siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
@@ -95,6 +101,9 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 	lang={lang}
 	setOGTypeArticle={setOGTypeArticle}
 	postSlug={postSlug}
+	keywords={keywords}
+	canonicalURL={canonicalURL}
+	noindex={noindex}
 >
 	<GridScripts
 		navbarTransparentMode={siteConfig.banner?.navbar?.transparentMode ||
@@ -211,6 +220,7 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 
 				<main
 					id="swup-container"
+					tabindex="-1"
 					class={`${mainContentClass} transition-main`}
 				>
 					<div

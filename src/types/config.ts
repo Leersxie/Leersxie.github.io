@@ -327,9 +327,19 @@ export interface PageProgressBarConfig {
 	duration?: number;
 }
 
+export interface GoogleTagManagerConfig {
+	/** 是否启用 Google Tag Manager */
+	enable: boolean;
+	/** GTM 容器 ID，形如 GTM-XXXXXXX */
+	id?: string;
+}
+
 export interface ThirdPartyAnalyticsConfig {
+	/** 是否启用 Microsoft Clarity */
 	enable: boolean;
 	clarityId?: string;
+	/** Google Tag Manager 独立开关（与 Clarity 互不影响） */
+	gtm?: GoogleTagManagerConfig;
 }
 
 export interface Config {

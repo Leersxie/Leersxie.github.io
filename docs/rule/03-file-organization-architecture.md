@@ -245,7 +245,6 @@ Mizuki/
 │       └── ci.yml
 │
 ├── astro.config.mjs             # Astro 配置
-├── tailwind.config.cjs           # Tailwind 配置
 ├── tsconfig.json                # TypeScript 配置
 ├── svelte.config.js             # Svelte 配置
 ├── package.json                 # 依赖管理
@@ -777,7 +776,6 @@ export const friends: Friend[] = [
 
 **示例**：
 - `astro.config.mjs` - Astro 配置
-- `tailwind.config.cjs` - Tailwind 配置
 - `tsconfig.json` - TypeScript 配置
 
 ## 模块化组织原则

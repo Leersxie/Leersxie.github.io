@@ -38,8 +38,8 @@
         "seo": 0.9
       }
     },
-    "anime": {
-      "url": "http://localhost:4321/anime/",
+    "friends": {
+      "url": "http://localhost:4321/friends/",
       "metrics": {
         "performance": 0.85,
         "first-contentful-paint": 1900,

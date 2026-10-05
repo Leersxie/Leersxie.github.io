@@ -30,6 +30,36 @@ import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkFixGithubAdmonitions } from "./src/plugins/remark-fix-github-admonitions.js";
 import { remarkMermaid } from "./src/plugins/remark-mermaid.js";
 
+/**
+ * 功能页路由映射（与 src/config.ts 的 featurePages 一一对应）。
+ * 未启用的功能页仍会被构建为「跳转 404」的占位页面，
+ * 因此这里同步把它们从 sitemap 中剔除，避免向搜索引擎提交无效 URL。
+ */
+const FEATURE_PAGE_ROUTES = {
+	anime: "/anime/",
+	diary: "/diary/",
+	friends: "/friends/",
+	projects: "/projects/",
+	skills: "/skills/",
+	timeline: "/timeline/",
+	albums: "/albums/",
+	devices: "/devices/",
+};
+
+const nonIndexablePrefixes = [
+	"/api/",
+	"/og/",
+	...Object.entries(FEATURE_PAGE_ROUTES)
+		.filter(([key]) => !siteConfig.featurePages?.[key])
+		.map(([, route]) => route),
+];
+
+/** 判断某个页面是否应被 sitemap 收录 */
+const isIndexablePage = (pageUrl) => {
+	const { pathname } = new URL(pageUrl);
+	return !nonIndexablePrefixes.some((prefix) => pathname.startsWith(prefix));
+};
+
 // https://astro.build/config
 export default defineConfig({
 	site: siteConfig.siteURL,
@@ -116,7 +146,9 @@ export default defineConfig({
 		svelte({
 			preprocess: vitePreprocess(),
 		}),
-		sitemap(),
+		sitemap({
+			filter: isIndexablePage,
+		}),
 	],
 	markdown: {
 		remarkPlugins: [

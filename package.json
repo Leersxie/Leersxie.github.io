@@ -23,6 +23,10 @@
 		"lint": "eslint ./src --fix",
 		"preinstall": "npx only-allow pnpm",
 		"compress-fonts": "node scripts/compress-fonts.js",
+		"optimize:images": "node scripts/optimize-banner-images.js",
+		"check-env": "node scripts/check-env.js",
+		"test": "vitest run",
+		"test:watch": "vitest",
 		"test-font-compression": "node scripts/test-font-compression.js",
 		"lhci": "lhci",
 		"lighthouse": "lighthouse",
@@ -42,8 +46,8 @@
 		"@fontsource/roboto": "^5.2.10",
 		"@iconify/svelte": "^5.2.1",
 		"@swup/astro": "^1.8.0",
-		"@tailwindcss/vite": "^4.0.0",
 		"@tailwindcss/typography": "^0.5.15",
+		"@tailwindcss/vite": "^4.0.0",
 		"astro": "6.0.4",
 		"astro-expressive-code": "^0.41.7",
 		"astro-icon": "^1.1.5",
@@ -109,7 +113,8 @@
 		"prettier-plugin-astro": "^0.14.1",
 		"prettier-plugin-svelte": "^3.5.0",
 		"svelte-eslint-parser": "^1.6.0",
-		"typescript-eslint": "^8.57.1"
+		"typescript-eslint": "^8.57.1",
+		"vitest": "^5.0.3"
 	},
 	"packageManager": "pnpm@10.22.0",
 	"pnpm": {

@@ -1,55 +1,159 @@
-name: Deploy Mizuki to GitHub Pages
+name: CI & Deploy
+
+# 统一流水线：质量检查 → 构建 → （仅 master 推送时）部署到 GitHub Pages
+#
+# 历史上存在四个工作流（build.yml / CI.yml / lint.yml / deploy.yml）：
+#   - build.yml 的触发分支是 main（仓库实际默认分支为 master），永不执行；
+#   - CI.yml、lint.yml、deploy.yml 在同一分支上各跑一次 install + build，重复消耗额度。
+# 现合并为单条流水线，用 job 依赖表达先后关系。
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
+  pull_request:
+    branches: [master]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PNPM_VERSION: 10.22.0
+  NODE_VERSION: 22
+
 jobs:
-  build:
+  quality:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # 安装 pnpm（与项目版本完全一致）
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.22.0
+          version: ${{ env.PNPM_VERSION }}
           run_install: false
 
-      # 安装 Node.js（升级到 Astro 支持的版本）
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22  # 从 20 升级到 22，满足 Astro >=22.12.0 的要求
-          cache: 'pnpm'
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
 
-      # 安装依赖
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 构建 Astro 站点
+      - name: Run ESLint
+        run: pnpm lint
+        env:
+          ENABLE_CONTENT_SYNC: "false"
+
+      - name: Run Astro Check
+        run: pnpm check
+        env:
+          ENABLE_CONTENT_SYNC: "false"
+
+      - name: Run unit tests
+        run: pnpm test
+        env:
+          ENABLE_CONTENT_SYNC: "false"
+
+  build:
+    name: Build
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Build site
         run: pnpm run build
+        env:
+          ENABLE_CONTENT_SYNC: "false"
+          BILI_SESSDATA: ${{ secrets.BILI_SESSDATA }}
 
-      # 上传构建产物
-      - name: Upload artifact
+      # 仅在实际部署时上传 Pages 产物（PR 上无需）
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
-  # 部署到 GitHub Pages
-  deploy:
+  lighthouse:
+    name: Lighthouse
     needs: build
+    runs-on: ubuntu-latest
+    # 只在推送与手动触发时跑，避免 PR 上消耗过多额度
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build site
+        run: pnpm run build
+        env:
+          ENABLE_CONTENT_SYNC: "false"
+
+      - name: Run Lighthouse CI
+        run: pnpm lhci autorun
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports-${{ github.run_id }}
+          path: .lighthouseci/
+          retention-days: 7
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
       pages: write
       id-token: write
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4

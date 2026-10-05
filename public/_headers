@@ -1,3 +1,18 @@
+# Netlify / Cloudflare Pages 响应头配置
+#
+# 注意：当前站点主部署平台是 GitHub Pages，而 GitHub Pages 不支持自定义响应头，
+# 因此本文件仅在改用 Netlify / Cloudflare Pages 时生效。
+# 若使用 Vercel，请改用仓库根目录的 vercel.json（两者语法不同、互不生效，
+# 故此处与 vercel.json 保持完全一致的意图）。
+
+# 全站安全响应头
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# 订阅源允许跨域读取
 /atom.xml
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET
@@ -8,23 +23,25 @@
   Access-Control-Allow-Methods: GET
   Access-Control-Max-Age: 86400
 
+# 带指纹的构建产物与静态资源：长期不可变缓存
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-/pio/*
+/images/*
   Cache-Control: public, max-age=31536000, immutable
 
-/images/*
+/pio/*
   Cache-Control: public, max-age=31536000, immutable
 
 /*.woff2
   Cache-Control: public, max-age=31536000, immutable
 
+# HTML：短缓存 + 必须回源校验
 /index.html
   Cache-Control: public, max-age=3600, must-revalidate
 
-*.html
+/*.html
   Cache-Control: public, max-age=3600, must-revalidate

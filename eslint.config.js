@@ -42,30 +42,26 @@ export default tseslint.config(
 			".astro/**",
 			"public/**",
 			"scripts/**",
+			"tests/**",
 			"demo/**",
 			"**/*.html",
 			"**/*.md",
 			"**/*.mdx",
-			// Files with parsing issues (Astro template compatibility)
+			// 以下文件目前仍无法被 astro-eslint-parser 解析（多为内联 <script> 中的
+			// `<style>` 属性或自闭合 <Fragment /> 触发），一旦上游解析器修复即可移出本列表。
+			// 详见下方 "已知缺口" 说明。
 			"src/components/atoms/custom-scrollbar/CustomScrollbar.astro",
 			"src/components/atoms/typewriter-text/TypewriterText.astro",
+			"src/components/features/posts/CategoryBar.astro",
 			"src/components/features/posts/PostPage.astro",
-			"src/components/features/stats/StatCard.astro",
-			"src/components/features/timeline/TimelineItem.astro",
 			"src/components/features/toc/FloatingTOC.astro",
 			"src/components/features/toc/SidebarTOC.astro",
-			"src/components/layout/Banner.astro",
-			"src/components/layout/RightSideBar.astro",
 			"src/components/misc/Markdown.astro",
-			"src/components/misc/ConfigCarrier.astro",
 			"src/components/organisms/navigation/DropdownMenu.astro",
 			"src/components/widgets/announcement/Announcement.astro",
-			"src/components/widgets/common/WidgetLayout.astro",
-			"src/components/widgets/profile/Profile.astro",
-			"src/components/features/posts/CategoryBar.astro",
 			"src/components/widgets/card-toc/CardTOC.astro",
+			"src/components/widgets/common/WidgetLayout.astro",
 			"src/layouts/Layout.astro",
-			"src/pages/timeline.astro",
 		],
 	},
 
@@ -195,3 +191,15 @@ export default tseslint.config(
 		},
 	},
 );
+
+/**
+ * 已知缺口（ESLint 覆盖盲区）
+ *
+ * 上方 ignores 中列出的 12 个 .astro 文件目前无法被 astro-eslint-parser 解析，
+ * 因此不参与任何规则校验，其中包含 Layout.astro、Markdown.astro 等核心文件。
+ * 触发原因主要是两类写法：
+ *   1. 内联 <script> 区块中带有 `style="..."` 属性的自闭合标签（解析器会误判为 <style> 元素）；
+ *   2. 模板表达式中出现自闭合的 <Fragment /> 等组件。
+ * 这些文件目前只能依赖 `pnpm check`（astro check）与 `pnpm build` 兜底。
+ * 后续升级 eslint-plugin-astro / astro-eslint-parser 后，应逐个移出该列表并重新验证。
+ */

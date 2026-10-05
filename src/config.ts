@@ -27,6 +27,9 @@ export const siteConfig: SiteConfig = {
 	siteURL: "https://leersxie.github.io/",
 	siteStartDate: "2026-03-28",
 
+	// 站点级默认关键词；文章页会用文章 tags 覆盖
+	keywords: ["Leersxie", "LX", "个人博客", "Astro", "Mizuki", "随笔"],
+
 	timeZone: SITE_TIMEZONE,
 	lang: SITE_LANG,
 
@@ -169,17 +172,20 @@ export const siteConfig: SiteConfig = {
 	favicon: [],
 
 	font: {
+		// ASCII（拉丁字母 / 数字 / 符号）字体，对应 main.css 中的 @font-face
 		asciiFont: {
-			fontFamily: "sans-serif",
-			fontWeight: "400",
-			localFonts: [],
-			enableCompress: false,
-		},
-		cjkFont: {
-			fontFamily: "sans-serif",
+			fontFamily: "ZenMaruGothic-Medium",
 			fontWeight: "500",
-			localFonts: [],
-			enableCompress: false,
+			localFonts: ["ZenMaruGothic-Medium.ttf"],
+			// 开启后由 scripts/compress-fonts.js 在构建时按实际用字子集化为 woff2
+			enableCompress: true,
+		},
+		// CJK 回退字体，仅在 ASCII 字体缺字时生效
+		cjkFont: {
+			fontFamily: "萝莉体 第二版",
+			fontWeight: "400",
+			localFonts: ["loli.ttf"],
+			enableCompress: true,
 		},
 	},
 	showLastModified: true,
@@ -190,8 +196,16 @@ export const siteConfig: SiteConfig = {
 	},
 
 	thirdPartyAnalytics: {
+		// Microsoft Clarity
 		enable: false,
 		clarityId: "",
+		// Google Tag Manager
+		// 注意：此前 GTM 容器 ID 硬编码在布局组件里，不受任何配置控制。
+		// 现已提为显式配置项，如需关闭统计把 enable 改为 false 即可。
+		gtm: {
+			enable: true,
+			id: "GTM-KRX3XGVH",
+		},
 	},
 };
 

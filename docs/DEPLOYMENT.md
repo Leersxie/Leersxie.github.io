@@ -120,13 +120,14 @@ export default defineConfig({
 
 ### 工作流说明
 
-项目包含三个工作流:
+项目只有一个工作流：`.github/workflows/deploy.yml`（CI & Deploy）。
 
-| 工作流 | 触发条件 | 功能 |
-|--------|---------|------|
-| `build.yml` | Push/PR 到 main | CI 测试，检查构建 |
-| `deploy.yml` | Push 到 main | 构建并部署到 pages 分支 |
-| `format.yml` | Push/PR | 代码格式和质量检查 |
+| 触发条件 | 执行内容 |
+|---------|---------|
+| Push / PR 到 `master`，或手动触发 | `quality`（ESLint + `astro check` + 单元测试）→ `build` → `lighthouse` |
+| Push 到 `master` | 在上述基础上追加 `deploy`，发布到 GitHub Pages |
+
+`lighthouse` 与 `deploy` 在 PR 上会跳过，避免消耗过多 Actions 额度。
 
 ---
 

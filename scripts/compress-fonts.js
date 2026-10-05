@@ -1075,6 +1075,8 @@ async function compressFonts() {
 
 		// 用于收集所有错误
 		const errors = [];
+		// 用于收集可降级的问题（例如原生工具链不可用），不影响构建结果
+		const warnings = [];
 
 		// 遍历所有需要压缩的字体
 		for (const fontConfig of fonts) {
@@ -1117,30 +1119,43 @@ async function compressFonts() {
 					// TTF/OTF 需要压缩为 woff2
 					console.log(`Compressing ${fontFile}...`);
 
-					const fontmin = new Fontmin()
-						.src(fontSrc)
-						.use(
-							Fontmin.glyph({
-								text: text,
-								hinting: false,
-							}),
-						)
-						.use(
-							Fontmin.ttf2woff2({
-								deflate: true,
-							}),
-						)
-						.dest(distFontDir);
+					// 注意：ttf2woff2 是需要在安装期编译的原生模块。
+					// 若工具链不可用（缺少编译环境等），此处只降级告警并保留原始 ttf 引用，
+					// 绝不能让字体子集化失败阻断整站部署。
+					try {
+						const fontmin = new Fontmin()
+							.src(fontSrc)
+							.use(
+								Fontmin.glyph({
+									text: text,
+									hinting: false,
+								}),
+							)
+							.use(
+								Fontmin.ttf2woff2({
+									deflate: true,
+								}),
+							)
+							.dest(distFontDir);
 
-					await new Promise((resolve, reject) => {
-						fontmin.run((err, files) => {
-							if (err) {
-								reject(err);
-							} else {
-								resolve(files);
-							}
+						await new Promise((resolve, reject) => {
+							fontmin.run((err, files) => {
+								if (err) {
+									reject(err);
+								} else {
+									resolve(files);
+								}
+							});
 						});
-					});
+					} catch (fontError) {
+						warnings.push(
+							`字体子集化失败（已跳过，保留 ttf 引用）：${fontFile} — ${fontError.message}`,
+						);
+						console.log(
+							`⚠ 跳过 ${fontFile}：${fontError.message}`,
+						);
+						continue;
+					}
 
 					// 检查压缩结果
 					const compressedFile = path.join(
@@ -1208,9 +1223,19 @@ async function compressFonts() {
 		} else {
 			console.log("\n⚠ No font files processed");
 		}
+
+		if (warnings.length > 0) {
+			console.log(`\n⚠ ${warnings.length} 项降级告警（不阻断构建）：`);
+			warnings.forEach((w) => console.log(`  - ${w}`));
+			console.log(
+				"  受影响字体会继续以原始 ttf 提供，功能不受影响，仅体积较大。",
+			);
+		}
 	} catch (error) {
-		console.error("❌ Font compression failed:", error);
-		process.exit(1);
+		// 字体优化属于锦上添花，不应阻断整站部署
+		console.error(
+			`⚠ Font compression failed (non-fatal, 继续使用原始字体): ${error.message}`,
+		);
 	}
 }
 

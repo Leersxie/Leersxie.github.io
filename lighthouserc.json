@@ -6,11 +6,14 @@
       "url": [
         "http://localhost:4321/",
         "http://localhost:4321/about/",
-        "http://localhost:4321/anime/"
+        "http://localhost:4321/friends/"
       ],
       "startServerCommand": "pnpm preview",
       "startServerReadyPattern": "localhost:4321",
-      "startServerReadyTimeout": 30000
+      "startServerReadyTimeout": 30000,
+      "settings": {
+        "chromeFlags": "--no-sandbox --headless=new"
+      }
     },
     "assert": {
       "assertions": {
@@ -32,8 +35,9 @@
       }
     },
     "upload": {
-      "target": "lhci",
-      "serverBaseUrl": "http://localhost:9001"
+      "target": "filesystem",
+      "outputDir": "./.lighthouseci",
+      "reportFilenamePattern": "%%PATHNAME%%-%%DATETIME%%-report.%%EXTENSION%%"
     }
   }
 }
