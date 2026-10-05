@@ -146,6 +146,10 @@ const favicons: Favicon[] =
 		/>
 	))
 }
+<!-- iOS 添加到主屏用的图标；iOS 不支持透明，该图已在生成时铺白底 -->
+<link rel="apple-touch-icon" sizes="180x180" href={url("/favicon/apple-touch-icon.png")} />
+<!-- Android / PWA 图标清单（用 .json 而非 .webmanifest —— GitHub Pages 对后者的 MIME 类型不可靠，加载失败会在控制台报错） -->
+<link rel="manifest" href={url("/favicon/manifest.json")} />
 
 <!-- 字体通过构建脚本压缩到 /assets/font/ 目录，此处不再预加载以避免 404 -->
 <!-- 字体在构建时通过 scripts/compress-fonts.js 处理并复制到 dist/ -->

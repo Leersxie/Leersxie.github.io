@@ -173,7 +173,13 @@ export const siteConfig: SiteConfig = {
 	},
 	showCoverInContent: true,
 	generateOgImages: false,
-	favicon: [],
+	// 站点图标。文件由 `pnpm generate:icons` 从 design/icon-source.png 生成。
+	// 换图标时覆盖源图后重跑该命令即可，无需手改这里。
+	favicon: [
+		{ src: "/favicon/favicon.ico", sizes: "48x48" },
+		{ src: "/favicon/favicon-32x32.png", sizes: "32x32" },
+		{ src: "/favicon/favicon-16x16.png", sizes: "16x16" },
+	],
 
 	font: {
 		// ASCII（拉丁字母 / 数字 / 符号）字体，对应 main.css 中的 @font-face

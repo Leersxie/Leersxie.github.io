@@ -25,6 +25,7 @@
 		"compress-fonts": "node scripts/compress-fonts.js",
 		"optimize:images": "node scripts/optimize-banner-images.js",
 		"generate:og": "node scripts/generate-og-default.mjs",
+		"generate:icons": "node scripts/generate-favicons.mjs",
 		"check-env": "node scripts/check-env.js",
 		"test": "vitest run",
 		"test:watch": "vitest",

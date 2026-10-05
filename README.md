@@ -31,6 +31,7 @@ pnpm format           # Prettier 格式化 src
 pnpm test             # 单元测试（Vitest）
 pnpm new-post <名称>  # 新建文章，自动生成 frontmatter
 pnpm generate:og      # 重新生成站点默认分享图
+pnpm generate:icons   # 从 design/icon-source.png 重新生成整套站点图标
 pnpm check-env        # 检查 .env 配置是否完整
 ```
 
