@@ -30,6 +30,7 @@ pnpm lint             # ESLint（自动修复）
 pnpm format           # Prettier 格式化 src
 pnpm test             # 单元测试（Vitest）
 pnpm new-post <名称>  # 新建文章，自动生成 frontmatter
+pnpm generate:og      # 重新生成站点默认分享图
 pnpm check-env        # 检查 .env 配置是否完整
 ```
 
@@ -70,11 +71,31 @@ published: 2026-03-28
 description: 摘要，会用于 SEO 描述与分享卡片
 category: 日常
 tags: [标签A, 标签B]
+image: /assets/images/cover.webp   # 封面图，可选
 draft: false
 ---
 ```
 
 可用字段见 `src/content.config.ts`，包含 `updated`、`pinned`、`priority`、`alias`、`permalink`、`encrypted` / `password`（文章加密）等。
+
+### 封面图与分享图
+
+`image` 支持两种写法：
+
+- **`public/` 下的绝对路径**，如 `/assets/images/cover.webp`；
+- **文章目录内的相对路径**，如 `cover.webp`（与 `.md` 同目录，构建时会走 `astro:assets` 生成响应式变体）。
+
+封面图会用在三处：文章页顶部、列表卡片、以及 `og:image`（社交平台分享预览）。
+
+**没有封面图时，分享预览会回退到站点默认分享图** `public/assets/og-default.png`。
+该图由脚本生成，改完站点标题 / 副标题后重跑即可同步：
+
+```bash
+pnpm generate:og
+```
+
+想换成自己设计的图，直接替换 `public/assets/og-default.png` 即可（建议 1200×630），
+并把 `src/config.ts` 里的 `siteConfig.ogImage` 指到对应路径。
 
 ## 站点配置
 

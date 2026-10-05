@@ -61,6 +61,18 @@ const canonical = (() => {
 	return new URL(Astro.url.pathname, base).href;
 })();
 
+// 分享图：页面自带的（文章封面 / 生成式 OG 图）优先，否则回退到站点默认图。
+// 在此之前站点完全没有 og:image，而 twitter:card 声明的却是 summary_large_image，
+// 导致分享到社交平台时没有预览图。
+const ogImageBase = Astro.site ?? Astro.url;
+const resolvedOgImage = ogImageUrl
+	? new URL(ogImageUrl, ogImageBase).href
+	: siteConfig.ogImage
+		? new URL(siteConfig.ogImage, ogImageBase).href
+		: undefined;
+// 默认分享图固定 1200×630，仅在用到它时声明尺寸
+const ogImageIsDefault = !ogImageUrl && !!resolvedOgImage;
+
 // Favicons
 const favicons: Favicon[] =
 	siteConfig.favicon.length > 0 ? siteConfig.favicon : defaultFavicons;
@@ -83,7 +95,18 @@ const favicons: Favicon[] =
 <meta property="og:url" content={canonical} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description || title} />
-{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+{
+	resolvedOgImage && (
+		<meta property="og:image" content={resolvedOgImage} />
+	)
+}
+{ogImageIsDefault && <meta property="og:image:width" content="1200" />}
+{ogImageIsDefault && <meta property="og:image:height" content="630" />}
+{
+	resolvedOgImage && (
+		<meta property="og:image:alt" content={title} />
+	)
+}
 {
 	setOGTypeArticle ? (
 		<meta property="og:type" content="article" />
@@ -97,6 +120,16 @@ const favicons: Favicon[] =
 <meta property="twitter:url" content={canonical} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description || title} />
+{
+	resolvedOgImage && (
+		<meta name="twitter:image" content={resolvedOgImage} />
+	)
+}
+{
+	resolvedOgImage && (
+		<meta name="twitter:image:alt" content={title} />
+	)
+}
 
 <!-- Viewport and Generator -->
 <meta name="viewport" content="width=device-width" />

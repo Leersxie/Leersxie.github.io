@@ -35,6 +35,8 @@ interface Props {
 	keywords?: string[];
 	canonicalURL?: string;
 	noindex?: boolean;
+	/** 页面自带的分享图（文章封面等） */
+	coverImage?: string;
 }
 
 // 获取 banner 图片
@@ -51,6 +53,7 @@ const {
 	keywords,
 	canonicalURL,
 	noindex,
+	coverImage,
 } = Astro.props;
 const hasBannerCredit = siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
@@ -104,6 +107,7 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 	keywords={keywords}
 	canonicalURL={canonicalURL}
 	noindex={noindex}
+	coverImage={coverImage}
 >
 	<GridScripts
 		navbarTransparentMode={siteConfig.banner?.navbar?.transparentMode ||

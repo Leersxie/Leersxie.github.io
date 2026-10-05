@@ -30,6 +30,10 @@ export const siteConfig: SiteConfig = {
 	// 站点级默认关键词；文章页会用文章 tags 覆盖
 	keywords: ["Leersxie", "LX", "个人博客", "Astro", "Mizuki", "随笔"],
 
+	// 默认分享图：文章没有封面时用于 og:image / twitter:image。
+	// 由 `pnpm generate:og` 生成（1200×630），也可直接替换该文件。
+	ogImage: "/assets/og-default.png",
+
 	timeZone: SITE_TIMEZONE,
 	lang: SITE_LANG,
 

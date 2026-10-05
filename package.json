@@ -24,6 +24,7 @@
 		"preinstall": "npx only-allow pnpm",
 		"compress-fonts": "node scripts/compress-fonts.js",
 		"optimize:images": "node scripts/optimize-banner-images.js",
+		"generate:og": "node scripts/generate-og-default.mjs",
 		"check-env": "node scripts/check-env.js",
 		"test": "vitest run",
 		"test:watch": "vitest",

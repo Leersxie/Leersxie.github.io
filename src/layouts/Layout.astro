@@ -38,6 +38,8 @@ interface Props {
 	keywords?: string[];
 	canonicalURL?: string;
 	noindex?: boolean;
+	/** 页面自带的分享图（文章封面等，需为绝对地址）；未提供时回退到站点默认分享图 */
+	coverImage?: string;
 }
 
 let {
@@ -50,6 +52,7 @@ let {
 	keywords,
 	canonicalURL,
 	noindex = false,
+	coverImage,
 } = Astro.props;
 
 // apply a class to the body element to decide the height of the banner, only used for initial page load
@@ -122,6 +125,10 @@ if (title) {
 let ogImageUrl: string | undefined;
 if (siteConfig.generateOgImages && postSlug) {
 	ogImageUrl = new URL(`/og/${postSlug}.png`, Astro.site).toString();
+}
+// 没有生成式 OG 图时用文章封面；两者都没有则由 HeadTags 回退到站点默认分享图
+if (!ogImageUrl && coverImage) {
+	ogImageUrl = coverImage;
 }
 
 // const siteLang = siteConfig.lang.replace('_', '-')

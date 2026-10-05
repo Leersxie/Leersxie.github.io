@@ -11,6 +11,12 @@ export interface SiteConfig {
 	subtitle: string;
 	siteURL: string;
 	keywords?: string[];
+	/**
+	 * 站点默认分享图（OG image）。
+	 * 文章没有封面时，社交平台抓取到的预览图就用它。
+	 * 由 `pnpm generate:og` 生成到 public/assets/og-default.png，也可换成自己设计的图。
+	 */
+	ogImage?: string;
 	siteStartDate?: string;
 	timeZone: `-${string}` | `+${string}`;
 	lang: "en" | "zh_CN" | "zh_TW" | "ja" | "ko" | "es" | "th" | "vi" | "tr" | "id";
