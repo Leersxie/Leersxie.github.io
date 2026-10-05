@@ -50,6 +50,28 @@ const BG_COLOR = bgArg ? bgArg.slice("--bg=".length) : null;
 /** 圆角半径占画布比例；取 12% 时不会裁到 86% 占比的图形 */
 const BG_RADIUS_RATIO = 0.12;
 
+/**
+ * 导航栏品牌标记用哪种裁切（导航栏槽位是 28×28 正方形，放不下横版字标）。
+ * 通过 `--mark=head|x|full` 切换，默认 head。
+ * 各值为「相对内容包围盒」的比例，是为当前这张图调的；换图后可能需要微调。
+ */
+const MARK_CROPS = {
+	head: { l: 0.02, t: 0, w: 0.44, h: 0.4 },
+	x: { l: 0.5, t: 0.3, w: 0.5, h: 0.7 },
+	full: { l: 0, t: 0, w: 1, h: 1 },
+};
+const markArg = process.argv.find((a) => a.startsWith("--mark="));
+const MARK_KEY = markArg ? markArg.slice("--mark=".length) : "head";
+if (!MARK_CROPS[MARK_KEY]) {
+	throw new Error(
+		`未知的 --mark 值：${MARK_KEY}（可选：${Object.keys(MARK_CROPS).join(" / ")}）`,
+	);
+}
+
+/** 导航栏图标输出路径（与 src/config.ts 的 navbarTitle.icon 对应） */
+const NAV_ICON = path.join(rootDir, "public/assets/home/home.webp");
+const NAV_ICON_SIZE = 256;
+
 function readSiteConfig() {
 	const src = fs.readFileSync(path.join(rootDir, "src/config.ts"), "utf-8");
 	const pick = (key) => {
@@ -205,6 +227,50 @@ async function main() {
 		`${JSON.stringify(manifest, null, "\t")}\n`,
 	);
 	console.log("  ✓ manifest.json");
+
+	// 8) 导航栏品牌标记
+	// 导航栏的槽位是 28×28 正方形（Navbar.astro 里 h-[1.75rem] w-[1.75rem]），
+	// 横版字标塞进去在 28px 下会糊，所以按比例裁出一个方形标记。
+	const markFrac = MARK_CROPS[MARK_KEY];
+	// 注意：sharp 的 trimOffsetLeft/Top 是「负值」约定，实际偏移要取反
+	const offL = -(trimmed.info.trimOffsetLeft ?? 0);
+	const offT = -(trimmed.info.trimOffsetTop ?? 0);
+	const markTrimmed = await sharp(SOURCE)
+		.extract({
+			left: Math.round(offL + markFrac.l * cw),
+			top: Math.round(offT + markFrac.t * ch),
+			width: Math.round(markFrac.w * cw),
+			height: Math.round(markFrac.h * ch),
+		})
+		.trim({ threshold: 1 })
+		.toBuffer({ resolveWithObject: true });
+	const markSide = Math.ceil(
+		Math.max(markTrimmed.info.width, markTrimmed.info.height) / 0.84,
+	);
+	const mark = await sharp({
+		create: {
+			width: markSide,
+			height: markSide,
+			channels: 4,
+			background: { r: 0, g: 0, b: 0, alpha: 0 },
+		},
+	})
+		.composite([
+			{
+				input: markTrimmed.data,
+				left: Math.round((markSide - markTrimmed.info.width) / 2),
+				top: Math.round((markSide - markTrimmed.info.height) / 2),
+			},
+		])
+		.png()
+		.toBuffer();
+	await sharp(mark)
+		.resize(NAV_ICON_SIZE, NAV_ICON_SIZE)
+		.webp({ quality: 92 })
+		.toFile(NAV_ICON);
+	console.log(
+		`  ✓ assets/home/home.webp（导航栏标记，裁切=${MARK_KEY}，${NAV_ICON_SIZE}×${NAV_ICON_SIZE}）`,
+	);
 
 	console.log(`\n全部输出到 ${path.relative(rootDir, OUT_DIR)}/`);
 	console.log(
