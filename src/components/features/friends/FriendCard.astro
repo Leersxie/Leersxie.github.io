@@ -37,11 +37,12 @@ const hostname = new URL(friend.siteurl).hostname;
 			</div>
 
 			<div class="flex-1 min-w-0">
-				<h3
+				{/* 使用 h2：页面主标题为 h1，此前用 h3 会跳过层级，触发 Lighthouse 的 heading-order 告警 */}
+				<h2
 					class="text-xl font-bold text-black/90 dark:text-white/90 mb-1 truncate group-hover:text-[var(--primary)] transition-colors duration-200"
 				>
 					{friend.title}
-				</h3>
+				</h2>
 				<a
 					href={friend.siteurl}
 					target="_blank"

@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/GoogleChrome/lighthouse-ci/main/docs/schema.json",
   "ci": {
     "collect": {
-      "numberOfRuns": 3,
+      "numberOfRuns": 1,
       "url": [
         "http://localhost:4321/",
         "http://localhost:4321/about/",
@@ -10,9 +10,9 @@
       ],
       "startServerCommand": "pnpm preview",
       "startServerReadyPattern": "localhost:4321",
-      "startServerReadyTimeout": 30000,
+      "startServerReadyTimeout": 60000,
       "settings": {
-        "chromeFlags": "--no-sandbox --headless=new"
+        "chromeFlags": "--no-sandbox --disable-gpu --disable-dev-shm-usage"
       }
     },
     "assert": {

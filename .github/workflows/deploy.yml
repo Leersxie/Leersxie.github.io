@@ -131,16 +131,32 @@ jobs:
         env:
           ENABLE_CONTENT_SYNC: "false"
 
-      - name: Run Lighthouse CI
-        run: pnpm lhci autorun
+      - name: Check Chrome availability
+        run: |
+          google-chrome --version || google-chrome-stable --version || echo "WARNING: 未找到 Chrome，Lighthouse 将无法运行"
+
+      # 拆成 collect / upload / assert 三段执行：
+      # 之前用 `lhci autorun` 时，断言失败会导致整个进程提前退出，
+      # 报告来不及落盘，CI 里只看得到「exit code 1」，无法判断是哪一项不达标。
+      - name: Lighthouse collect
+        run: pnpm lhci collect
+
+      - name: Lighthouse upload reports
+        if: always()
+        continue-on-error: true
+        run: pnpm lhci upload
 
       - name: Upload Lighthouse reports
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-reports-${{ github.run_id }}
           path: .lighthouseci/
           retention-days: 7
+
+      - name: Lighthouse assert
+        run: pnpm lhci assert
 
   deploy:
     name: Deploy to GitHub Pages
