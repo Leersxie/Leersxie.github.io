@@ -58,11 +58,24 @@ export class FancyboxHandler {
 
 	/**
 	 * 加载 Fancybox 模块和样式
+	 *
+	 * 样式用 `?url` 取地址后运行时插入，避免被 Astro 当成页面级样式
+	 * 在没有图片灯箱的页面上也输出阻塞 <link>。
 	 */
 	private async loadFancybox(): Promise<void> {
 		const mod = await import("@fancyapps/ui");
 		this.Fancybox = mod.Fancybox;
-		await import("@fancyapps/ui/dist/fancybox/fancybox.css");
+
+		if (!document.querySelector("link[data-fancybox-css]")) {
+			const { default: href } = await import(
+				"@fancyapps/ui/dist/fancybox/fancybox.css?url"
+			);
+			const link = document.createElement("link");
+			link.rel = "stylesheet";
+			link.href = href;
+			link.setAttribute("data-fancybox-css", "true");
+			document.head.appendChild(link);
+		}
 	}
 
 	/**

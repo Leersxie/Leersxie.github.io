@@ -77,11 +77,24 @@ export class ScrollHandler {
 
 	/**
 	 * 检查并加载 KaTeX 样式
+	 *
+	 * 用 `?url` 只取资源地址、在运行时按需插入 <link>：
+	 * 直接 `import("katex/dist/katex.css")` 会被 Astro 判定为页面级样式，
+	 * 从而在每个页面（包括没有公式的首页）都输出一个阻塞渲染的 <link>。
 	 */
-	checkKatex(): void {
-		if (document.querySelector(".katex")) {
-			import("katex/dist/katex.css");
+	async checkKatex(): Promise<void> {
+		if (!document.querySelector(".katex")) {
+			return;
 		}
+		if (document.querySelector("link[data-katex-css]")) {
+			return;
+		}
+		const { default: href } = await import("katex/dist/katex.css?url");
+		const link = document.createElement("link");
+		link.rel = "stylesheet";
+		link.href = href;
+		link.setAttribute("data-katex-css", "true");
+		document.head.appendChild(link);
 	}
 
 	/**
