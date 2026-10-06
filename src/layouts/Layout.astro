@@ -358,9 +358,14 @@ if (siteConfig.font) {
 	// Swup 页面过渡管理器 - 统一入口
 	// 所有功能已重构为模块化架构，详见 src/scripts/ 目录
 	import { initSwupManager } from "../scripts/swup-manager";
+	// 滚动触发动效（anime.js）—— 自启动，不依赖 SwupManager 的异步初始化链路
+	import { bootScrollMotion } from "../scripts/effects/scroll-motion";
 
 	// 初始化 Swup 管理器
 	initSwupManager();
+
+	// 启动滚动动效
+	bootScrollMotion();
 </script>
 
 <!-- 代码块折叠功能 -->

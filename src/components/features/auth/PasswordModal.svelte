@@ -86,19 +86,21 @@
 		{/if}
 
 		<form class="password-form" onsubmit={handleSubmit}>
-			<input
-				type="password"
-				id="password-input"
-				placeholder={i18n(I18nKey.passwordPlaceholder)}
-				class="password-input"
-				bind:value={password}
-				onkeypress={handleKeypress}
-				disabled={isLoading}
-				autocomplete="off"
-			/>
+			<div class="input-underline">
+				<input
+					type="password"
+					id="password-input"
+					placeholder={i18n(I18nKey.passwordPlaceholder)}
+					class="password-input"
+					bind:value={password}
+					onkeypress={handleKeypress}
+					disabled={isLoading}
+					autocomplete="off"
+				/>
+			</div>
 			<button
 				id="unlock-btn"
-				class="unlock-button"
+				class="unlock-button btn-shine"
 				type="submit"
 				disabled={isLoading}
 			>
@@ -180,22 +182,26 @@
 		gap: 0.5rem;
 	}
 
+	.input-underline {
+		position: relative;
+		width: 100%;
+	}
+
 	.password-input {
 		width: 100%;
-		padding: 0.5rem 0.75rem;
-		border-radius: 0.5rem;
+		padding: 0.6rem 0.15rem;
+		border: none;
+		border-bottom: 2px solid var(--line-color);
+		border-radius: 0;
 		font-size: 0.875rem;
-		background: rgba(0, 0, 0, 0.05);
-		border: 1px solid rgba(0, 0, 0, 0.08);
+		background: transparent;
 		color: rgba(0, 0, 0, 0.8);
 		outline: none;
-		transition: border-color 0.2s;
+		transition: border-color 0.25s ease;
 	}
 
 	:global(.dark) .password-input {
-		background: rgba(255, 255, 255, 0.1);
-		border-color: rgba(255, 255, 255, 0.08);
-		color: rgba(255, 255, 255, 0.8);
+		color: rgba(255, 255, 255, 0.85);
 	}
 
 	.password-input::placeholder {
@@ -206,8 +212,20 @@
 		color: rgba(255, 255, 255, 0.25);
 	}
 
-	.password-input:focus {
-		border-color: var(--primary);
+	/* 聚焦时主色下划线自左向右铺开 */
+	.input-underline::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		height: 2px;
+		width: 0;
+		background: var(--primary);
+		transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.input-underline:focus-within::after {
+		width: 100%;
 	}
 
 	.unlock-button {
@@ -259,6 +277,12 @@
 
 		.password-container {
 			padding: 1.5rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.input-underline::after {
+			transition: none;
 		}
 	}
 </style>

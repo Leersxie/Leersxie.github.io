@@ -38,7 +38,9 @@ export const siteConfig: SiteConfig = {
 	lang: SITE_LANG,
 
 	themeColor: {
-		hue: 210,
+		// 品牌紫罗兰：与 design/icon-source.png 的「LX」标识对齐
+		// （标识实测 oklch(0.61 0.17 287)，原值 210 为蓝色，偏差 77°）
+		hue: 287,
 		fixed: false,
 	},
 

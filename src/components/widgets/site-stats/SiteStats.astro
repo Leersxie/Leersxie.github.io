@@ -136,6 +136,7 @@ const stats = [
 						<span
 							class="text-base font-bold text-neutral-900 dark:text-neutral-100"
 							data-stat-id={stat.id}
+							data-countup={stat.dynamic ? undefined : stat.value}
 						>
 							{stat.formatted
 								? formatNumber(stat.value)

@@ -1,0 +1,83 @@
+/* ------------------------------------------------------------------
+ * 动效与基础件（纯 CSS，零运行时依赖）
+ * 与 src/scripts/effects/scroll-motion.ts（anime.js 滚动动效）配套。
+ * 组件：① 按钮扫光 ② 图片骨架屏
+ * 所有动效均在 prefers-reduced-motion 下降级。
+ * ------------------------------------------------------------------ */
+
+/* ============ ① 按钮「扫光」 ============ */
+/* 用法：在 <a>/<button> 上追加 class="btn-shine"（元素需可 overflow:hidden） */
+.btn-shine {
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+}
+
+.btn-shine::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: -150%;
+	width: 55%;
+	height: 100%;
+	background: linear-gradient(
+		100deg,
+		transparent,
+		rgba(255, 255, 255, 0.55),
+		transparent
+	);
+	transform: skewX(-20deg);
+	transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+	pointer-events: none;
+	z-index: 1;
+}
+
+.btn-shine:hover::after,
+.btn-shine:focus-visible::after {
+	left: 150%;
+}
+
+/* 暗色下降低亮度，避免过曝 */
+:root.dark .btn-shine::after {
+	background: linear-gradient(
+		100deg,
+		transparent,
+		rgba(255, 255, 255, 0.22),
+		transparent
+	);
+}
+
+/* ============ ② 图片骨架屏 ============ */
+/* 用法：在图片容器上追加 class="image-skeleton"。
+   图片未加载时容器露出微光底；<img> 覆盖后自然遮挡。
+   限定 8 次循环，避免加载完成后仍持续重绘。 */
+.image-skeleton {
+	background-image: linear-gradient(
+		100deg,
+		var(--btn-regular-bg) 30%,
+		var(--btn-regular-bg-hover) 45%,
+		var(--btn-regular-bg) 60%
+	);
+	background-size: 300% 100%;
+	animation: skeleton-shimmer 1.6s ease-in-out 8;
+}
+
+@keyframes skeleton-shimmer {
+	from {
+		background-position: 150% 0;
+	}
+	to {
+		background-position: -150% 0;
+	}
+}
+
+/* ============ 无障碍降级 ============ */
+@media (prefers-reduced-motion: reduce) {
+	.btn-shine::after {
+		display: none;
+	}
+
+	.image-skeleton {
+		animation: none;
+	}
+}

@@ -7,6 +7,8 @@
 /* 导入动画样式 */
 @import "./transition.css";
 @import "./animation-enhancements.css";
+/* 导入动效与基础件（按钮扫光、图片骨架屏） */
+@import "./motion.css";
 /* 导入渐变按钮样式 */
 @import "./gradient-buttons.css";
 /* 导入 Banner 和网格布局样式 */

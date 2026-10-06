@@ -25,6 +25,11 @@ interface Props {
 	 *      未匹配到 media 时浏览器回退到 <img>，行为与原先一致。
 	 */
 	placeholderMedia?: string;
+	/**
+	 * 容器是否铺一层微光骨架屏（图片加载完成后被 <img> 自然遮挡）。
+	 * 默认关闭，避免影响带透明通道的 logo / 图标。
+	 */
+	skeleton?: boolean;
 }
 
 import { Image as AstroImage } from "astro:assets";
@@ -42,6 +47,7 @@ const {
 	widths,
 	sizes,
 	placeholderMedia,
+	skeleton = false,
 } = Astro.props;
 const className = Astro.props.class;
 
@@ -87,7 +93,14 @@ const isBilibiliImage = !isLocal && src.includes("hdslb.com");
 const referrerPolicy = !isLocal && isBilibiliImage ? "no-referrer" : undefined;
 ---
 
-<div id={id} class:list={[className, "overflow-hidden relative"]}>
+<div
+	id={id}
+	class:list={[
+		className,
+		"overflow-hidden relative",
+		{ "image-skeleton": skeleton },
+	]}
+>
 	<div
 		class="transition absolute inset-0 dark:bg-black/10 bg-opacity-50 pointer-events-none"
 	>
