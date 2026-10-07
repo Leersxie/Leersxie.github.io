@@ -83,7 +83,9 @@
 
 /* 第二级：大标题。
    用 clamp 取代「1279px 时 4rem、1280px 起 96px」的硬跳档；
-   端点与原先的手感对齐（手机约 3rem，大屏封顶 6rem）。 */
+   端点与原先的手感对齐（手机约 3rem，大屏封顶 6rem）。
+   入场动效由 JS 对每个 .banner-title__ch 逐字触发，这里不再做整体动画，
+   否则两者叠加会显得拖沓。 */
 .banner-title {
   font-size: clamp(3rem, 1.9rem + 4.6vw, 6rem);
   line-height: 1.12;
@@ -94,7 +96,6 @@
   text-shadow:
     0 2px 18px rgba(0, 0, 0, 0.55),
     2px 2px 4px rgba(0, 0, 0, 0.6);
-  animation: fadeInUp 1s ease-out;
 }
 
 /* 第三级：副标题 */
@@ -914,4 +915,117 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
     min-height: 30px !important;
     max-height: 40px !important;
   }
+}
+
+/* ==========================================================================
+   Banner 分页指示器
+   ========================================================================== */
+/* 位置：底部居中，抬到水波纹之上（波纹高度 8~12vh，故用 12.5vh 让开） */
+.banner-dots {
+  position: absolute;
+  bottom: 12.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.banner-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition:
+    width 0.32s cubic-bezier(0.2, 0.7, 0.3, 1),
+    background-color 0.24s ease;
+}
+
+.banner-dot:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* 当前项拉长成胶囊 */
+.banner-dot[aria-selected="true"] {
+  width: 26px;
+  background: #fff;
+}
+
+.banner-dot:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 2px;
+}
+
+.banner-dots__counter {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.92);
+  font-variant-numeric: tabular-nums;
+  margin-right: 3px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  user-select: none;
+}
+
+.banner-dots__sep {
+  opacity: 0.55;
+  margin: 0 2px;
+}
+
+/* 悬停缩略图：内容由 JS 克隆自 banner-tpl-*，不额外请求图片 */
+.banner-dots__preview {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  width: 190px;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.banner-dots[data-preview="1"] .banner-dots__preview {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.banner-dots__preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 空间紧张时（横屏矮视口）隐藏指示器，避免和文字挤在一起 */
+@media (max-height: 500px), (orientation: landscape) and (max-height: 600px) {
+  .banner-dots {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Banner 标题逐字入场
+   ========================================================================== */
+/* 字符拆成 inline-block 才能单独做 transform；white-space:pre 保住标题里的空格 */
+.banner-title__ch {
+  display: inline-block;
+  white-space: pre;
 }

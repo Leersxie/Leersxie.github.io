@@ -64,6 +64,12 @@ const carouselIntervalMs = Math.max(
 // 淡入淡出时间：间隔的 40%，范围 500ms ~ 1500ms
 const fadeMs = Math.min(Math.max(Math.round(carouselIntervalMs * 0.4), 500), 1500);
 
+// 指示器格子数：移动端与桌面端取较大者，点击时按当前可见的 slot 实际张数收敛
+const carouselIndicatorCount = Math.max(
+	mobileImages.length,
+	desktopImages.length,
+);
+
 // Ken Burns 动画时长 = 间隔 + 淡入，确保旧图在 crossfade 期间仍在运动，消除停顿感
 const kbDurationMs = carouselIntervalMs + fadeMs;
 
@@ -150,6 +156,31 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 					/>
 				</template>
 			))}
+
+			{/* 分页指示器：点击直达 + 悬停预览缩略图 + 当前序号。
+			    首屏固定第 1 张、首次切换跳随机帧（见下方脚本），指示器把这个随机感显性化。 */}
+			{carouselIndicatorCount > 1 && (
+				<div class="banner-dots" role="tablist" aria-label="横幅切换">
+					<span class="banner-dots__counter" aria-hidden="true">
+						<b class="banner-dots__current">{String(1).padStart(2, "0")}</b>
+						<span class="banner-dots__sep">/</span>
+						<span class="banner-dots__total">
+							{String(carouselIndicatorCount).padStart(2, "0")}
+						</span>
+					</span>
+					{Array.from({ length: carouselIndicatorCount }).map((_, i) => (
+						<button
+							type="button"
+							class="banner-dot"
+							role="tab"
+							data-dot-index={i}
+							aria-selected={i === 0 ? "true" : "false"}
+							aria-label={`第 ${i + 1} 张`}
+						/>
+					))}
+					<span class="banner-dots__preview" aria-hidden="true" />
+				</div>
+			)}
 		</div>
 	) : (
 		/* 单图模式 */
@@ -314,6 +345,35 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 				// 是否已经切换过一次：首次切换跳随机帧，之后按顺序前进
 				const hasAdvancedOnce = { mobile: false, desktop: false };
 
+			/* ---------- 标题逐字入场 ----------
+			   字符在服务端已拆成 .banner-title__ch（并带 --ch-i 序号），
+			   这里只按序号错峰，用 Web Animations API 实现 —— 不依赖 anime.js，
+			   因为 Banner 的脚本是 is:inline，无法 import。 */
+			(function animateTitleChars() {
+				const chars = document.querySelectorAll('.banner-title__ch');
+				if (!chars.length) {return;}
+				if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+					return;
+				}
+				for (let i = 0; i < chars.length; i++) {
+					const el = chars[i];
+					const delay = 140 + i * 55;
+					if (typeof el.animate !== 'function') {continue;}
+					el.animate(
+						[
+							{ opacity: 0, transform: 'translateY(0.55em)' },
+							{ opacity: 1, transform: 'translateY(0)' },
+						],
+						{
+							duration: 620,
+							delay: delay,
+							easing: 'cubic-bezier(0.2, 0.7, 0.3, 1)',
+							fill: 'backwards',
+						},
+					);
+				}
+			})();
+
 				// 断点检测（md = 768px）
 				function isSlotHiddenByBreakpoint(slot) {
 					const cl = slot.classList;
@@ -359,6 +419,7 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 
 					isCrossfading[type] = true;
 					window.__bannerCarouselIndex[type] = targetIndex;
+					syncDots();
 
 					// 清理快速交互可能残留的中间层
 					cleanupOrphanedLayers(slotClass, oldSlot);
@@ -379,13 +440,125 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						});
 					});
 
-					// 淡入完成后：移除旧层，清理 transition，释放锁
-					setTimeout(function() {
-						if (oldSlot.parentNode) {oldSlot.parentNode.removeChild(oldSlot);}
-						newSlot.style.transition = '';
-						isCrossfading[type] = false;
-					}, FADE_MS + 50);
+// 淡入完成后：移除旧层，清理 transition，释放锁
+				setTimeout(function() {
+					if (oldSlot.parentNode) {oldSlot.parentNode.removeChild(oldSlot);}
+					newSlot.style.transition = '';
+					isCrossfading[type] = false;
+				}, FADE_MS + 50);
+			}
+
+			/* ---------- 分页指示器 ---------- */
+			const dotsWrap = container.querySelector('.banner-dots');
+			const dots = dotsWrap
+				? Array.from(dotsWrap.querySelectorAll('.banner-dot'))
+				: [];
+			const previewBox = dotsWrap
+				? dotsWrap.querySelector('.banner-dots__preview')
+				: null;
+			const currentLabel = dotsWrap
+				? dotsWrap.querySelector('.banner-dots__current')
+				: null;
+
+			// 指示器只反映「当前可见」的那一组（移动端 / 桌面端张数可能不同）
+			function visibleType() {
+				const desktopSlot = container.querySelector(
+					'.banner-image-slot-desktop',
+				);
+				if (desktopSlot && !isSlotHiddenByBreakpoint(desktopSlot)) {
+					return 'desktop';
 				}
+				return 'mobile';
+			}
+
+			function syncDots() {
+				if (!dots.length) {return;}
+				const type = visibleType();
+				const total = type === 'desktop' ? desktopCount : mobileCount;
+				const idx =
+					(window.__bannerCarouselIndex &&
+						window.__bannerCarouselIndex[type]) ||
+					0;
+				for (let i = 0; i < dots.length; i++) {
+					const on = i === idx && i < total;
+					dots[i].setAttribute('aria-selected', on ? 'true' : 'false');
+					dots[i].tabIndex = on ? 0 : -1;
+				}
+				if (currentLabel) {
+					currentLabel.textContent = String(
+						Math.min(idx + 1, total),
+					).padStart(2, '0');
+				}
+				// 张数较少的一侧隐藏多余的点
+				if (dotsWrap) {
+					dotsWrap.setAttribute('data-visible-count', String(total));
+				}
+			}
+
+			// 悬停预览：内容克隆自对应 template，不额外请求图片
+			let previewToken = 0;
+			function showPreview(dot) {
+				if (!previewBox || !dotsWrap) {return;}
+				const i = parseInt(dot.getAttribute('data-dot-index') || '0', 10);
+				previewBox.innerHTML = '';
+				if (i === 0) {
+					const slot = container.querySelector(
+						'.banner-image-slot-' + visibleType(),
+					);
+					const img = slot ? slot.querySelector('img') : null;
+					if (!img) {return;}
+					const c = document.createElement('img');
+					c.src = img.currentSrc || img.src;
+					c.alt = '';
+					previewBox.appendChild(c);
+				} else {
+					// 桌面端 template 集合最全，优先用它
+					const tpl = container.querySelectorAll('.banner-tpl-desktop')[i - 1];
+					if (tpl) {
+						previewBox.appendChild(tpl.content.cloneNode(true));
+					}
+				}
+				const token = ++previewToken;
+				requestAnimationFrame(function() {
+					if (token === previewToken) {
+						dotsWrap.setAttribute('data-preview', '1');
+					}
+				});
+			}
+
+			function hidePreview() {
+				previewToken++;
+				if (dotsWrap) {dotsWrap.setAttribute('data-preview', '0');}
+			}
+
+			if (dots.length) {
+				dots.forEach(function(dot) {
+					dot.addEventListener('click', function() {
+						const i = parseInt(dot.getAttribute('data-dot-index') || '0', 10);
+						const type = visibleType();
+						const total = type === 'desktop' ? desktopCount : mobileCount;
+						if (i >= total) {return;}
+						// 点击暂停自动轮播，让用户看清自己选的那一张
+						isPaused = true;
+						stopCarousel();
+						crossfadeToIndex(
+							'banner-image-slot-' + type,
+							total,
+							type,
+							i,
+						);
+					});
+					dot.addEventListener('mouseenter', function() {showPreview(dot);});
+					dot.addEventListener('mouseleave', hidePreview);
+					dot.addEventListener('focus', function() {showPreview(dot);});
+					dot.addEventListener('blur', hidePreview);
+				});
+				syncDots();
+				// 视口跨过 768px 时移动端/桌面端切换，指示器要跟着换
+				window.addEventListener('resize', function() {
+					setTimeout(syncDots, 120);
+				});
+			}
 
 				// 自动轮播用的 crossfade
 				function crossfade(slotClass, totalCount, type) {
@@ -584,8 +757,12 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						</p>
 					)}
 					{overlayTitle && (
-						<h1 class="banner-title text-white">
-							{overlayTitle}
+						/* 逐字拆分：服务端拆好，客户端只负责按 --ch-i 错峰入场。
+						   aria-label 给整句、字符标 aria-hidden，读屏软件只会读一遍标题。 */
+						<h1 class="banner-title text-white" aria-label={overlayTitle}>
+							{Array.from(overlayTitle).map((ch, i) => (
+							<span class="banner-title__ch" style={`--ch-i:${i}`} aria-hidden="true">{ch}</span>
+						))}
 						</h1>
 					)}
 					{overlaySubtitle && (

@@ -23,7 +23,7 @@ import { animate, stagger } from "animejs";
 /** 列表项与卡片：文章列表容器子元素 + 显式标记的元素 */
 const REVEAL_SELECTOR = "#post-list-container > *, [data-reveal]";
 /** 数字滚动目标 */
-const COUNTUP_SELECTOR = "[data-countup]";
+const COUNTUP_SELECTOR = "[data-countup], [data-countup-dyn]";
 
 /** 元素露出约 72px 后再触发，避免贴着底边就开始动 */
 const REVEAL_OPTIONS: IntersectionObserverInit = {
@@ -119,8 +119,7 @@ function setupCountUp(): void {
 		if (el.dataset.countupBound) {
 			return false;
 		}
-		const value = Number(el.dataset.countup);
-		return Number.isFinite(value) && value > 0;
+		return true;
 	});
 
 	if (targets.length === 0) {
@@ -136,13 +135,25 @@ function setupCountUp(): void {
 			const el = entry.target as HTMLElement;
 			observer.unobserve(el);
 
+			// 动态项（站点统计里的「运行时长」「最后更新」）的值是页面脚本在运行时
+			// 算出来写进 textContent 的，没有 data-countup。
+			// IntersectionObserver 的回调必然晚于该脚本执行，所以这里直接读 textContent
+			// 就是准的 —— 前提是初始化时没有把它的文本清零（见下方 targets.forEach）。
+			const isDynamic = el.dataset.countup === undefined;
+			const target = isDynamic
+				? Number(el.textContent)
+				: Number(el.dataset.countup);
+			if (!Number.isFinite(target) || target <= 0) {
+				return;
+			}
+
 			// 归零放在真正开始计数之前：隐藏副本（如抽屉里的同一组件）
 			// 在初始化时不会被归零，只有真正进入视口走上台前才从 0 开始。
 			el.textContent = "0";
 
 			const counter = { value: 0 };
 			animate(counter, {
-				value: Number(el.dataset.countup),
+				value: target,
 				duration: 1100,
 				ease: "out(4)",
 				onUpdate: () => {
@@ -157,7 +168,8 @@ function setupCountUp(): void {
 		// 已渲染的（视口内或视口下方）先归零：此刻站点统计卡片多处于
 		// onload 淡入的起始阶段，归零与淡入同步，视觉上不构成跳变。
 		// 未渲染的隐藏副本保持原始数值，等它真正出现时再开始计数。
-		if (isRendered(el)) {
+		// 动态项例外：它的目标值就写在 textContent 里，归零等于把目标抹掉。
+		if (el.dataset.countup !== undefined && isRendered(el)) {
 			el.textContent = "0";
 		}
 		countObserver?.observe(el);
