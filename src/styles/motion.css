@@ -71,6 +71,38 @@
 	}
 }
 
+/* ============ ③ 桌面端自定义光标 ============ */
+/* 效果：链接/按钮等可点元素上用一个「白色环 + 深色描边」代替系统手型光标。
+ *
+ * 三点刻意的约束，改动前请留意：
+ * 1. 仅在「有悬停能力 + 精确指针」的设备生效 —— 触屏设备完全不受影响。
+ * 2. 文本录入类元素（input/textarea/select）保留系统 I-beam 光标，
+ *    否则打字时会失去「插入点在哪」的提示。
+ * 3. 环形用中性色而非主题色 —— 改 themeColor.hue 时光标颜色不会跟着漂移。
+ *
+ * 需要还原系统光标时：给 <html> 加 class="cursor-default"，
+ * 或直接删除本节。不影响任何 JS 行为。
+ */
+@media (hover: hover) and (pointer: fine) {
+	:root:not(.cursor-default) a,
+	:root:not(.cursor-default) button,
+	:root:not(.cursor-default) [role="button"],
+	:root:not(.cursor-default) summary,
+	:root:not(.cursor-default) label[for],
+	:root:not(.cursor-default) .cursor-ring {
+		cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='6' fill='none' stroke='%23000' stroke-opacity='0.3' stroke-width='4'/%3E%3Ccircle cx='12' cy='12' r='6' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E")
+			12 12, pointer;
+	}
+
+	/* 录入类元素明确回退为文本光标 */
+	:root:not(.cursor-default)
+		input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+	:root:not(.cursor-default) textarea,
+	:root:not(.cursor-default) select {
+		cursor: text;
+	}
+}
+
 /* ============ 无障碍降级 ============ */
 @media (prefers-reduced-motion: reduce) {
 	.btn-shine::after {
