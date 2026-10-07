@@ -59,7 +59,9 @@ export function createPlaylistState(): PlaylistState {
 	return {
 		playlist: [],
 		currentIndex: 0,
-		isShuffled: false,
+		// 注意：真正生效的默认值在 src/stores/musicPlayerStore.ts 的 createInitialState()，
+		// 这里同步一份只是避免读到本文件的人被误导（本函数目前无调用者）。
+		isShuffled: true,
 		isRepeating: 0,
 	};
 }

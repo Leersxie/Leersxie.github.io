@@ -66,7 +66,8 @@ class MusicPlayerStore {
 			duration: 0,
 			volume: 0.7,
 			isMuted: false,
-			isShuffled: false,
+			// 默认随机播放：开随机时按 toggleShuffle 的约定必须同时把循环模式归零
+			isShuffled: true,
 			isRepeating: 0,
 			showPlaylist: false,
 			errorMessage: "",

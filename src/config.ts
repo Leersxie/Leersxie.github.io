@@ -405,7 +405,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	floatingEntryMode: "fab",
 	mode: "meting",
 	meting_api: "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&auth=:auth&r=:r",
-	id: "17866970079",
+	id: "18178118678",
 	server: "netease",
 	type: "playlist",
 };
