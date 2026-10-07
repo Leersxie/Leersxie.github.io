@@ -44,7 +44,8 @@ function getAssetPath(path: string): string {
 	return `/${path}`;
 }
 
-class MusicPlayerStore {
+// 类一并导出，便于测试按用例创建独立实例（单例只导出实例会导致用例间状态互相污染）
+export class MusicPlayerStore {
 	private audio: HTMLAudioElement | null = null;
 	private state: MusicPlayerState;
 	private isInitialized = false;
