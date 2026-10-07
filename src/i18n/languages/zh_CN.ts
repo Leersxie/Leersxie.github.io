@@ -297,6 +297,13 @@ export const zh_CN: Translation = {
 	[Key.siteStatsRunningDays]: "运行天数",
 	[Key.siteStatsLastUpdate]: "最后活动",
 	[Key.siteStatsDaysAgo]: "{days} 天前",
+	[Key.shortcutPanelTitle]: "键盘快捷键",
+	[Key.shortcutSearch]: "聚焦搜索框",
+	[Key.shortcutTop]: "回到顶部",
+	[Key.shortcutNextPost]: "下一篇",
+	[Key.shortcutPrevPost]: "上一篇",
+	[Key.shortcutToggle]: "打开 / 关闭本面板",
+	[Key.shortcutClose]: "关闭",
 	[Key.siteStatsDays]: "{days} 天",
 
 	// 日历组件

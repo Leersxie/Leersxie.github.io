@@ -113,3 +113,163 @@
 		animation: none;
 	}
 }
+
+/* ==================================================================
+   ④ 点阵网格背景
+   给纯色页头一点结构感，边缘用遮罩淡出，不与正文抢对比度。
+   用法：给容器加 class="dot-grid"
+   ================================================================== */
+:root {
+	--dot-grid-color: rgb(0 0 0 / 0.1);
+}
+
+:root.dark {
+	--dot-grid-color: rgb(255 255 255 / 0.12);
+}
+
+.dot-grid {
+	position: relative;
+	isolation: isolate;
+}
+
+.dot-grid::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background-image: radial-gradient(
+		circle,
+		var(--dot-grid-color) 1px,
+		transparent 1px
+	);
+	background-size: 20px 20px;
+	-webkit-mask-image: radial-gradient(
+		ellipse 68% 96% at 28% 0%,
+		#000 8%,
+		transparent 72%
+	);
+	mask-image: radial-gradient(
+		ellipse 68% 96% at 28% 0%,
+		#000 8%,
+		transparent 72%
+	);
+}
+
+/* ==================================================================
+   ⑤ 流光边框（仅 hover 启用）
+   静止时零动画、零 GPU；悬停时一道主色渐变边扫过一圈。
+   用法：给卡片加 class="card-flow"
+   ================================================================== */
+@property --flow-angle {
+	syntax: "<angle>";
+	initial-value: 0deg;
+	inherits: false;
+}
+
+.card-flow {
+	position: relative;
+}
+
+.card-flow::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	padding: 1px;
+	pointer-events: none;
+	background: conic-gradient(
+		from var(--flow-angle),
+		transparent 0 62%,
+		var(--primary) 78%,
+		transparent 92%
+	);
+	-webkit-mask:
+		linear-gradient(#000 0 0) content-box,
+		linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask:
+		linear-gradient(#000 0 0) content-box,
+		linear-gradient(#000 0 0);
+	mask-composite: exclude;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+@media (hover: hover) {
+	.card-flow:hover::after {
+		opacity: 1;
+		animation: flow-sweep 1.15s linear 1;
+	}
+}
+
+@keyframes flow-sweep {
+	from {
+		--flow-angle: 0deg;
+	}
+	to {
+		--flow-angle: 360deg;
+	}
+}
+
+/* ==================================================================
+   ⑥ 卡片 3D 倾斜（配合 src/scripts/effects/card-tilt.ts）
+   transform 由 JS 写入 --tilt-* 变量；这里只负责合成。
+   注意：卡片原本的 hover 上浮（translateY）必须并入这里的 --tilt-lift，
+   两个 transform 会互相覆盖。
+   ================================================================== */
+@media (hover: hover) and (pointer: fine) {
+	.tilt-card {
+		--tilt-x: 0deg;
+		--tilt-y: 0deg;
+		--tilt-lift: 0px;
+		--tilt-ox: 50%;
+		--tilt-oy: 50%;
+		transform:
+			perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y))
+			translateY(var(--tilt-lift));
+		transform-origin: var(--tilt-ox) var(--tilt-oy);
+		transition:
+			transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
+			box-shadow 0.28s ease;
+	}
+
+	/* 跟随指针过程中关掉过渡，否则会有明显滞后感 */
+	.tilt-card.is-tilting {
+		transition: box-shadow 0.28s ease;
+	}
+
+	.tilt-card:hover {
+		--tilt-lift: -4px;
+	}
+
+	/* 指针位置的高光 */
+	.tilt-card::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.28s ease;
+		background: radial-gradient(
+			180px circle at var(--tilt-px, 50%) var(--tilt-py, 50%),
+			color-mix(in oklch, var(--primary) 16%, transparent),
+			transparent 70%
+		);
+	}
+
+	.tilt-card:hover::before {
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card-flow:hover::after {
+		animation: none;
+	}
+
+	.tilt-card {
+		transform: none !important;
+	}
+}

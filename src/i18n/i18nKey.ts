@@ -288,6 +288,13 @@ enum I18nKey {
 	siteStatsRunningDays = "siteStatsRunningDays",
 	siteStatsLastUpdate = "siteStatsLastUpdate",
 	siteStatsDaysAgo = "siteStatsDaysAgo",
+	shortcutPanelTitle = "shortcutPanelTitle",
+	shortcutSearch = "shortcutSearch",
+	shortcutTop = "shortcutTop",
+	shortcutNextPost = "shortcutNextPost",
+	shortcutPrevPost = "shortcutPrevPost",
+	shortcutToggle = "shortcutToggle",
+	shortcutClose = "shortcutClose",
 	siteStatsDays = "siteStatsDays",
 
 	// 日历组件

@@ -310,6 +310,13 @@ export const en: Translation = {
 	[Key.siteStatsRunningDays]: "Running Days",
 	[Key.siteStatsLastUpdate]: "Last Activity",
 	[Key.siteStatsDaysAgo]: "{days} days ago",
+	[Key.shortcutPanelTitle]: "Keyboard shortcuts",
+	[Key.shortcutSearch]: "Focus search",
+	[Key.shortcutTop]: "Back to top",
+	[Key.shortcutNextPost]: "Next post",
+	[Key.shortcutPrevPost]: "Previous post",
+	[Key.shortcutToggle]: "Open / close this panel",
+	[Key.shortcutClose]: "Close",
 	[Key.siteStatsDays]: "{days} days",
 
 	// Calendar Component

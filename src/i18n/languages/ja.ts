@@ -313,6 +313,13 @@ export const ja: Translation = {
 	[Key.siteStatsRunningDays]: "稼働日数",
 	[Key.siteStatsLastUpdate]: "最終更新",
 	[Key.siteStatsDaysAgo]: "{days}日前",
+	[Key.shortcutPanelTitle]: "キーボードショートカット",
+	[Key.shortcutSearch]: "検索にフォーカス",
+	[Key.shortcutTop]: "ページ上部へ",
+	[Key.shortcutNextPost]: "次の記事",
+	[Key.shortcutPrevPost]: "前の記事",
+	[Key.shortcutToggle]: "このパネルの開閉",
+	[Key.shortcutClose]: "閉じる",
 	[Key.siteStatsDays]: "{days}日",
 
 	// カレンダーコンポーネント

@@ -1,5 +1,7 @@
 ---
+import { getCollection } from "astro:content";
 import ConfigCarrier from "@components/misc/ConfigCarrier.astro";
+import ShortcutHelp from "@components/features/keyboard-shortcuts/ShortcutHelp.astro";
 import MusicPlayer from "@components/widgets/music-player/MusicPlayer.svelte";
 import Pio from "@components/features/pio/Pio.svelte"; // 使用 Svelte 版本的 Pio 组件
 import { PageProgressBar } from "@components/control/PageProgressBar";
@@ -16,7 +18,7 @@ import {
 	BANNER_HEIGHT_HOME,
 	PAGE_WIDTH,
 } from "../constants/constants";
-import { pathsEqual, url } from "../utils/url-utils";
+import { getPostUrl, pathsEqual, url } from "../utils/url-utils";
 import "../styles/main.css";
 import "../styles/mobile-navbar.css";
 import "../styles/wallpaper-navbar-transparent.css";
@@ -179,6 +181,14 @@ if (siteConfig.font) {
 	// 组合成完整的 font-family 字符串
 	bodyFontFamily = fonts.join(", ");
 }
+
+// 键盘快捷键 j/k 用的全站文章路径（按发布时间倒序）。
+// 用 getPostUrl 是因为它会处理 permalink —— 例如 guestbook 的路径是 /guestbook/
+// 而不是 /posts/guestbook/。
+const kbdPosts = (
+	await getCollection("posts", ({ data }) => data.draft !== true)
+).sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+const kbdPostUrls = kbdPosts.map((p) => getPostUrl(p));
 ---
 
 <!doctype html>
@@ -280,6 +290,14 @@ if (siteConfig.font) {
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
+
+		<!-- 键盘快捷键：文章列表（供 j/k 跳转）+ 说明面板 -->
+		<script
+			id="shortcut-post-list"
+			type="application/json"
+			set:html={JSON.stringify(kbdPostUrls)}
+		/>
+		<ShortcutHelp />
 	</body>
 </html>
 
@@ -376,4 +394,14 @@ if (siteConfig.font) {
 <!-- 主题切换综合性能优化器（包含代码块优化、重型元素优化、性能诊断） -->
 <script>
 	import "../scripts/theme-optimizer.js";
+</script>
+
+<!-- 博客级键盘快捷键（/ t j k ?） -->
+<script>
+	import "../scripts/keyboard-shortcuts.ts";
+</script>
+
+<!-- 卡片 3D 倾斜跟随（配合 motion.css 的 .tilt-card） -->
+<script>
+	import "../scripts/effects/card-tilt.ts";
 </script>

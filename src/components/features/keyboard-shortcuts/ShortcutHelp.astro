@@ -1,0 +1,197 @@
+---
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+
+/**
+ * 键盘快捷键说明面板（按 `?` 开关）。
+ * 纯展示 + 一个关闭按钮，行为逻辑在 src/scripts/keyboard-shortcuts.ts。
+ * 面板默认 hidden，由脚本切换 hidden 属性。
+ */
+const rows = [
+	{ keys: ["/"], label: i18n(I18nKey.shortcutSearch) },
+	{ keys: ["t"], label: i18n(I18nKey.shortcutTop) },
+	{ keys: ["j"], label: i18n(I18nKey.shortcutNextPost) },
+	{ keys: ["k"], label: i18n(I18nKey.shortcutPrevPost) },
+	{ keys: ["?"], label: i18n(I18nKey.shortcutToggle) },
+	{ keys: ["Esc"], label: i18n(I18nKey.shortcutClose) },
+];
+---
+
+<div id="shortcut-help" class="shortcut-help" hidden>
+	<div class="shortcut-help__backdrop" data-shortcut-close></div>
+	<div
+		class="shortcut-help__panel"
+		role="dialog"
+		aria-modal="true"
+		aria-label={i18n(I18nKey.shortcutPanelTitle)}
+	>
+		<div class="shortcut-help__head">
+			<h2 class="shortcut-help__title">{i18n(I18nKey.shortcutPanelTitle)}</h2>
+			<button
+				type="button"
+				class="shortcut-help__close"
+				data-shortcut-close
+				aria-label={i18n(I18nKey.shortcutClose)}
+			>
+				<iconify-icon icon="material-symbols:close-rounded" width="18"
+				></iconify-icon>
+			</button>
+		</div>
+		<ul class="shortcut-help__list">
+			{
+				rows.map((row) => (
+					<li class="shortcut-help__row">
+						<span class="shortcut-help__keys">
+							{row.keys.map((k) => (
+								<kbd class="shortcut-help__kbd">{k}</kbd>
+							))}
+						</span>
+						<span class="shortcut-help__label">{row.label}</span>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</div>
+
+<style>
+	.shortcut-help {
+		position: fixed;
+		inset: 0;
+		z-index: 100;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1rem;
+	}
+
+	/* 作者样式里的 display 会盖掉 UA 的 [hidden]{display:none}，必须显式声明 */
+	.shortcut-help[hidden] {
+		display: none;
+	}
+
+	.shortcut-help__backdrop {
+		position: absolute;
+		inset: 0;
+		background: rgb(0 0 0 / 0.45);
+		backdrop-filter: blur(3px);
+		-webkit-backdrop-filter: blur(3px);
+	}
+
+	.shortcut-help__panel {
+		position: relative;
+		width: min(26rem, 100%);
+		max-height: 80vh;
+		overflow: auto;
+		padding: 1.25rem 1.5rem 1.5rem;
+		border-radius: 1rem;
+		background: var(--card-bg);
+		border: 1px solid light-dark(var(--card-border), rgb(255 255 255 / 0.12));
+		box-shadow: 0 18px 48px rgb(0 0 0 / 0.28);
+		animation: shortcut-panel-in 0.24s cubic-bezier(0.2, 0.7, 0.3, 1);
+	}
+
+	@keyframes shortcut-panel-in {
+		from {
+			opacity: 0;
+			transform: translateY(10px) scale(0.97);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+
+	.shortcut-help__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	.shortcut-help__title {
+		font-size: 1rem;
+		font-weight: 700;
+		color: var(--card-h2-color, currentColor);
+	}
+
+	.shortcut-help__close {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2rem;
+		height: 2rem;
+		border: 0;
+		border-radius: 0.5rem;
+		background: transparent;
+		color: inherit;
+		opacity: 0.65;
+		cursor: pointer;
+		transition:
+			opacity 0.2s ease,
+			background-color 0.2s ease;
+	}
+
+	.shortcut-help__close:hover {
+		opacity: 1;
+		background: var(--btn-plain-bg-hover, rgb(0 0 0 / 0.06));
+	}
+
+	.shortcut-help__list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.shortcut-help__row {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+		padding: 0.45rem 0.35rem;
+		border-radius: 0.5rem;
+	}
+
+	.shortcut-help__row:hover {
+		background: var(--btn-plain-bg-hover, rgb(0 0 0 / 0.04));
+	}
+
+	.shortcut-help__keys {
+		display: flex;
+		gap: 0.3rem;
+		flex: none;
+		min-width: 3.6rem;
+	}
+
+	.shortcut-help__kbd {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 1.7rem;
+		height: 1.7rem;
+		padding: 0 0.4rem;
+		border-radius: 0.4rem;
+		border: 1px solid light-dark(#0000001f, #ffffff24);
+		border-bottom-width: 2px;
+		background: var(--inline-code-bg, rgb(127 127 127 / 0.14));
+		color: var(--inline-code-color, inherit);
+		font-family:
+			"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
+		font-size: 0.78rem;
+		line-height: 1;
+	}
+
+	.shortcut-help__label {
+		font-size: 0.9rem;
+		opacity: 0.85;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.shortcut-help__panel {
+			animation: none;
+		}
+	}
+</style>

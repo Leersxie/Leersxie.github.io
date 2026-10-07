@@ -299,6 +299,13 @@ export const zh_TW: Translation = {
 	[Key.siteStatsRunningDays]: "運行天數",
 	[Key.siteStatsLastUpdate]: "最後活動",
 	[Key.siteStatsDaysAgo]: "{days} 天前",
+	[Key.shortcutPanelTitle]: "鍵盤快捷鍵",
+	[Key.shortcutSearch]: "聚焦搜尋框",
+	[Key.shortcutTop]: "回到頂部",
+	[Key.shortcutNextPost]: "下一篇",
+	[Key.shortcutPrevPost]: "上一篇",
+	[Key.shortcutToggle]: "開啟 / 關閉本面板",
+	[Key.shortcutClose]: "關閉",
 	[Key.siteStatsDays]: "{days} 天",
 
 	// 日曆組件

@@ -28,7 +28,7 @@ const getStatusText = (status: string) => {
 ---
 
 <div
-	class="project-card group relative rounded-xl border border-black/10 dark:border-white/10 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+	class="project-card card-flow tilt-card group relative rounded-xl border border-black/10 dark:border-white/10 overflow-hidden transition-all duration-300 hover:shadow-xl"
 	data-category={project.category}
 >
 	{
@@ -137,7 +137,10 @@ const getStatusText = (status: string) => {
 
 <style>
 	.project-card {
-		animation: fadeInUp 0.5s ease-out forwards;
+		/* 入场动画只做透明度：transform 归 .tilt-card 的 3D 倾斜使用。
+		   动画（尤其 fill-mode: forwards）会永久覆盖同属性的普通声明，
+		   若这里再动 transform，倾斜会被锁死成单位矩阵。 */
+		animation: cardFadeIn 0.5s ease-out forwards;
 		opacity: 0;
 	}
 
@@ -145,14 +148,12 @@ const getStatusText = (status: string) => {
 		display: none;
 	}
 
-	@keyframes fadeInUp {
+	@keyframes cardFadeIn {
 		from {
 			opacity: 0;
-			transform: translateY(20px);
 		}
 		to {
 			opacity: 1;
-			transform: translateY(0);
 		}
 	}
 
