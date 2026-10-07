@@ -21,125 +21,108 @@ export interface Project {
 
 export const projectsData: Project[] = [
 	{
-		id: "mizuki",
-		title: "Mizuki",
+		id: "yesimbot-memory-panel",
+		title: "YesImBot 记忆面板",
 		description:
-			"A next-gen Material Design 3 blog theme built with Astro, featuring i18n, dark mode, and responsive design.",
-		image: "/assets/projects/mizuki.webp",
-		category: "web",
-		techStack: ["Astro", "TypeScript", "Tailwind CSS", "Svelte"],
-		status: "completed",
-		sourceCode: "https://github.com/matsuzaka-yuki/Mizuki",
-		visitUrl: "https://mizuki.mysqil.com",
-		startDate: "2024-01-01",
-		endDate: "2024-06-01",
-		featured: true,
-		tags: ["Blog", "Theme", "Open Source"],
-	},
-	{
-		id: "folkpatch",
-		title: "FolkPatch",
-		description:
-			"A kernel-level ROOT solution based on KernelPatch, with polished UI, APM module system, and KPM kernel module support.",
-		image: "/assets/projects/folkpatch.webp",
-		category: "mobile",
-		techStack: ["Kotlin", "Rust", "C++", "Java"],
+			"给 YesImBot 做的记忆可视化面板：核心人格、三级记忆（工作 / 语义 / 日记）、记忆体检、注入联调与行为学习。以 Koishi 控制台内嵌页呈现，用来排查「它为什么这样回答」。",
+		image: "",
+		category: "other",
+		techStack: ["TypeScript", "Koishi", "SQLite"],
 		status: "in-progress",
-		sourceCode: "https://github.com/matsuzaka-yuki/FolkPatch",
-		visitUrl: "https://fp.mysqil.com",
-		startDate: "2024-03-01",
-		featured: true,
-		tags: ["Android", "Root", "Kernel"],
-	},
-	{
-		id: "folktool",
-		title: "FolkTool",
-		description:
-			"A fast ROOT flashing tool for FolkPatch with a graphical interface and automated operations, simplifying the complex flashing process.",
-		image: "",
-		category: "desktop",
-		techStack: ["Flutter", "Dart", "C++", "CMake"],
-		status: "completed",
-		sourceCode: "https://github.com/matsuzaka-yuki/FolkTool",
-		startDate: "2026-02-01",
-		endDate: "2026-02-28",
-		tags: ["Android", "Tool", "Desktop"],
+		sourceCode:
+			"https://github.com/Leersxie/koishi-plugin-yesimbot-memory-panel",
+		startDate: "2026-10-01",
+		tags: ["Koishi", "QQ 机器人", "LLM"],
 		showImage: false,
 	},
 	{
-		id: "folkadb",
-		title: "FolkADB",
+		id: "yesimbot-behavior-learner",
+		title: "YesImBot 行为学习器",
 		description:
-			"A portable ADB/Fastboot tool written in C, featuring interactive CLI, Tab completion, drag-and-drop module installation, and Shizuku activation.",
+			"定时从日常对话里提炼「值得长期学习」的行为偏好，私聊推送候选、逐条确认后才写入行为文档。带自动备份、相似度去重与外部改动检测，绝不自动改写人格文件。",
 		image: "",
-		category: "desktop",
-		techStack: ["C"],
+		category: "other",
+		techStack: ["TypeScript", "Koishi", "LLM"],
 		status: "completed",
-		sourceCode: "https://github.com/matsuzaka-yuki/FolkADB",
-		startDate: "2025-06-01",
-		endDate: "2026-01-01",
-		tags: ["Android", "ADB", "CLI"],
+		sourceCode:
+			"https://github.com/Leersxie/koishi-plugin-yesimbot-behavior-learner",
+		startDate: "2026-10-01",
+		endDate: "2026-10-02",
+		tags: ["Koishi", "QQ 机器人", "Agent"],
 		showImage: false,
 	},
 	{
-		id: "folksplash",
-		title: "FolkSplash",
+		id: "yesimbot-livingdiary",
+		title: "YesImBot 生活日记扩展",
 		description:
-			"A web-based splash.img visualizer for OPPO/Realme/OnePlus devices, supporting unpack, preview, replace, and repack.",
+			"YesImBot 扩展：让机器人自动记录并发布 QQ 空间日记，支持读写空间动态与自动互动。",
+		image: "",
+		category: "other",
+		techStack: ["TypeScript", "Koishi"],
+		status: "completed",
+		sourceCode:
+			"https://github.com/Leersxie/koishi-plugin-yesimbot-livingdiary",
+		startDate: "2026-09-12",
+		endDate: "2026-09-13",
+		tags: ["Koishi", "QQ 空间"],
+		showImage: false,
+	},
+	{
+		id: "yesimbot-discord-reaction",
+		title: "YesImBot Discord 表情回应",
+		description: "YesImBot 扩展：为 Discord 消息自动添加表情回应。自用插件。",
+		image: "",
+		category: "other",
+		techStack: ["Koishi", "Discord"],
+		status: "completed",
+		sourceCode:
+			"https://github.com/Leersxie/koishi-plugin-yesimbot-extension-discord-reaction",
+		startDate: "2026-09-24",
+		tags: ["Koishi", "Discord"],
+		showImage: false,
+	},
+	{
+		id: "waveform-maker-v3-cn",
+		title: "音频波形生成器 v3 中文化",
+		description:
+			"无扩展即可把音频转成可视化波形的在线工具，可输出波形数据（txt）或 Scratch 的 .sb3 记录。此仓库为其汉化与修改版。",
+		image: "/assets/projects/waveform-gen-v3.webp",
+		category: "web",
+		techStack: ["JavaScript", "Web Audio API"],
+		status: "completed",
+		sourceCode: "https://github.com/Leersxie/Audio-Spectrum-Maker-v3-CN",
+		visitUrl: "https://leersxie.github.io/Audio-Spectrum-Maker-v3-CN/",
+		startDate: "2026-06-26",
+		endDate: "2026-09-19",
+		tags: ["汉化", "音频可视化", "Web"],
+	},
+	{
+		id: "waveform-gen-v2-cn",
+		title: "波形生成器 v2 中文化",
+		description:
+			"高性能波形生成器 v2 的汉化与修改版，面向中文用户，可录制并导出波形数据。",
+		image: "/assets/projects/waveform-gen-v2.webp",
+		category: "web",
+		techStack: ["HTML", "JavaScript", "Web Audio API"],
+		status: "completed",
+		sourceCode: "https://github.com/Leersxie/AudioSpectrum-CN",
+		visitUrl: "https://leersxie.github.io/AudioSpectrum-CN/",
+		startDate: "2025-08-07",
+		endDate: "2026-06-26",
+		tags: ["汉化", "音频可视化", "Web"],
+	},
+	{
+		id: "leersxie-blog",
+		title: "本站",
+		description:
+			"基于 Astro + Mizuki 主题深度定制的个人博客：品牌紫主题、滚动触发动效、图片与样式的按需加载优化。",
 		image: "",
 		category: "web",
-		techStack: ["React", "TypeScript", "Vite", "Material-UI", "Zustand"],
-		status: "completed",
-		sourceCode: "https://github.com/matsuzaka-yuki/FolkSplash",
-		visitUrl: "https://splash.mysqil.com",
-		startDate: "2025-09-01",
-		endDate: "2025-10-01",
-		tags: ["Android", "Tool", "Frontend"],
+		techStack: ["Astro", "Svelte 5", "Tailwind CSS", "TypeScript"],
+		status: "in-progress",
+		sourceCode: "https://github.com/Leersxie/Leersxie.github.io",
+		startDate: "2026-03-28",
+		tags: ["博客", "Astro", "自建"],
 		showImage: false,
 	},
 ];
-
-// Get project statistics
-export const getProjectStats = () => {
-	const total = projectsData.length;
-	const completed = projectsData.filter(
-		(p) => p.status === "completed",
-	).length;
-	const inProgress = projectsData.filter(
-		(p) => p.status === "in-progress",
-	).length;
-	const planned = projectsData.filter((p) => p.status === "planned").length;
-
-	return {
-		total,
-		byStatus: {
-			completed,
-			inProgress,
-			planned,
-		},
-	};
-};
-
-// Get projects by category
-export const getProjectsByCategory = (category?: string) => {
-	if (!category || category === "all") {
-		return projectsData;
-	}
-	return projectsData.filter((p) => p.category === category);
-};
-
-// Get featured projects
-export const getFeaturedProjects = () => {
-	return projectsData.filter((p) => p.featured);
-};
-
-// Get all tech stacks
-export const getAllTechStack = () => {
-	const techSet = new Set<string>();
-	projectsData.forEach((project) => {
-		project.techStack.forEach((tech) => {
-			techSet.add(tech);
-		});
-	});
-	return Array.from(techSet).sort();
-};

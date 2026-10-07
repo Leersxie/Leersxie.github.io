@@ -48,7 +48,7 @@ export const siteConfig: SiteConfig = {
 		anime: false,
 		diary: false,
 		friends: true,
-		projects: false,
+		projects: true,
 		skills: false,
 		timeline: false,
 		albums: false,
@@ -252,6 +252,7 @@ export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,
 		LinkPreset.Archive,
+		LinkPreset.Projects,
 		{
 			name: "个人链接",
 			url: "/links/",
