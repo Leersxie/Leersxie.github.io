@@ -19,6 +19,50 @@
     }
   }
 
+  /* --- 章节标题体系 ---
+     h2 当作「章节」：左侧主色竖条 + 标题下一条渐隐细线
+     h3 当作「小节」：左侧主色圆点
+     仅用伪元素，不改动文章 Markdown 结构。 */
+  h2 {
+    @apply relative mt-12 mb-4 pl-4 text-2xl font-bold tracking-tight;
+  }
+
+  h2::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.3em;
+    bottom: 0.3em;
+    width: 3px;
+    border-radius: 999px;
+    background: var(--primary);
+  }
+
+  h2::after {
+    content: "";
+    display: block;
+    margin-top: 0.6rem;
+    height: 1px;
+    opacity: 0.35;
+    background: linear-gradient(to right, var(--primary), transparent 78%);
+  }
+
+  h3 {
+    @apply relative mt-8 mb-3 pl-4 text-lg font-semibold;
+  }
+
+  h3::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    opacity: 0.75;
+  }
+
   /* --- 链接 --- */
   a:not(.no-styling) {
     @apply relative bg-none font-medium text-(--primary)

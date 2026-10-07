@@ -1,3 +1,5 @@
+// ⚠️ 以下内容是 Mizuki 主题自带的【示例时间线】（约 30 条）。对应功能页当前是关闭的
+// （featurePages.timeline = false），页面只输出跳转桩。开启前请整份替换为真实经历。
 import type { TimelineItem } from "../components/features/timeline/types";
 
 export const timelineData: TimelineItem[] = [

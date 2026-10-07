@@ -1,3 +1,7 @@
+// ⚠️ 以下内容是 Mizuki 主题自带的【示例数据】，不是 Leersxie 的真实追番记录。
+// 对应功能页当前是关闭的（featurePages.anime = false）。
+// 开启前请整份替换，或改用 siteConfig.anime.mode = "bangumi" 并填入
+// siteConfig.bangumi.userId（当前仍是占位符 "your-bangumi-id"），由构建期自动同步。
 // 本地番剧数据配置
 export interface AnimeItem {
 	title: string;

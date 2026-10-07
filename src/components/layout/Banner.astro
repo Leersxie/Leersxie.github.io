@@ -24,6 +24,7 @@ interface Props {
 
 	// 文字覆盖层
 	showTextOverlay?: boolean;
+	overlayEyebrow?: string;
 	overlayTitle?: string;
 	overlaySubtitle?: string | string[];
 	typewriter?: boolean;
@@ -36,6 +37,7 @@ const {
 	bannerImages,
 	mobileNonHomeBannerClass = "",
 	showTextOverlay = false,
+	overlayEyebrow = siteConfig.banner.homeText?.eyebrow,
 	overlayTitle = siteConfig.banner.homeText?.title,
 	overlaySubtitle = siteConfig.banner.homeText?.subtitle,
 	typewriter = siteConfig.banner.homeText?.typewriter?.enable ?? false,
@@ -574,14 +576,20 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 	{siteConfig.banner.homeText?.enable && (
 		<div class={`banner-text-overlay absolute inset-0 z-20 flex items-center justify-center ${!showTextOverlay ? "hidden" : ""}`}>
 			<div class="w-4/5 lg:w-3/4 text-center mb-0">
-				<div class="flex flex-col">
+				<div class="flex flex-col items-center">
+					{overlayEyebrow && (
+						<p class="banner-eyebrow">
+							<span class="banner-eyebrow__dot" aria-hidden="true" />
+							<span class="banner-eyebrow__text">{overlayEyebrow}</span>
+						</p>
+					)}
 					{overlayTitle && (
-						<h1 class="banner-title text-6xl lg:text-8xl text-white drop-shadow-lg mb-2 lg:mb-4">
+						<h1 class="banner-title text-white">
 							{overlayTitle}
 						</h1>
 					)}
 					{overlaySubtitle && (
-						<h2 class="banner-subtitle text-xl lg:text-3xl text-white/90 drop-shadow-md">
+						<h2 class="banner-subtitle text-white/90">
 							<span class="inline-block min-h-[1.2em]">
 								{typewriter && Array.isArray(overlaySubtitle) ? (
 									<TypewriterText

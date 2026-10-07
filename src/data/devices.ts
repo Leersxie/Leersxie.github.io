@@ -1,3 +1,5 @@
+// ⚠️ 以下内容是 Mizuki 主题自带的【示例数据】。
+// 对应功能页当前是关闭的（featurePages.devices = false）。开启前请整份替换为真实设备。
 // 设备数据配置文件
 
 export interface Device {

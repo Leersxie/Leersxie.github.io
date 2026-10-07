@@ -103,6 +103,8 @@ export interface SiteConfig {
 		};
 		homeText?: {
 			enable: boolean;
+			/** 标题上方的小标签（眉毛行）；留空则不渲染 */
+			eyebrow?: string;
 			title?: string;
 			subtitle?: string | string[];
 			typewriter?: {

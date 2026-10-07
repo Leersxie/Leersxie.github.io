@@ -140,6 +140,9 @@ export const siteConfig: SiteConfig = {
 
 		homeText: {
 			enable: true,
+			// 标题上方的小标签（三级排版的第一级）：短、全大写、带一道主色细线。
+			// 置空字符串即可只保留标题 + 副标题的两级排版。
+			eyebrow: "LEERSXIE",
 			title: "欢迎查看LX的博客",
 			subtitle: [
 				"横扫饥饿，做回自己",

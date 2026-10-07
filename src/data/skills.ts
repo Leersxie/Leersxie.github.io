@@ -1,3 +1,6 @@
+// ⚠️ 以下 111 条是 Mizuki 主题自带的【示例技能】（JavaScript / React / Docker 等），
+// 不是 Leersxie 的真实技能栈。对应功能页当前是关闭的
+// （featurePages.skills = false），页面只输出跳转桩。开启前请整份替换。
 // Skill data configuration file
 // Used to manage data for the skill display page
 
