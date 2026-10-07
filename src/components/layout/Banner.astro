@@ -275,20 +275,13 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 					};
 				}
 
-				// 从 template 替换默认图片
-				function applyRandom(slotClass, tplClass, randomIndex) {
-					if (randomIndex === 0) {return;}
-					const slot = container.querySelector('.' + slotClass);
-					const templates = container.querySelectorAll('.' + tplClass);
-					if (!slot || !templates.length) {return;}
-					const tpl = templates[randomIndex - 1];
-					if (!tpl) {return;}
-					slot.innerHTML = '';
-					slot.appendChild(tpl.content.cloneNode(true));
-				}
-
-				applyRandom('banner-image-slot-mobile', 'banner-tpl-mobile', window.__bannerRandomIndex.mobile);
-				applyRandom('banner-image-slot-desktop', 'banner-tpl-desktop', window.__bannerRandomIndex.desktop);
+				// 首屏不再用 JS 把默认帧替换成随机帧。
+				// 静态 HTML 里的第 1 张带 fetchpriority="high"，浏览器在解析阶段就能发现并
+				// 提前开始下载 —— 这是 LCP 能早开始的关键。若在脚本里把它 innerHTML 换掉，
+				// LCP 元素就变成运行期注入：既晚被发现、也没有优先级提示
+				// （Lighthouse lcp-discovery-insight 会报 requestDiscoverable: False /
+				// priorityHinted: False），而实际上约 5/6 的访问会命中这种情况。
+				// 随机感改由 crossfade() 在「首次切换」时跳到 __bannerRandomIndex 来保留。
 
 				// 收集所有帧 HTML 字符串（仅首次）
 				if (!window.__bannerCarouselFrames) {window.__bannerCarouselFrames = {};}
@@ -313,12 +306,11 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 				collectFrames('banner-image-slot-mobile', 'banner-tpl-mobile');
 				collectFrames('banner-image-slot-desktop', 'banner-tpl-desktop');
 
-				if (typeof window.__bannerCarouselIndex === 'undefined') {
-					window.__bannerCarouselIndex = {
-						mobile: window.__bannerRandomIndex ? window.__bannerRandomIndex.mobile : 0,
-						desktop: window.__bannerRandomIndex ? window.__bannerRandomIndex.desktop : 0
-					};
-				}
+				// 每次进入页面（含 Swup 换页），静态 HTML 渲染的都是第 1 张，
+				// 索引必须与画面保持一致，否则后续 crossfade 的序号会对不上。
+				window.__bannerCarouselIndex = { mobile: 0, desktop: 0 };
+				// 是否已经切换过一次：首次切换跳随机帧，之后按顺序前进
+				const hasAdvancedOnce = { mobile: false, desktop: false };
 
 				// 断点检测（md = 768px）
 				function isSlotHiddenByBreakpoint(slot) {
@@ -393,22 +385,58 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 					}, FADE_MS + 50);
 				}
 
-				// 自动轮播用的 crossfade（前进到下一张）
+				// 自动轮播用的 crossfade
 				function crossfade(slotClass, totalCount, type) {
 					const frames = window.__bannerCarouselFrames[slotClass];
 					if (!frames || frames.length === 0) {return;}
 					const currentIndex = window.__bannerCarouselIndex[type];
-					const nextIndex = (currentIndex + 1) % frames.length;
+					let nextIndex;
+					if (!hasAdvancedOnce[type] && window.__bannerRandomIndex) {
+						// 首次切换跳到随机帧：每次访问看到的第二张都不同
+						nextIndex = window.__bannerRandomIndex[type];
+					} else {
+						nextIndex = (currentIndex + 1) % frames.length;
+					}
+					// 随机帧恰好等于当前帧时，顺延一张，避免空切换
+					if (nextIndex === currentIndex) {
+						nextIndex = (nextIndex + 1) % frames.length;
+					}
+					hasAdvancedOnce[type] = true;
 					crossfadeToIndex(slotClass, totalCount, type, nextIndex);
 				}
 
 				let timerId = null;
 				let isPaused = false;
+				let hasStartedCycle = false;
 
 				// 触摸手势状态
 				let touchStartX = 0;
 				let touchStartY = 0;
 				let isSwiping = false;
+
+				// 等当前可见横幅的 <img> 加载完成（或超时）后再回调。
+				// 否则图片加载耗时会把第一张的停留时间吃掉：首张刚露面就撞上
+				// 第 interval 秒的首次切换，而那次切换的淡入落点会在 LCP 观测窗口内，
+				// 把 LCP 从「首张图」推后到「切图之后」。
+				function whenVisibleBannerReady(callback) {
+					const isMd = window.matchMedia('(min-width: 768px)').matches;
+					const slotClass = isMd ? 'banner-image-slot-desktop' : 'banner-image-slot-mobile';
+					const slot = container.querySelector('.' + slotClass);
+					const img = slot ? slot.querySelector('img') : null;
+					if (!img || img.complete) { callback(); return; }
+
+					let settled = false;
+					const finish = function() {
+						if (settled) { return; }
+						settled = true;
+						img.removeEventListener('load', finish);
+						img.removeEventListener('error', finish);
+						callback();
+					};
+					img.addEventListener('load', finish);
+					img.addEventListener('error', finish);
+					setTimeout(finish, 4000);
+				}
 
 				function startCarousel() {
 					stopCarousel();
@@ -417,12 +445,22 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 					applyInitialKB('banner-image-slot-mobile');
 					applyInitialKB('banner-image-slot-desktop');
 
-					timerId = setInterval(function() {
-						if (!isPaused) {
-							crossfade('banner-image-slot-mobile', mobileCount, 'mobile');
-							crossfade('banner-image-slot-desktop', desktopCount, 'desktop');
-						}
-					}, interval);
+					const beginInterval = function() {
+						if (isPaused || timerId !== null) { return; }
+						timerId = setInterval(function() {
+							if (!isPaused) {
+								crossfade('banner-image-slot-mobile', mobileCount, 'mobile');
+								crossfade('banner-image-slot-desktop', desktopCount, 'desktop');
+							}
+						}, interval);
+					};
+
+					if (hasStartedCycle) {
+						beginInterval();
+					} else {
+						hasStartedCycle = true;
+						whenVisibleBannerReady(beginInterval);
+					}
 				}
 
 				function stopCarousel() {
