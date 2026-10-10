@@ -1,5 +1,5 @@
 import { STORAGE_KEY_VOLUME } from "../constants";
-import type { AudioPlayerState } from "./useAudioPlayer";
+import type { AudioPlayerState } from "../types";
 
 export interface VolumeDragState {
 	isVolumeDragging: boolean;

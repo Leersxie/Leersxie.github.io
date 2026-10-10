@@ -6,7 +6,6 @@ category: 日常
 tags: [测试]
 encrypted: true
 password: "123456"
-password_hint: "密码是123456"
 
 ---
 

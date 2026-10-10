@@ -29,7 +29,6 @@
 		"check-env": "node scripts/check-env.js",
 		"test": "vitest run",
 		"test:watch": "vitest",
-		"test-font-compression": "node scripts/test-font-compression.js",
 		"lhci": "lhci",
 		"lighthouse": "lighthouse",
 		"performance:baseline": "node scripts/performance-baseline.js",

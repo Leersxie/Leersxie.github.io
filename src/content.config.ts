@@ -4,6 +4,9 @@ import { defineCollection } from "astro:content";
 
 const postsCollection = defineCollection({
 	loader: glob({ pattern: "**/*.md", base: "./src/content/posts" }),
+	// .strict()：未知的 frontmatter 字段直接报错，而不是被静默丢弃。
+	// 背景：cs2.md 曾把 `passwordHint` 写成 `password_hint`，zod 默认剥离未知键，
+	// 导致密码提示从未渲染且无人察觉。改动 frontmatter 字段名时请同步本 schema。
 	schema: z.object({
 		title: z.string(),
 		published: z.date(),
@@ -38,7 +41,7 @@ const postsCollection = defineCollection({
 		prevSlug: z.string().default(""),
 		nextTitle: z.string().default(""),
 		nextSlug: z.string().default(""),
-	}),
+	}).strict(),
 });
 const specCollection = defineCollection({
 	loader: glob({ pattern: "**/*.md", base: "./src/content/spec" }),

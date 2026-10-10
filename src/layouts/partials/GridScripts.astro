@@ -4,6 +4,8 @@
  * 包含壁纸模式管理、布局切换和 Swup 集成逻辑
  */
 
+import { BANNER_HEIGHT as DEFAULT_BANNER_HEIGHT } from "../../constants/constants";
+
 interface Props {
 	navbarTransparentMode?: string;
 	defaultWallpaperMode?: string;
@@ -16,7 +18,8 @@ const {
 	navbarTransparentMode = "semi",
 	defaultWallpaperMode = "banner",
 	defaultPostListLayout = "list",
-	BANNER_HEIGHT = 35,
+	// 未显式传入时回退到 src/constants/constants.ts 的唯一定义
+	BANNER_HEIGHT = DEFAULT_BANNER_HEIGHT,
 	pageScaling = { enable: false },
 } = Astro.props;
 ---

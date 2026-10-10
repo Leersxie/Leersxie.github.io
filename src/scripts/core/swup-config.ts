@@ -3,10 +3,13 @@
  * 提供页面过渡动画的配置常量和类型定义
  */
 
-// Banner 高度常量
-export const BANNER_HEIGHT = 35;
-export const BANNER_HEIGHT_EXTEND = 30;
-export const BANNER_HEIGHT_HOME = BANNER_HEIGHT + BANNER_HEIGHT_EXTEND;
+// Banner 高度常量：单一来源在 src/constants/constants.ts。
+// 这里只做转出，保持既有 `../core/swup-config` 导入路径不变，避免常量值多处维护。
+export {
+	BANNER_HEIGHT,
+	BANNER_HEIGHT_EXTEND,
+	BANNER_HEIGHT_HOME,
+} from "../../constants/constants";
 
 // 选择器配置
 export const SWUP_SELECTORS = {

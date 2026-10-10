@@ -431,14 +431,12 @@ const categories = await getCategories()
 **说明**：此目录用于存放待整理的组件，应该逐步迁移到合适的分类。
 
 **包含文件**：
-- `AnimationTest.astro`
 - `FullscreenWallpaper.astro`
 - `ImageWrapper.astro`
 - `Markdown.astro`
 - `SharePoster.svelte`
 
 **迁移目标**：
-- `AnimationTest.astro` → 删除或移到 `organisms/`
 - `FullscreenWallpaper.astro` → `features/media/`
 - `ImageWrapper.astro` → `atoms/`
 - `Markdown.astro` → `organisms/` 或 `features/media/`
