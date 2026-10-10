@@ -16,21 +16,22 @@
   background-image:
     linear-gradient(
       to top,
-      rgba(0, 0, 0, 0.46) 0%,
-      rgba(0, 0, 0, 0.24) 30%,
-      rgba(0, 0, 0, 0.06) 58%,
+      rgba(0, 0, 0, 0.28) 0%,
+      rgba(0, 0, 0, 0.12) 30%,
+      rgba(0, 0, 0, 0.03) 58%,
       transparent 82%
     ),
     radial-gradient(
       ellipse 62% 42% at 50% 50%,
-      rgba(0, 0, 0, 0.5) 0%,
-      rgba(0, 0, 0, 0.26) 52%,
+      rgba(0, 0, 0, 0.3) 0%,
+      rgba(0, 0, 0, 0.14) 52%,
       transparent 100%
     );
 }
 
-/* 暗色主题略加重：跟随站点主题类（html.dark），
-   而不是 prefers-color-scheme —— 本站是 class 式主题切换，跟随系统会与画面错位。 */
+/* 暗色主题加重：跟随站点主题类（html.dark），
+   而不是 prefers-color-scheme —— 本站是 class 式主题切换，跟随系统会与画面错位。
+   亮/暗两档必须拉开差距（原先只差 0.1，导致切到亮色时横幅几乎没变亮）。 */
 :root.dark .banner-text-overlay {
   background-image:
     linear-gradient(
@@ -1012,6 +1013,29 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* 亮色主题下指示器胶囊改用浅色，避免在明亮画面上留一个深色小块 */
+:root:not(.dark) .banner-dots {
+  background: rgb(255 255 255 / 0.34);
+  border-color: rgb(0 0 0 / 0.08);
+}
+
+:root:not(.dark) .banner-dot {
+  background: rgb(0 0 0 / 0.3);
+}
+
+:root:not(.dark) .banner-dot:hover {
+  background: rgb(0 0 0 / 0.55);
+}
+
+:root:not(.dark) .banner-dot[aria-selected="true"] {
+  background: var(--primary);
+}
+
+:root:not(.dark) .banner-dots__counter {
+  color: rgb(0 0 0 / 0.62);
+  text-shadow: none;
 }
 
 /* 空间紧张时（横屏矮视口）隐藏指示器，避免和文字挤在一起 */
