@@ -34,6 +34,22 @@ const OUT_DIR = path.join(rootDir, "public/favicon");
 
 /** 图形在正方形画布里的占比；太小会显小，太大会贴边 */
 const CONTENT_RATIO = 0.86;
+
+/**
+ * 图标（favicon 全套 + PWA）用哪种裁切，相对内容包围盒的比例。
+ *
+ * 为什么需要：当前源图是**宽幅插画**（内容 804×544 ≈ 1.48:1），
+ * 整幅塞进正方形画布只能占 58% 的高度 —— 在 16/32px 的浏览器标签页里
+ * 糊成一团，周围的星形与弧线还会碎成散落的噪点（实测已复现）。
+ * 改取「角色头 + 完整 LX」的方形裁切（≈1.11:1），图形占比翻倍后 16px 才认得出。
+ *
+ * 取值依据：X 字母的右边缘在 0.92 处，**必须完整保留**（几何字母被切边最像 bug），
+ * 因此左边界只能收到 0.21，代价是角色的左侧头发被切掉一部分
+ * （柔和的发梢被切不显眼，且视觉上像「角色从边缘探出来」）。
+ * 上下留出 0.02 的余量，让 X 底边与头发出血一点点，不贴边。
+ * 换源图后这组值要重调（做法：把 0.1 坐标网格叠在内容区上再选）。
+ */
+const ICON_CROP = { l: 0.21, t: 0.02, w: 0.72, h: 0.96 };
 /** apple-touch-icon 的底色（iOS 不支持透明） */
 const TOUCH_BG = "#FFFFFF";
 
@@ -145,8 +161,32 @@ async function main() {
 		.toBuffer({ resolveWithObject: true });
 	const { width: cw, height: ch } = trimmed.info;
 
+	// 1.5) 取图标专用的方形裁切，再单独 trim 一次（extract 与 trim 必须分两步，见下方标记处的说明）
+	const iconLeft = Math.max(0, Math.min(cw - 1, Math.round(ICON_CROP.l * cw)));
+	const iconTop = Math.max(0, Math.min(ch - 1, Math.round(ICON_CROP.t * ch)));
+	const iconRegion = await sharp(trimmed.data)
+		.extract({
+			left: iconLeft,
+			top: iconTop,
+			width: Math.max(
+				1,
+				Math.min(cw - iconLeft, Math.round(ICON_CROP.w * cw)),
+			),
+			height: Math.max(
+				1,
+				Math.min(ch - iconTop, Math.round(ICON_CROP.h * ch)),
+			),
+		})
+		.png()
+		.toBuffer();
+	const icon = await sharp(iconRegion)
+		.trim({ threshold: 1 })
+		.toBuffer({ resolveWithObject: true });
+	const iw = icon.info.width;
+	const ih = icon.info.height;
+
 	// 2) 补成正方形，并留出边距
-	const side = Math.ceil(Math.max(cw, ch) / CONTENT_RATIO);
+	const side = Math.ceil(Math.max(iw, ih) / CONTENT_RATIO);
 	const square = await sharp({
 		create: {
 			width: side,
@@ -157,15 +197,17 @@ async function main() {
 	})
 		.composite([
 			{
-				input: trimmed.data,
-				left: Math.round((side - cw) / 2),
-				top: Math.round((side - ch) / 2),
+				input: icon.data,
+				left: Math.round((side - iw) / 2),
+				top: Math.round((side - ih) / 2),
 			},
 		])
 		.png()
 		.toBuffer();
 
-	console.log(`源图内容 ${cw}×${ch} → 正方形画布 ${side}×${side}`);
+	console.log(
+		`源图内容 ${cw}×${ch}（长宽比 ${(cw / ch).toFixed(2)}）→ 图标裁切 ${iw}×${ih}（长宽比 ${(iw / ih).toFixed(2)}）→ 正方形画布 ${side}×${side}`,
+	);
 
 	// 2.5) 可选：铺圆角浅色底（图形占比 86%，圆角 12%，不会裁到图形）
 	let base = square;
