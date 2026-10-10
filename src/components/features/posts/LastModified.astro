@@ -14,7 +14,9 @@ dayjs.extend(utc);
 
 const { updatedDate, class: className } = Astro.props;
 
-const lastModified = dayjs(updatedDate).utc().format("YYYY-MM-DDTHH:mm:ss");
+// 上游 0c280a1d：必须带明确的 UTC 标记（[Z]），否则无时区字符串会被浏览器
+// 按访客本地时区解析，「更新于 X 前」差出时区偏移量（国内访客同样差 8 小时）。
+const lastModified = dayjs(updatedDate).utc().format("YYYY-MM-DDTHH:mm:ss[Z]");
 ---
 
 <>

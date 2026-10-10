@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
 
+	import { DEFAULT_COVER_URL } from "../../music-player/constants";
 	import type { Song } from "../../music-player/types";
 
 	interface Props {
@@ -40,7 +41,7 @@
 >
 	<div class="cover-shell">
 		<img
-			src={getAssetPath(song.cover)}
+			src={getAssetPath(song.cover || DEFAULT_COVER_URL)}
 			alt={song.title}
 			loading="lazy"
 			class="item-cover"

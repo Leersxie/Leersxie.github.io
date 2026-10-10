@@ -2,6 +2,7 @@ import Key from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 
 import {
+	DEFAULT_COVER_URL,
 	DEFAULT_SONG,
 	LOCAL_PLAYLIST,
 	SKIP_ERROR_DELAY,
@@ -185,7 +186,14 @@ export class MusicPlayerStore {
 		this.showError(i18n(Key.musicPlayerErrorSong));
 
 		if (this.state.playlist.length > 1) {
-			setTimeout(() => this.next(true), SKIP_ERROR_DELAY);
+			setTimeout(() => {
+				// 上游 cb1fc5036：1s 延迟窗口内用户可能已暂停，回调执行前复核状态，
+				// 否则暂停后仍会自动切歌
+				if (!this.state.willAutoPlay) {
+					return;
+				}
+				this.next(true);
+			}, SKIP_ERROR_DELAY);
 		} else if (this.state.playlist.length <= 1) {
 			this.showError(i18n(Key.musicPlayerErrorEmpty));
 		}
@@ -335,7 +343,8 @@ export class MusicPlayerStore {
 					: (song.id ?? 0),
 			title,
 			artist,
-			cover: song.pic ?? "",
+			// 上游 cb1fc5036：Meting 返回空封面时回退默认图，避免 img src=""
+			cover: song.pic || DEFAULT_COVER_URL,
 			url: song.url ?? "",
 			duration: dur,
 		};

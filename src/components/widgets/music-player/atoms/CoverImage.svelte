@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
 
+	import { DEFAULT_COVER_URL } from "../constants";
 	import Key from "../../../../i18n/i18nKey";
 	import { i18n } from "../../../../i18n/translation";
 
@@ -93,7 +94,7 @@
 			: i18n(Key.musicPlayerPlay)}
 	>
 		<img
-			src={getAssetPath(cover)}
+			src={getAssetPath(cover || DEFAULT_COVER_URL)}
 			alt={i18n(Key.musicPlayerCover)}
 			loading="eager"
 			fetchpriority="high"
@@ -122,7 +123,7 @@
 {:else}
 	<div class={containerClasses[size]}>
 		<img
-			src={getAssetPath(cover)}
+			src={getAssetPath(cover || DEFAULT_COVER_URL)}
 			alt={i18n(Key.musicPlayerCover)}
 			loading="eager"
 			fetchpriority="high"
