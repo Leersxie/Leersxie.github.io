@@ -617,7 +617,9 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
    ========================================================================== */
 @media (min-width: 1280px) {
   #main-grid[data-layout-mode="grid"] {
-    grid-template-columns: 17.5rem 1fr !important;
+    /* 上游 fix(01f845f9)：1fr → minmax(0,1fr)，允许主列正确收缩，
+       防止宽表格/代码块把页面撑出横向滚动条 */
+    grid-template-columns: 17.5rem minmax(0, 1fr) !important;
   }
 
   #main-grid[data-layout-mode="grid"] #swup-container {
@@ -628,7 +630,9 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 /* 确保大屏桌面设备 Grid 模式配置 */
 @media (min-width: 1280px) {
   #main-grid[data-layout-mode="grid"] {
-    grid-template-columns: 17.5rem 1fr !important;
+    /* 上游 fix(01f845f9)：1fr → minmax(0,1fr)，允许主列正确收缩，
+       防止宽表格/代码块把页面撑出横向滚动条 */
+    grid-template-columns: 17.5rem minmax(0, 1fr) !important;
   }
 
   #main-grid[data-layout-mode="grid"] #swup-container {

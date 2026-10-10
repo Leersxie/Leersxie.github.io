@@ -200,6 +200,14 @@ const kbdPostUrls = kbdPosts.map((p) => getPostUrl(p));
 	<head>
 		<meta charset="UTF-8" />
 
+		<!-- 上游 fix(2e7ace7)：在 head 最前部锁定 Tailwind 的 @layer 顺序。
+		     Swup 无刷新导航会替换 <head> 里的样式表，未声明层顺序时样式表重排
+		     会让 base 层压过 utilities 层（margin/padding 丢失、页面左移）。
+		     必须先于任何样式表出现。 -->
+		<style is:inline>
+			@layer properties, theme, base, components, utilities;
+		</style>
+
 		<!-- 第三方分析脚本 -->
 		<AnalyticsScripts
 			thirdPartyAnalytics={siteConfig.thirdPartyAnalytics}

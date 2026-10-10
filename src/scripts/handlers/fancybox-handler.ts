@@ -7,6 +7,7 @@ import {
 	FANCYBOX_SELECTORS,
 	getDefaultFancyboxConfig,
 } from "../core/swup-config";
+import { type FancyboxL10n, loadFancyboxL10n } from "../utils/fancybox-l10n";
 
 // Fancybox 模块类型
 type FancyboxType = any;
@@ -19,6 +20,7 @@ export class FancyboxHandler {
 	private Fancybox: FancyboxType | null = null;
 	private boundSelectors: string[] = [];
 	private initialized = false;
+	private l10n: FancyboxL10n | null = null;
 
 	/**
 	 * 初始化 Fancybox
@@ -76,6 +78,9 @@ export class FancyboxHandler {
 			link.setAttribute("data-fancybox-css", "true");
 			document.head.appendChild(link);
 		}
+
+		// 按站点语言自动加载 Fancybox 语言包（上游 97d47229 + 72e41aa6）
+		this.l10n = await loadFancyboxL10n();
 	}
 
 	/**
@@ -86,7 +91,11 @@ export class FancyboxHandler {
 			return;
 		}
 
-		const commonConfig = getDefaultFancyboxConfig();
+		const baseConfig = getDefaultFancyboxConfig();
+		const commonConfig = {
+			...baseConfig,
+			...(this.l10n ? { l10n: this.l10n } : {}),
+		};
 
 		// 绑定相册/文章图片
 		this.Fancybox.bind(FANCYBOX_SELECTORS.albumImages, {
@@ -95,6 +104,7 @@ export class FancyboxHandler {
 			Carousel: {
 				transition: "slide",
 				preload: 2,
+				...(this.l10n ? { l10n: this.l10n } : {}),
 			},
 		});
 		this.boundSelectors.push(FANCYBOX_SELECTORS.albumImages);

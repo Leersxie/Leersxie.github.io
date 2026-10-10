@@ -1,10 +1,13 @@
 .custom-md
 
   blockquote.admonition
-    .bdm-title
+    /* 上游 fix(c01a8c58)：标题原来用 -0.9rem 负下外边距抵消内容块默认上外边距，
+       但表格包装层 table-wrapper 上外边距为 0，会被直接拉进标题区域造成重叠。
+       改为标题提供稳定的正向间距，并清除紧邻首个内容块的上外边距。 */
+    > .bdm-title
       display: flex
       align-items: center
-      margin-bottom: -.9rem
+      margin-bottom: .5rem
       font-weight: bold
 
       &:before
@@ -20,6 +23,10 @@
         mask-position: center
         mask-repeat: no-repeat
         transform: translateY(-0.0625rem)
+
+    > .bdm-title + *
+      margin-top: 0
+
     &.bdm-tip
       .bdm-title
         color: var(--admonitions-color-tip)
