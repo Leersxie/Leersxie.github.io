@@ -26,15 +26,16 @@
    2. 首页不是 `src/pages/index.astro`（该文件不存在），
       而是 `src/pages/[...page].astro`（分页路由，配合 PAGE_SIZE）。
    3. 项目**没有**跟随系统的自动深色模式：主题是 class 式（`html.dark`），
-      默认值来自 `src/constants/constants.ts` 的 `DEFAULT_THEME = LIGHT_MODE`，
+      默认值来自 `src/constants/constants.ts` 的 `DEFAULT_THEME = DARK_MODE`
+      （2026-10-10 已从 LIGHT_MODE 切到 DARK_MODE，新访客直接进深色），
       切换由 `control/ThemeSwitch.svelte` 写 localStorage("theme")。
-      要“默认深色”改那个常量；要“跟随系统”见下方 ❽ 的脚本片段。
+      要“默认浅色”改回那个常量；要“跟随系统”见下方 ❽ 的脚本片段。
 
    作用域策略（只加分、不破坏现有浅色观感）
    --------------------------------------------------------------------------
    · 蓝图网格/点阵：明暗两种模式都生效（暗色下更明显）
    · 深蓝黑底 + 毛玻璃：**只在 `:root.dark` 生效**
-     → 想让站点默认就是暗色科技风，改 `DEFAULT_THEME = DARK_MODE`
+     → 站点**默认已是暗色**（`DEFAULT_THEME = DARK_MODE`）；想默认浅色就改回 `LIGHT_MODE`
    · 低成本零风险的写法：能改变量的地方就改变量，不硬写 backdrop-filter，
      免得和 `wallpaper-navbar-transparent.css`、`mobile-navbar.css` 打架
 
@@ -54,13 +55,16 @@
 	--tech-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 	--tech-ease-ui: cubic-bezier(0.4, 0, 0.2, 1);
 
-	/* --- 毛玻璃（统一一处改，全站生效） --- */
-	--tech-glass-blur: blur(16px) saturate(180%);
+	/* --- 毛玻璃（统一一处改，全站生效） ---
+	   2026-10-10 微调：blur 16→20px（层次更深，移动端已有降级不受影响）；
+	   卡片底 0.62→0.70 / strong 0.78→0.84（网格增强后文字对比更稳）；
+	   高光描边 0.06→0.08。 */
+	--tech-glass-blur: blur(20px) saturate(180%);
 	/* 深蓝黑卡片底，与 --tech-page-bg 同色系、略提亮 */
-	--tech-glass-bg: rgb(17 22 41 / 0.62);
-	--tech-glass-bg-strong: rgb(15 19 37 / 0.78);
+	--tech-glass-bg: rgb(17 22 41 / 0.7);
+	--tech-glass-bg-strong: rgb(15 19 37 / 0.84);
 	--tech-glass-border: rgb(255 255 255 / 0.1);
-	--tech-glass-highlight: rgb(255 255 255 / 0.06);
+	--tech-glass-highlight: rgb(255 255 255 / 0.08);
 	--tech-glass-shadow: 0 8px 32px rgb(0 0 0 / 0.32);
 
 	/* --- 科技感装饰色（蓝色系）---
@@ -74,26 +78,30 @@
 	   写成 rgb 三元组是为了能自由拼 alpha：rgb(var(--tech-accent) / 0.05)。 */
 	--tech-accent: 120 170 255;
 
-	/* --- 蓝图网格（低饱和蓝，只做纹理不抢色） --- */
-	--tech-grid-line: rgb(var(--tech-accent) / 0.05);
-	--tech-grid-line-major: rgb(var(--tech-accent) / 0.09);
-	--tech-dot: rgb(var(--tech-accent) / 0.09);
+	/* --- 蓝图网格（低饱和蓝，只做纹理不抢色） ---
+	   2026-10-10 微调：细线 0.05→0.07、主线 0.09→0.13、点 0.09→0.13，
+	   底色从主题紫黑换成深蓝黑 #0b1020 后原值偏淡，网格几乎看不见。 */
+	--tech-grid-line: rgb(var(--tech-accent) / 0.07);
+	--tech-grid-line-major: rgb(var(--tech-accent) / 0.13);
+	--tech-dot: rgb(var(--tech-accent) / 0.13);
 	--tech-grid-size: 24px; /* 细线格距 */
 	--tech-grid-major: 120px; /* 主线格距 = 5 格 */
 
 	/* --- 深色页底（深蓝黑） --- */
 	--tech-page-bg: #0b1020;
 
-	/* --- 顶部氛围光 + 曲线描边（同属蓝色装饰层） --- */
-	--tech-glow-soft: rgb(var(--tech-accent) / 0.16);
-	--tech-curve-stroke: rgb(var(--tech-accent) / 0.35);
+	/* --- 顶部氛围光 + 曲线描边（同属蓝色装饰层） ---
+	   2026-10-10 微调：氛围光 0.16→0.22、曲线描边 0.35→0.45 */
+	--tech-glow-soft: rgb(var(--tech-accent) / 0.22);
+	--tech-curve-stroke: rgb(var(--tech-accent) / 0.45);
 }
 
-/* 浅色模式：网格改用低饱和深蓝，否则白底线几乎看不见 */
+/* 浅色模式：网格改用低饱和深蓝，否则白底线几乎看不见
+   2026-10-10 微调：与暗色同步增强（0.045→0.06 / 0.08→0.12 / 0.08→0.12） */
 :root:not(.dark) {
-	--tech-grid-line: rgb(30 60 120 / 0.045);
-	--tech-grid-line-major: rgb(30 60 120 / 0.08);
-	--tech-dot: rgb(30 60 120 / 0.08);
+	--tech-grid-line: rgb(30 60 120 / 0.06);
+	--tech-grid-line-major: rgb(30 60 120 / 0.12);
+	--tech-dot: rgb(30 60 120 / 0.12);
 }
 
 
@@ -323,12 +331,13 @@ a {
 /* 卡片悬停抬升 + 主色微光（克制：位移 2px、无缩放，避免列表抖动） */
 @media (hover: hover) and (pointer: fine) {
 	:root.dark .card-base:hover {
-		/* 发丝边提亮 + 一圈 8% 的蓝色辉光：克制到几乎只有「温度」变化，不做霓虹。
-		   嫌亮就把最后两行的 alpha 调到 0 或删掉。 */
+		/* 发丝边提亮 + 一圈蓝色辉光：克制但可感知，不做霓虹。
+		   2026-10-10 微调：发丝边 0.18→0.26、辉光 0.08→0.14（原先克制到几乎无感）。
+		   嫌亮就把最后两行的 alpha 调小。 */
 		box-shadow:
-			inset 0 0 0 1px rgb(var(--tech-accent) / 0.18),
+			inset 0 0 0 1px rgb(var(--tech-accent) / 0.26),
 			0 10px 36px rgb(0 0 0 / 0.38),
-			0 0 24px rgb(var(--tech-accent) / 0.08);
+			0 0 24px rgb(var(--tech-accent) / 0.14);
 	}
 }
 
