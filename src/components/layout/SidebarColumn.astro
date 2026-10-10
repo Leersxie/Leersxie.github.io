@@ -96,6 +96,19 @@ function renderComponent(
 ---
 
 <div id={containerId} class:list={[rootClass, "sidebar-column-root"]}>
+	<!-- 科技感装饰：侧栏顶部的极细数据流曲线（纯装饰、aria-hidden，删掉这段即可移除） -->
+	<svg
+		class="tech-curve tech-curve--flow"
+		viewBox="0 0 320 60"
+		preserveAspectRatio="none"
+		aria-hidden="true"
+		focusable="false"
+	>
+		<path
+			d="M0 46C40 46 56 14 96 14S152 46 192 46S248 14 288 14S304 26 320 26"
+		/>
+	</svg>
+
 	<div class:list={["flex flex-col w-full gap-4 mb-4", topClass]}>
 		{
 			showMobile && mobileTopComponents.length > 0 && (

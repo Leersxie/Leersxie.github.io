@@ -1,0 +1,528 @@
+/* ==========================================================================
+   custom-tech.css —— 「现代科技感」皮肤
+   毛玻璃 / 蓝图网格 + 点阵 / 极细 SVG 曲线 / 统一缓动 / 移动端降级
+   ==========================================================================
+
+   设计参考与具体参数来源
+   --------------------------------------------------------------------------
+   毛玻璃    ui.glass 生成器风格 + 开源主题「琥珀」的统一规格：
+             backdrop-filter: blur(16px) saturate(180%)，配 1px 高光描边
+   蓝图底纹  TOSAKAFUNK「Blueprint」（细线 + 主线双层网格）
+             Design Revision「Architectural Blueprint Grid」
+             Brand Peel「Subtle Tech Dot Matrix」（点阵落在网格交点）
+             全部用 CSS 渐变实现，零图片、零请求
+   缓动      EaseMaster / cubic-bezier 工具
+             入场 cubic-bezier(0.16, 1, 0.3, 1)   ← out-expo，收尾极缓
+             交互 cubic-bezier(0.4, 0, 0.2, 1)     ← Material 标准曲线（项目里已在用）
+   SVG 曲线  Codrops / Awwwards Dark·Technology 类目常见的“数据流动”细线
+
+   ⚠️ 与仓库实际状态的三处偏差（写在这里免得后来者踩）
+   --------------------------------------------------------------------------
+   1. `src/config.ts` 的 themeColor.hue 当前是 **287（品牌紫罗兰）**，不是 210。
+      本文件把蓝色拆成独立的**装饰层** `--tech-accent`（网格 / 点阵 / 曲线 /
+      氛围光 / 悬停辉光），交互层仍用品牌主色 `--primary`。
+      于是「深蓝黑 + 蓝色发光点缀」与「品牌紫罗兰」并存、互不打架。
+      想整站变蓝：把 hue 改成 240 即可（一行，装饰层不受影响）。
+   2. 首页不是 `src/pages/index.astro`（该文件不存在），
+      而是 `src/pages/[...page].astro`（分页路由，配合 PAGE_SIZE）。
+   3. 项目**没有**跟随系统的自动深色模式：主题是 class 式（`html.dark`），
+      默认值来自 `src/constants/constants.ts` 的 `DEFAULT_THEME = LIGHT_MODE`，
+      切换由 `control/ThemeSwitch.svelte` 写 localStorage("theme")。
+      要“默认深色”改那个常量；要“跟随系统”见下方 ❽ 的脚本片段。
+
+   作用域策略（只加分、不破坏现有浅色观感）
+   --------------------------------------------------------------------------
+   · 蓝图网格/点阵：明暗两种模式都生效（暗色下更明显）
+   · 深蓝黑底 + 毛玻璃：**只在 `:root.dark` 生效**
+     → 想让站点默认就是暗色科技风，改 `DEFAULT_THEME = DARK_MODE`
+   · 低成本零风险的写法：能改变量的地方就改变量，不硬写 backdrop-filter，
+     免得和 `wallpaper-navbar-transparent.css`、`mobile-navbar.css` 打架
+
+   引入方式：在 `src/styles/main.css` 顶部的 @import 列表**末尾**加一行
+             @import "./custom-tech.css";
+   （放末尾是为了让本文件在同等特异性下靠后生效，覆盖缓动等声明；
+     postcss-import 要求所有 @import 集中在其他规则之前，别插到文件中部）
+   ========================================================================== */
+
+
+/* ==========================================================================
+   ❶ 设计令牌
+   ========================================================================== */
+
+:root {
+	/* --- 缓动（可导出为 Tailwind 的 ease-* 工具类，见文件末尾注释） --- */
+	--tech-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+	--tech-ease-ui: cubic-bezier(0.4, 0, 0.2, 1);
+
+	/* --- 毛玻璃（统一一处改，全站生效） --- */
+	--tech-glass-blur: blur(16px) saturate(180%);
+	/* 深蓝黑卡片底，与 --tech-page-bg 同色系、略提亮 */
+	--tech-glass-bg: rgb(17 22 41 / 0.62);
+	--tech-glass-bg-strong: rgb(15 19 37 / 0.78);
+	--tech-glass-border: rgb(255 255 255 / 0.1);
+	--tech-glass-highlight: rgb(255 255 255 / 0.06);
+	--tech-glass-shadow: 0 8px 32px rgb(0 0 0 / 0.32);
+
+	/* --- 科技感装饰色（蓝色系）---
+	   只作用于「环境层」：网格 / 点阵 / 曲线 / 氛围光 / 悬停辉光。
+	   交互层（链接、按钮、标题竖条、选中态）仍由品牌主色 --primary 驱动 ——
+	   这样既拿到「深蓝黑 + 蓝色发光点缀」的科技感，又不动品牌色。
+
+	   2026-10-10 决策：主色 hue 维持 287（品牌紫罗兰，对齐 design/icon-source.png），
+	   蓝色独立成装饰层。**想让整站都变蓝，只需把 src/config.ts 的 hue 改成 240**，
+	   本文件的装饰色不受影响（仍是同一族蓝，不会打架）。
+	   写成 rgb 三元组是为了能自由拼 alpha：rgb(var(--tech-accent) / 0.05)。 */
+	--tech-accent: 120 170 255;
+
+	/* --- 蓝图网格（低饱和蓝，只做纹理不抢色） --- */
+	--tech-grid-line: rgb(var(--tech-accent) / 0.05);
+	--tech-grid-line-major: rgb(var(--tech-accent) / 0.09);
+	--tech-dot: rgb(var(--tech-accent) / 0.09);
+	--tech-grid-size: 24px; /* 细线格距 */
+	--tech-grid-major: 120px; /* 主线格距 = 5 格 */
+
+	/* --- 深色页底（深蓝黑） --- */
+	--tech-page-bg: #0b1020;
+
+	/* --- 顶部氛围光 + 曲线描边（同属蓝色装饰层） --- */
+	--tech-glow-soft: rgb(var(--tech-accent) / 0.16);
+	--tech-curve-stroke: rgb(var(--tech-accent) / 0.35);
+}
+
+/* 浅色模式：网格改用低饱和深蓝，否则白底线几乎看不见 */
+:root:not(.dark) {
+	--tech-grid-line: rgb(30 60 120 / 0.045);
+	--tech-grid-line-major: rgb(30 60 120 / 0.08);
+	--tech-dot: rgb(30 60 120 / 0.08);
+}
+
+
+/* ==========================================================================
+   ❷ 深蓝黑页底 + 蓝图网格 + 点阵
+   用 body::before 固定铺满视口，z-index:-1 → 画在 html 底色之上、
+   所有内容之下（负 z-index 的绘制顺序正好符合这个需求）。
+   注意：全屏壁纸模式（wallpaper-transparent）下壁纸也在 z-index:-1，
+   DOM 顺序上壁纸在后 → 会盖住网格，这是预期行为，不必处理。
+   ========================================================================== */
+
+/* ⚠️ 这里用 `html:root.dark`（特异性 0,2,1）而不是 `:root.dark`（0,2,0）：
+   主题的 --page-bg 定义在 variables.styl 编译出的 variables.css 里，
+   特异性同为 0,2,0，而它在本文件之后被 <link>（Astro 决定顺序，不受控）。
+   实机验证过：写成 :root.dark 会被它压过去，页底仍是主题的色。
+   多带一个 html 类型选择器即可确定性胜出，不依赖加载顺序。 */
+html:root.dark {
+	/* 让暗色页底脱离 --hue 驱动，换成中性深蓝黑。
+	   想恢复“深色底跟随 hue”（原先的紫黑）就删掉这一行。 */
+	--page-bg: var(--tech-page-bg);
+}
+
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+
+	/* 自下而上：点阵 → 主线(横/竖) → 细线(横/竖) */
+	background-image:
+		radial-gradient(circle at 1px 1px, var(--tech-dot) 1px, transparent 1.6px),
+		repeating-linear-gradient(
+			to right,
+			var(--tech-grid-line-major) 0 1px,
+			transparent 1px var(--tech-grid-major)
+		),
+		repeating-linear-gradient(
+			to bottom,
+			var(--tech-grid-line-major) 0 1px,
+			transparent 1px var(--tech-grid-major)
+		),
+		repeating-linear-gradient(
+			to right,
+			var(--tech-grid-line) 0 1px,
+			transparent 1px var(--tech-grid-size)
+		),
+		repeating-linear-gradient(
+			to bottom,
+			var(--tech-grid-line) 0 1px,
+			transparent 1px var(--tech-grid-size)
+		);
+	/* 第 1 层点阵按主线间距排布，正好落在交点；其余层自带重复尺寸 */
+	background-size:
+		var(--tech-grid-major) var(--tech-grid-major),
+		auto,
+		auto,
+		auto,
+		auto;
+
+	/* 顶部实、向下淡出：纹理只做氛围，不压正文可读性（风格克制的关键） */
+	-webkit-mask-image: radial-gradient(
+		140% 100% at 50% 0%,
+		#000 28%,
+		rgb(0 0 0 / 0.25) 100%
+	);
+	mask-image: radial-gradient(
+		140% 100% at 50% 0%,
+		#000 28%,
+		rgb(0 0 0 / 0.25) 100%
+	);
+}
+
+/* 顶部一层极淡的氛围光（不给正文用，只在首屏上部） */
+:root.dark body::after {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background: radial-gradient(
+		62% 42% at 50% -6%,
+		var(--tech-glow-soft),
+		transparent 72%
+	);
+}
+
+
+/* ==========================================================================
+   ❸ 通用毛玻璃类 .glass-tech
+   给任意容器加 class="glass-tech" 即可。
+   1px 边用 inset box-shadow 而不是 border —— 不占布局盒，
+   不会把既有尺寸顶歪，也不会和组件自带的 border 叠成 2px。
+   ========================================================================== */
+
+.glass-tech {
+	position: relative;
+	background: var(--tech-glass-bg);
+	border-radius: var(--tech-glass-radius, var(--radius-large, 1rem));
+	box-shadow:
+		inset 0 0 0 1px var(--tech-glass-border),
+		inset 0 1px 0 0 var(--tech-glass-highlight),
+		var(--tech-glass-shadow);
+	backdrop-filter: var(--tech-glass-blur);
+	-webkit-backdrop-filter: var(--tech-glass-blur);
+}
+
+/* 强调版：给需要更实一点的面板（下拉、抽屉、浮层） */
+.glass-tech--strong {
+	background: var(--tech-glass-bg-strong);
+}
+
+
+/* ==========================================================================
+   ❹ 把毛玻璃套到 Mizuki 既有组件上
+   已核实的真实类名（在仓库里 grep 过，不是猜的）：
+     .card-base            卡片基类，主内容/文章容器/侧栏 widget 都用它
+                           （侧栏每个 widget 是 <widget-layout class="… card-base">）
+     .card-base-transparent 全屏壁纸模式下的半透明卡片
+     .post-card            首页文章列表卡片
+     .float-panel          所有浮层面板（搜索/目录/显示设置/移动菜单）
+     .dropdown-content     导航下拉内容
+     #navbar > div         导航栏本体（外观由 --nav-* 变量驱动）
+   .card-base 定义在 main.css 的 `@layer components` 里；本文件不套 @layer，
+   属于「未分层样式」，在层叠顺序上天然压过 @layer 里的规则，无需 !important。
+   ========================================================================== */
+
+:root.dark .card-base {
+	background: var(--tech-glass-bg);
+	box-shadow: inset 0 0 0 1px var(--tech-glass-border);
+	backdrop-filter: var(--tech-glass-blur);
+	-webkit-backdrop-filter: var(--tech-glass-blur);
+	/* transition 写在常态而非 :hover —— 否则只有「进入」有过渡、「离开」是硬切。
+	   会覆盖 .card-base 自带的 transition-colors(150ms)，属有意统一节奏。 */
+	transition:
+		box-shadow 240ms var(--tech-ease-ui),
+		background-color 240ms var(--tech-ease-ui);
+}
+
+/* 嵌套卡片不再重复模糊：blur 叠加既昂贵又只会更糊 */
+:root.dark .card-base .card-base {
+	background: var(--tech-glass-bg-strong);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+
+/* 浮层面板（下拉 / 搜索 / 目录 / 显示设置 / 移动菜单）：**刻意不改，沿用主题实现**。
+ *
+ * 实机验证时发现：在 banner 模式下，主题有一条更具体、也更「有意图」的规则会命中这些面板 ——
+ *   src/styles/mobile-navbar.css:207-221（暗色）
+ *     :root.dark body:has(#banner-wrapper) .float-panel … { background: rgba(24,25,38,.85); }
+ *   src/styles/wallpaper-navbar-transparent.css:110-115
+ *     :is(.dropdown-content, … , .float-panel) { background: var(--panel-bg); backdrop-filter: var(--panel-blur); }
+ * 它们给出的已经是毛玻璃（blur(20px) + 半透明底），目的明确：**面板悬在横幅图片上**，
+ * 不透明度低于 0.85 会让面板文字压不住插画、掉对比度。
+ *
+ * 所以这里主动让路，而不是靠提高特异性去压它 —— 面板的视觉效果与卡片一致，
+ * 但保留主题为「图片之上的可读性」选定的更实底色。
+ *
+ * 若你确实想把面板也统一成 --tech-glass-blur（blur 16px saturate 180%）：
+ *   1. 先接受对比度可能下降，并复测 a11y（CI 门禁 a11y ≥ 0.9）；
+ *   2. 把上面的选择器前面加 `html:root.dark body`（提到 0,3,2）即可确定性胜出；
+ *   3. 同时把 mobile-navbar.css:219 的 0.85 保持在 0.8 以上，别一味调低。
+ */
+
+/* 导航栏毛玻璃。
+   实机验证（2026-10-10）纠正了两个想当然的写法：
+   ① banner 模式下导航栏**没有** `data-dynamic-transparent` 属性 ——
+      那个属性只在「无 banner 模式」由 GridScripts.astro:226 设置；
+      banner 模式下「滚动」是通过给 #navbar 加 `.scrolled` 类表达的
+      （GridScripts.astro:183 还会主动移除 data-dynamic-transparent）。
+      所以只写 [data-dynamic-transparent="semi"] 在本站是**死代码**。
+   ② 真正决定外观的是 mobile-navbar.css:115-120：
+      `:root.dark body:has(#banner-wrapper) #navbar[data-transparent-mode="semifull"].scrolled > div`
+      —— 特异性 (2,4,3)，直接写死 `background: rgba(0,0,0,.55)`，且 border 与背景同色
+      （等于没有描边）。它是「纯深色透明条」，与新的玻璃卡片不是一套观感，故此处覆盖。
+
+   用 `html` 前缀把特异性提到 (2,4,4)（只多一个类型选择器），不依赖文件加载顺序。
+   描边用 inset box-shadow 而非 border：wallpaper-navbar-transparent.css:92 有
+   `border: none !important`，改 border-color 压不过它。 */
+html:root.dark body:has(#banner-wrapper) #navbar[data-transparent-mode="semifull"].scrolled > div,
+html:root.dark body:has(#banner-wrapper) #navbar[data-transparent-mode="semi"] > div,
+html:root.dark body #navbar[data-dynamic-transparent="semi"] > div {
+	background: var(--tech-glass-bg-strong);
+	backdrop-filter: var(--tech-glass-blur);
+	-webkit-backdrop-filter: var(--tech-glass-blur);
+	box-shadow:
+		inset 0 0 0 1px var(--tech-glass-border),
+		0 8px 32px rgb(0 0 0 / 0.38);
+}
+
+
+/* ==========================================================================
+   ❺ 统一缓动曲线
+   注意三套机制并存，别只改一处就以为全局生效：
+   (a) 页面切换（Swup）：缓动由 **JS** 写进 html 的内联样式
+       （scripts/effects/transition-effect.ts:24-26 → DOM 元素上的内联
+        --transition-easing 会压过任何样式表规则）。
+       要改就去 src/scripts/core/swup-config.ts 的 TRANSITION_CONFIG.easing。
+   (b) 首屏错峰入场 .onload-animation：transition.css:86 写死了 `ease-out`。
+       下面的 animation-timing-function 覆盖它（本文件在 import 列表末尾，
+       同等特异性下靠后生效）。
+   (c) 悬停/按钮/链接：直接给 transition-timing-function。
+   ========================================================================== */
+
+/* (b) 首屏入场统一为 out-expo。
+   前缀 html 同样是为了确定性压过 transition.css 的同名规则
+   （两边都是 0,1,0，而 transition.css 的 <link> 在本文件之后）。 */
+html .onload-animation,
+html .onload-animation-fade-in,
+html .card-animation,
+html .transition-slide-in {
+	animation-timing-function: var(--tech-ease-out);
+}
+
+/* (c) 悬停与交互反馈 */
+.card-base,
+.post-card,
+.glass-tech,
+.float-panel,
+.dropdown-content,
+button,
+a {
+	transition-timing-function: var(--tech-ease-ui);
+}
+
+/* 卡片悬停抬升 + 主色微光（克制：位移 2px、无缩放，避免列表抖动） */
+@media (hover: hover) and (pointer: fine) {
+	:root.dark .card-base:hover {
+		/* 发丝边提亮 + 一圈 8% 的蓝色辉光：克制到几乎只有「温度」变化，不做霓虹。
+		   嫌亮就把最后两行的 alpha 调到 0 或删掉。 */
+		box-shadow:
+			inset 0 0 0 1px rgb(var(--tech-accent) / 0.18),
+			0 10px 36px rgb(0 0 0 / 0.38),
+			0 0 24px rgb(var(--tech-accent) / 0.08);
+	}
+}
+
+
+/* ==========================================================================
+   ❻ 极细 SVG 曲线装饰（零标记版）
+   用 data-URI 画一条 1px 曲线，贴在容器顶部或底边。
+   用法：给元素加 class="tech-curve-top"（顶部）或 class="tech-curve-bottom"（分割处）。
+   参考落点：侧栏顶部（src/components/layout/SidebarColumn.astro 的容器）、
+             文章元信息与正文之间的分割线（src/pages/posts/[...slug].astro）。
+   SVG 里用 rgb() 而不是 #hex，省掉 data-URI 里 %23 转义，可读性好很多。
+   ========================================================================== */
+
+.tech-curve-top,
+.tech-curve-bottom {
+	position: relative;
+}
+
+.tech-curve-top::before,
+.tech-curve-bottom::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 22px;
+	pointer-events: none;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	opacity: 0.9;
+}
+
+.tech-curve-top::before {
+	top: -11px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 60' preserveAspectRatio='none'%3E%3Cpath d='M0 46C40 46 56 14 96 14S152 46 192 46S248 14 288 14S304 26 320 26' fill='none' stroke='rgb(120,170,255)' stroke-opacity='0.35' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.tech-curve-bottom::after {
+	bottom: -11px;
+	/* 翻转一下，和顶部那条不重样 */
+	transform: scaleY(-1);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 60' preserveAspectRatio='none'%3E%3Cpath d='M0 22C32 22 48 50 96 50S160 18 208 18S288 44 320 44' fill='none' stroke='rgb(120,170,255)' stroke-opacity='0.3' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* —— 流动版曲线：已实际插入组件（不再是「待贴的片段」）。两个落点：
+     · 侧栏顶部        src/components/layout/SidebarColumn.astro（左右栏都会渲染）
+     · 文章元信息之后  src/pages/posts/[...slug].astro 与 src/pages/[...permalink].astro
+   纯装饰：aria-hidden + pointer-events:none，不进 tab 序、不挡点击。 */
+.tech-curve {
+	display: block;
+	width: 100%;
+	height: 22px;
+	pointer-events: none;
+}
+.tech-curve path {
+	fill: none;
+	stroke: var(--tech-curve-stroke);
+	/* viewBox 是 320×60，而 preserveAspectRatio="none" 会把它拉伸到实际宽高，
+     描边因此各向异性变细且宽度不定。non-scaling-stroke 让 1px 真的是 1 像素。 */
+	stroke-width: 1;
+	vector-effect: non-scaling-stroke;
+	stroke-linecap: round;
+}
+.tech-curve--flow path {
+	stroke-dasharray: 6 14;
+	animation: tech-curve-flow 9s linear infinite;
+}
+@keyframes tech-curve-flow {
+	to {
+		stroke-dashoffset: -200;
+	}
+}
+
+
+/* ==========================================================================
+   ❼ 移动端 / 低端设备降级
+   思路与项目既有做法一致（mobile-navbar.css:170 已有“移动端禁用面板 blur”）。
+   1) 窄屏：网格抽稀 + 卡片不做 blur，只留导航栏（导航栏是窄条，成本最低）
+   2) 不支持 backdrop-filter：换成不透明底，保证可读性
+   3) prefers-reduced-transparency：Safari 的“降低透明度”开关，尊重它
+   4) prefers-reduced-motion：停掉曲线流动与悬停位移
+   ========================================================================== */
+
+@media (max-width: 768px) {
+	:root {
+		/* 抽稀：细线 48px、主线 240px，点阵随之变稀；手机屏上原密度会像噪点 */
+		--tech-grid-size: 48px;
+		--tech-grid-major: 240px;
+		--tech-grid-line: rgb(120 170 255 / 0.04);
+		--tech-grid-line-major: rgb(120 170 255 / 0.07);
+		--tech-dot: rgb(150 190 255 / 0.07);
+	}
+
+	/* 移动端卡片不做模糊，改用近似不透明底（视觉几乎无差，省掉大量重绘） */
+	:root.dark .card-base,
+	:root.dark .card-base .card-base,
+	:root.dark .glass-tech {
+		background: color-mix(in srgb, var(--tech-page-bg) 92%, white);
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	/* 装饰性曲线在窄屏容易糊，直接不显示（含已插入组件的那条流动曲线） */
+	.tech-curve,
+	.tech-curve-top::before,
+	.tech-curve-bottom::after {
+		display: none;
+	}
+}
+
+/* 不支持 backdrop-filter（含旧 Safari / 部分安卓 WebView）→ 不透明兜底 */
+@supports not (
+	(backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+	:root.dark .card-base,
+	:root.dark .glass-tech,
+	:root.dark
+		:is(
+			.dropdown-content,
+			#nav-menu-panel,
+			#mobile-toc-panel,
+			#display-setting,
+			#search-panel,
+			.float-panel
+		) {
+		background: color-mix(in srgb, var(--tech-page-bg) 88%, white);
+	}
+}
+
+/* Safari / 系统级“降低透明度” */
+@media (prefers-reduced-transparency: reduce) {
+	:root.dark .card-base,
+	:root.dark .glass-tech,
+	:root.dark body #navbar {
+		background: color-mix(in srgb, var(--tech-page-bg) 92%, white);
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+}
+
+/* 尊重“减少动态效果”（比项目既有的 animation-enhancements.css 更保守） */
+@media (prefers-reduced-motion: reduce) {
+	.tech-curve--flow path {
+		animation: none;
+		stroke-dasharray: none;
+	}
+	:root.dark .card-base:hover {
+		box-shadow: inset 0 0 0 1px var(--tech-glass-border);
+	}
+}
+
+
+/* ==========================================================================
+   ❽ 附：两个可选增强（默认不启用，按需放开）
+   ========================================================================== */
+
+/* 想让浅色模式也用毛玻璃，把下面这段取消注释。
+   前提：浅色模式的文字对比度必须复测（CI 有 a11y ≥ 0.9 的门禁）。 */
+/*
+:root:not(.dark) .card-base {
+	background: rgb(255 255 255 / 0.6);
+	box-shadow: inset 0 0 0 1px rgb(15 23 42 / 0.06);
+	backdrop-filter: var(--tech-glass-blur);
+	-webkit-backdrop-filter: var(--tech-glass-blur);
+}
+*/
+
+/* 想要 Tailwind 工具类版缓动（如 class="ease-out-tech"）：
+   把下面两行加进 src/styles/main.css 的 @theme 块，
+   Tailwind v4 才会生成 ease-out-tech / ease-ui 工具类。
+   （不建议写在本文件里：@theme 需要由 Tailwind 本体处理，
+     经 postcss-import 内联后的处理顺序不保证，容易静默失效。）
+@theme {
+  --ease-out-tech: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-ui: cubic-bezier(0.4, 0, 0.2, 1);
+}
+*/
+
+
+/* ==========================================================================
+   ❾ 类名/路径自查方法（不确定时照这个查，别猜）
+   --------------------------------------------------------------------------
+   查组件用的类名：
+     rg -n 'class[:=]' src/components/widgets/common/WidgetLayout.astro
+     rg -n 'card-base' src/styles/main.css            # 看基类定义
+   查某个类被谁用：
+     rg -n 'float-panel' src/                          # 全部引用点
+   查导航/面板的变量来源：
+     rg -n -- '--nav-(bg|blur|shadow)|--panel-(bg|blur)' src/styles/
+   查页面结构 / 首页入口：
+     ls src/pages/                                     # 无 index.astro，首页是 [...page].astro
+   查主题深浅色判定：
+     rg -n 'root\.dark|html\.dark|DEFAULT_THEME' src/
+   改完必须复测（CI 有门禁，见 .github/workflows/deploy.yml）：
+     corepack pnpm check && corepack pnpm lint && corepack pnpm test
+     CODEBUDDY_SAFE_DELETE_ENABLED=0 corepack pnpm build
+     corepack pnpm lhci autorun        # a11y / best-practices / seo 必须 ≥ 0.9
+   ========================================================================== */

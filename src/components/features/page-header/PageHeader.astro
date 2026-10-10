@@ -4,21 +4,40 @@ import type { PageHeaderProps } from "./types";
 const {
 	title,
 	subtitle,
+	eyebrow,
 	class: className = "",
 } = Astro.props as PageHeaderProps;
 ---
 
+<!-- 「标签 + 标题 + 细线」三段式；eyebrow / subtitle 都可选 -->
 <div class={`dot-grid flex flex-col items-start justify-center mb-8 ${className}`}>
-	<h1
-		class="text-4xl font-bold text-black/90 dark:text-white/90 mb-2 relative
-			before:w-1 before:h-8 before:rounded-md before:bg-[var(--primary)]
-			before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-4"
-	>
-		{title}
-	</h1>
+	{
+		eyebrow && (
+			<p class="mb-3 flex items-center gap-2 text-[0.7rem] font-semibold tracking-[0.18em] uppercase text-[var(--primary)]/80">
+				<span
+					class="inline-block h-px w-6 bg-[var(--primary)]/40"
+					aria-hidden="true"
+				/>
+				{eyebrow}
+			</p>
+		)
+	}
+	<div class="flex w-full items-center gap-4">
+		<h1
+			class="text-4xl font-bold text-black/90 dark:text-white/90 relative
+				before:w-1 before:h-8 before:rounded-md before:bg-[var(--primary)]
+				before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-4"
+		>
+			{title}
+		</h1>
+		<span
+			class="h-px min-w-8 flex-1 bg-gradient-to-r from-[var(--line-color)] to-transparent"
+			aria-hidden="true"
+		/>
+	</div>
 	{
 		subtitle && (
-			<p class="text-lg text-black/60 dark:text-white/60">{subtitle}</p>
+			<p class="mt-2 text-lg text-black/60 dark:text-white/60">{subtitle}</p>
 		)
 	}
 </div>

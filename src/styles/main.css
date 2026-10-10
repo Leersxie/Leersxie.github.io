@@ -13,6 +13,8 @@
 @import "./gradient-buttons.css";
 /* 导入 Banner 和网格布局样式 */
 @import "./banner.css";
+/* 科技感皮肤：毛玻璃 / 蓝图网格 + 点阵 / 极细曲线 / 统一缓动（放末尾以覆盖缓动声明） */
+@import "./custom-tech.css";
 /* 加密内容样式已移除，现在直接使用非加密文章的样式 */
 
 @plugin "@tailwindcss/typography";
