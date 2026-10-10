@@ -56,8 +56,9 @@ const BG_RADIUS_RATIO = 0.12;
  * 各值为「相对内容包围盒」的比例，是为当前这张图调的；换图后可能需要微调。
  */
 const MARK_CROPS = {
-	head: { l: 0.02, t: 0, w: 0.44, h: 0.4 },
-	x: { l: 0.5, t: 0.3, w: 0.5, h: 0.7 },
+	// 2026-10-10 换图后重调（新图：角色头+手在左上、X 在右下，爱心与星形是装饰）
+	head: { l: 0.02, t: 0, w: 0.44, h: 0.58 },
+	x: { l: 0.48, t: 0.42, w: 0.44, h: 0.56 },
 	full: { l: 0, t: 0, w: 1, h: 1 },
 };
 const markArg = process.argv.find((a) => a.startsWith("--mark="));
@@ -235,13 +236,28 @@ async function main() {
 	// 注意：sharp 的 trimOffsetLeft/Top 是「负值」约定，实际偏移要取反
 	const offL = -(trimmed.info.trimOffsetLeft ?? 0);
 	const offT = -(trimmed.info.trimOffsetTop ?? 0);
-	const markTrimmed = await sharp(SOURCE)
+
+	/* ⚠️ extract 与 trim 必须分两步（2026-10-10 实测修正）。
+	   写进同一个 pipeline 时，sharp 会**先 trim 整图、再用原始坐标 extract**，
+	   于是裁切位置整体偏移（偏移量正好是刚刚被 trim 掉的边距），
+	   越界时还会直接抛 `extract_area: bad extract area`。
+	   旧图标的导航栏标记就是被这个 bug 裁坏的（头部被切、右侧混入 X 的碎片）。
+	   下面同时把区域钳制在源图边界内，避免 l + w 略大于 1 时越界。 */
+	const mkLeft = Math.max(0, Math.min(cw - 1, Math.round(markFrac.l * cw)));
+	const mkTop = Math.max(0, Math.min(ch - 1, Math.round(markFrac.t * ch)));
+	const markRegion = await sharp(SOURCE)
 		.extract({
-			left: Math.round(offL + markFrac.l * cw),
-			top: Math.round(offT + markFrac.t * ch),
-			width: Math.round(markFrac.w * cw),
-			height: Math.round(markFrac.h * ch),
+			left: offL + mkLeft,
+			top: offT + mkTop,
+			width: Math.max(1, Math.min(cw - mkLeft, Math.round(markFrac.w * cw))),
+			height: Math.max(
+				1,
+				Math.min(ch - mkTop, Math.round(markFrac.h * ch)),
+			),
 		})
+		.png()
+		.toBuffer();
+	const markTrimmed = await sharp(markRegion)
 		.trim({ threshold: 1 })
 		.toBuffer({ resolveWithObject: true });
 	const markSide = Math.ceil(

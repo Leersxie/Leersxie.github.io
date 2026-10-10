@@ -334,47 +334,15 @@ a {
 
 
 /* ==========================================================================
-   ❻ 极细 SVG 曲线装饰（零标记版）
-   用 data-URI 画一条 1px 曲线，贴在容器顶部或底边。
-   用法：给元素加 class="tech-curve-top"（顶部）或 class="tech-curve-bottom"（分割处）。
-   参考落点：侧栏顶部（src/components/layout/SidebarColumn.astro 的容器）、
-             文章元信息与正文之间的分割线（src/pages/posts/[...slug].astro）。
-   SVG 里用 rgb() 而不是 #hex，省掉 data-URI 里 %23 转义，可读性好很多。
-   ========================================================================== */
-
-.tech-curve-top,
-.tech-curve-bottom {
-	position: relative;
-}
-
-.tech-curve-top::before,
-.tech-curve-bottom::after {
-	content: "";
-	position: absolute;
-	left: 0;
-	right: 0;
-	height: 22px;
-	pointer-events: none;
-	background-repeat: no-repeat;
-	background-size: 100% 100%;
-	opacity: 0.9;
-}
-
-.tech-curve-top::before {
-	top: -11px;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 60' preserveAspectRatio='none'%3E%3Cpath d='M0 46C40 46 56 14 96 14S152 46 192 46S248 14 288 14S304 26 320 26' fill='none' stroke='rgb(120,170,255)' stroke-opacity='0.35' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
-}
-
-.tech-curve-bottom::after {
-	bottom: -11px;
-	/* 翻转一下，和顶部那条不重样 */
-	transform: scaleY(-1);
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 60' preserveAspectRatio='none'%3E%3Cpath d='M0 22C32 22 48 50 96 50S160 18 208 18S288 44 320 44' fill='none' stroke='rgb(120,170,255)' stroke-opacity='0.3' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
-}
-
-/* —— 流动版曲线：已实际插入组件（不再是「待贴的片段」）。两个落点：
+   ❻ 极细 SVG 曲线装饰
+   只用「流动版」：内联 <svg class="tech-curve tech-curve--flow">，落点两处 ——
      · 侧栏顶部        src/components/layout/SidebarColumn.astro（左右栏都会渲染）
      · 文章元信息之后  src/pages/posts/[...slug].astro 与 src/pages/[...permalink].astro
+   （原先还有一套纯 CSS data-URI 的静态版 `.tech-curve-top` / `.tech-curve-bottom`，
+     但没有任何元素使用过，属死代码，2026-10-10 已删除；需要极简静态版可从 git 历史取回。）
+   ========================================================================== */
+
+/* —— 流动版曲线 ——
    纯装饰：aria-hidden + pointer-events:none，不进 tab 序、不挡点击。 */
 .tech-curve {
 	display: block;
@@ -430,10 +398,8 @@ a {
 		-webkit-backdrop-filter: none;
 	}
 
-	/* 装饰性曲线在窄屏容易糊，直接不显示（含已插入组件的那条流动曲线） */
-	.tech-curve,
-	.tech-curve-top::before,
-	.tech-curve-bottom::after {
+	/* 装饰性曲线在窄屏容易糊，直接不显示 */
+	.tech-curve {
 		display: none;
 	}
 }

@@ -155,6 +155,33 @@ const isIndexablePage = (pageUrl) => {
 	return !nonIndexablePrefixes.some((prefix) => pathname.startsWith(prefix));
 };
 
+/**
+ * 把 Markdown 正文里的一级标题降为二级（在 remark / mdast 层处理）。
+ *
+ * 为什么需要：文章页与功能页的 <h1> 已经由**页面标题**承担 ——
+ * `pages/posts/[...slug].astro` 渲染 `<h1>{title}</h1>`，
+ * `features/page-header/PageHeader.astro` 渲染各功能页标题。
+ * 正文里再出现 `#` 就会让同一页出现两个可见 <h1>
+ * （2026-10-10 实测：`/about/` 与 `/posts/first-blog/` 都是 2 个可见 h1）。
+ *
+ * 放在 remark 而不是 rehype：这样 Astro 的 `headings`（右侧目录数据）
+ * 也拿到降级后的深度，目录层级与视觉一致。
+ * 注册在 remarkPlugins 的**第一位**，让后面的 remarkSectionize 按新深度分节。
+ *
+ * 不引入依赖：只遍历 mdast 改 depth。
+ */
+const remarkDemoteBodyH1 = () => (tree) => {
+	const walk = (node) => {
+		if (node.type === "heading" && node.depth === 1) {
+			node.depth = 2;
+		}
+		if (Array.isArray(node.children)) {
+			node.children.forEach(walk);
+		}
+	};
+	walk(tree);
+};
+
 // https://astro.build/config
 export default defineConfig({
 	site: siteConfig.siteURL,
@@ -247,6 +274,8 @@ export default defineConfig({
 	],
 	markdown: {
 		remarkPlugins: [
+			// 必须放第一位：先把正文 h1 降为 h2，后面的插件按新深度处理
+			remarkDemoteBodyH1,
 			remarkMath,
 			remarkContent,
 			remarkFixGithubAdmonitions,
