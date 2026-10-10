@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import sitemap from "@astrojs/sitemap";
 import svelte, { vitePreprocess } from "@astrojs/svelte";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
@@ -17,7 +20,7 @@ import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 
-import { siteConfig } from "./src/config.ts";
+import { permalinkConfig, siteConfig } from "./src/config.ts";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
@@ -46,12 +49,104 @@ const FEATURE_PAGE_ROUTES = {
 	devices: "/devices/",
 };
 
+const POSTS_DIR = path.resolve("./src/content/posts");
+
+/**
+ * 收集「兼容旧链接的副本页」路径前缀。
+ *
+ * 与 `src/pages/posts/[...slug].astro` 的 noindex 判据同源：使用根路径 permalink
+ * 或 alias 的文章，其 `/posts/<文件>` 页只是副本，规范地址在别处，因此不该进 sitemap。
+ * 两处判据必须保持一致，否则会重演「提交了却禁止抓取」的自相矛盾。
+ *
+ * 这里读不到 content 集合（config 阶段没有 astro:content），所以直接扫描 frontmatter。
+ * 漏判的失败模式是良性的：最坏只是 sitemap 里多列一条带 noindex 的地址，不会误删应收录的页面。
+ */
+/** 递归列出 src/content/posts 下所有 .md 的相对路径（与内容集合的递归 glob 一致） */
+const listPostFiles = (dir, prefix = "") => {
+	let dirents = [];
+	try {
+		dirents = fs.readdirSync(dir, { withFileTypes: true });
+	} catch {
+		return [];
+	}
+
+	const files = [];
+	for (const dirent of dirents) {
+		const relative = prefix ? `${prefix}/${dirent.name}` : dirent.name;
+		if (dirent.isDirectory()) {
+			files.push(...listPostFiles(path.join(dir, dirent.name), relative));
+		} else if (relative.endsWith(".md")) {
+			files.push(relative);
+		}
+	}
+	return files;
+};
+
+const collectNonCanonicalPostPrefixes = () => {
+	// 全局 permalink 开启时，所有文章都以根路径为规范地址，`/posts/` 下全是副本
+	if (permalinkConfig.enable) {
+		return ["/posts/"];
+	}
+
+	const prefixes = [];
+
+	for (const relative of listPostFiles(POSTS_DIR)) {
+		let raw = "";
+		try {
+			raw = fs.readFileSync(path.join(POSTS_DIR, relative), "utf8");
+		} catch {
+			continue;
+		}
+		// 没有 frontmatter 的文件不参与判断（避免把正文里的同名字符串当成配置）
+		if (!raw.startsWith("---")) {
+			continue;
+		}
+
+		const frontmatter = raw.split(/^---\s*$/m)[1] ?? "";
+		const readValue = (key) => {
+			const matched = frontmatter.match(
+				new RegExp(`^${key}:\\s*(.+?)\\s*$`, "m"),
+			);
+			if (!matched) {
+				return "";
+			}
+			return matched[1]
+				// 先去掉 YAML 行尾注释：否则 `permalink: # 说明` 会被误判成「有 permalink」，
+				// 那会导致页面可索引却被 sitemap 排除 —— 唯一有害的分叉方向
+				.replace(/\s+#.*$/, "")
+				.replace(/^['"]|['"]$/g, "")
+				.replace(/^\/+|\/+$/g, "")
+				.trim();
+		};
+
+		// 与 removeFileExtension(entry.id) 等价：只去掉 .md，保留目录层级。
+		// 不要把 `<dir>/index.md` 折成 `<dir>`：那会让前缀 `/posts/<dir>/` 连带
+		// 排除同目录下本应收录的其它页面（如 /posts/<dir>/other/）。
+		const slug = relative.replace(/\.md$/, "");
+
+		if (readValue("permalink")) {
+			// 自定义 permalink：规范地址在根路径，默认 slug 页是副本
+			prefixes.push(`/posts/${slug}/`);
+			continue;
+		}
+
+		const alias = readValue("alias").replace(/^posts\//, "");
+		if (alias) {
+			// alias 副本（与 src/utils/post-url.ts 的归一化方式保持一致）
+			prefixes.push(`/posts/${alias}/`);
+		}
+	}
+
+	return prefixes;
+};
+
 const nonIndexablePrefixes = [
 	"/api/",
 	"/og/",
 	...Object.entries(FEATURE_PAGE_ROUTES)
 		.filter(([key]) => !siteConfig.featurePages?.[key])
 		.map(([, route]) => route),
+	...collectNonCanonicalPostPrefixes(),
 ];
 
 /** 判断某个页面是否应被 sitemap 收录 */

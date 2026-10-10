@@ -4,12 +4,19 @@ import "@fontsource-variable/jetbrains-mono";
 
 interface Props {
 	class: string;
+	/**
+	 * 是否输出 Pagefind 的正文标记（`data-pagefind-body`），默认 true。
+	 * Pagefind 只索引带该标记的页面；「兼容旧链接」的副本页要传 false，
+	 * 否则同一篇文章会在站内搜索里出现两次（副本页与规范页各一条）。
+	 */
+	pagefindBody?: boolean;
 }
 const className = Astro.props.class;
+const pagefindBody = Astro.props.pagefindBody ?? true;
 ---
 
 <div
-	data-pagefind-body
+	data-pagefind-body={pagefindBody ? true : undefined}
 	class={`prose dark:prose-invert prose-base !max-w-none custom-md ${className}`}
 >
 	<!--<div class="prose dark:prose-invert max-w-none custom-md">-->

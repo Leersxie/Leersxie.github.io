@@ -15,7 +15,11 @@ import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getRelatedPosts, getSortedPosts } from "@utils/content-utils";
-import { hasCustomPermalink, initPostIdMap } from "@utils/permalink-utils";
+import {
+	getPermalinkPath,
+	hasCustomPermalink,
+	initPostIdMap,
+} from "@utils/permalink-utils";
 import { getFileDirFromPath, removeFileExtension } from "@utils/url-utils";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
@@ -47,10 +51,10 @@ export async function getStaticPaths() {
 		// 将 id 转换为 slug（移除扩展名）以匹配路由参数
 		const defaultSlug = removeFileExtension(entry.id);
 
-		// 如果文章有自定义 permalink，不在 /posts/ 下创建路径
-		// 而是通过根目录的 [permalink].astro 处理
+		// 文章有自定义 permalink 时，规范地址由根目录的 [permalink].astro 产出；
+		// 这里仍生成 /posts/<defaultSlug>/，作为「兼容旧链接」的副本页 ——
+		// 副本页会带 noindex，canonical 指向根路径（见下方 isCanonicalPage）。
 		if (hasCustomPermalink(entry)) {
-			// 仍然需要在 /posts/ 下创建默认路径以便兼容旧链接
 			paths.push({
 				params: { slug: defaultSlug },
 				props: { entry },
@@ -58,10 +62,8 @@ export async function getStaticPaths() {
 			continue;
 		}
 
-		// 如果全局 permalink 功能启用，不在 /posts/ 下创建路径
-		// 而是通过根目录的 [permalink].astro 处理
+		// 全局 permalink 启用时同理：规范地址在根路径，这里只产出副本页
 		if (permalinkConfig.enable) {
-			// 仍然保留默认 slug 路径以便兼容旧链接
 			paths.push({
 				params: { slug: defaultSlug },
 				props: { entry },
@@ -168,6 +170,26 @@ if (profileConfig.avatar) {
 // 判断是否为加密文章
 const isEncrypted = !!(entry.data.encrypted && entry.data.password);
 
+// ---- 规范链接（canonical）与收录策略 ----------------------------------------
+// 本路由（/posts/...）产出的是「兼容旧链接」的副本、还是这篇文章的规范页？
+//   ① 文章使用根路径 permalink（自定义 permalink 或全局 permalink 启用）
+//      → 规范地址在根路径，本路由产出的全是副本
+//   ② 本页由 alias 生成 → 规范地址是同篇的默认 /posts/<defaultSlug>/
+//
+// ⚠️ 不能靠比较 slug 来判断：当 `permalink` 的取值与文件名同名时
+// （例如 guestbook.md 声明 permalink: guestbook），Astro.params.slug 与
+// permalink slug 字符串完全相同，会把副本页误判成规范页、noindex 直接失效。
+const defaultSlug = removeFileExtension(entry.id);
+const usesRootPermalink = hasCustomPermalink(entry) || permalinkConfig.enable;
+const isCanonicalPage = !usesRootPermalink && Astro.params.slug === defaultSlug;
+// alias 分支不能复用 getPermalinkPath()：全局 permalink 关闭且有 alias 时，
+// 它返回的就是 alias 自身，会形成自指 canonical。
+const canonicalURL = usesRootPermalink
+	? getPermalinkPath(entry)
+	: isCanonicalPage
+		? undefined
+		: `/posts/${defaultSlug}/`;
+
 // JSON-LD 结构化数据的封面图：跳过 base64 内联图，其余补全为绝对地址
 const jsonLdImage = (() => {
 	const candidate = entry.data.image ? posterCoverUrl : "";
@@ -208,6 +230,8 @@ const jsonLd = {
 	lang={entry.data.lang}
 	keywords={entry.data.tags}
 	coverImage={jsonLdImage}
+	canonicalURL={canonicalURL}
+	noindex={!isCanonicalPage}
 	setOGTypeArticle={true}
 	postSlug={entry.id}
 	headings={headings}
@@ -250,10 +274,11 @@ const jsonLd = {
 				</div>
 			</div>
 
-			<!-- title -->
+			<!-- title。Pagefind 正文标记只在规范页输出：
+			     否则同一篇文章会被站内搜索索引两次（副本页与 permalink 页各一条） -->
 			<div class="relative onload-animation">
 				<h1
-					data-pagefind-body
+					data-pagefind-body={isCanonicalPage ? true : undefined}
 					data-pagefind-weight="10"
 					data-pagefind-meta="title"
 					class="transition w-full block font-bold mb-3
@@ -310,12 +335,18 @@ const jsonLd = {
 						password={entry.data.password}
 						hint={entry.data.passwordHint}
 					>
-						<Markdown class="mb-6 markdown-content onload-animation">
+						<Markdown
+							class="mb-6 markdown-content onload-animation"
+							pagefindBody={isCanonicalPage}
+						>
 							<Content />
 						</Markdown>
 					</Encryptor>
 				) : (
-					<Markdown class="mb-6 markdown-content onload-animation">
+					<Markdown
+						class="mb-6 markdown-content onload-animation"
+						pagefindBody={isCanonicalPage}
+					>
 						<Content />
 					</Markdown>
 				)
