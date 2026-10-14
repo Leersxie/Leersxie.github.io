@@ -101,22 +101,20 @@ export const siteConfig: SiteConfig = {
 	},
 
 	banner: {
+		// 2026-10-11 精简：6 张 → 3 张（保留 1 绚丽夜景 / 2 暗色特写 / 4 明亮风景，
+		// 明暗跨度最大），轮播间隔 3s → 6s。Lighthouse 采集窗口内横幅下载
+		// 从约 1.4MB 降到约 0.7MB；被移除的图同步从 fullscreenWallpaperConfig
+		// 摘除并删除文件（可从 git 历史找回）。
 		src: {
 			desktop: [
 				"/assets/desktop-banner/1.webp",
 				"/assets/desktop-banner/2.webp",
-				"/assets/desktop-banner/3.webp",
 				"/assets/desktop-banner/4.webp",
-				"/assets/desktop-banner/5.webp",
-				"/assets/desktop-banner/6.webp",
 			],
 			mobile: [
 				"/assets/mobile-banner/1.webp",
 				"/assets/mobile-banner/2.webp",
-				"/assets/mobile-banner/3.webp",
 				"/assets/mobile-banner/4.webp",
-				"/assets/mobile-banner/5.webp",
-				"/assets/mobile-banner/6.webp",
 			],
 		},
 
@@ -124,7 +122,7 @@ export const siteConfig: SiteConfig = {
 
 		carousel: {
 			enable: true,
-			interval: 3,
+			interval: 6,
 		},
 
 		waves: {
@@ -225,20 +223,17 @@ export const siteConfig: SiteConfig = {
 };
 
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
+	// 2026-10-11：横幅精简后同步为保留的 3 张，避免引用已删除的文件
 	src: {
 		desktop: [
-			"/assets/desktop-banner/3.webp",
+			"/assets/desktop-banner/1.webp",
+			"/assets/desktop-banner/2.webp",
 			"/assets/desktop-banner/4.webp",
-			"/assets/desktop-banner/5.webp",
-			"/assets/desktop-banner/6.webp",
 		],
 		mobile: [
 			"/assets/mobile-banner/1.webp",
 			"/assets/mobile-banner/2.webp",
-			"/assets/mobile-banner/3.webp",
 			"/assets/mobile-banner/4.webp",
-			"/assets/mobile-banner/5.webp",
-			"/assets/mobile-banner/6.webp",
 		],
 	},
 	position: "center",
