@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
 
-	import { DEFAULT_COVER_URL } from "../constants";
 	import Key from "../../../../i18n/i18nKey";
 	import { i18n } from "../../../../i18n/translation";
+	import { DEFAULT_COVER_URL } from "../constants";
 
 	interface Props {
 		cover: string;

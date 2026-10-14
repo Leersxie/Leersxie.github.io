@@ -1,6 +1,8 @@
 ---
 // 只加载基础的等宽字体，减少加载时间
 import "@fontsource-variable/jetbrains-mono";
+// Tab 代码组（rehype-code-group）的页签样式；交互 client 在 Layout.astro 初始化
+import "rehype-code-group/styles.css";
 
 interface Props {
 	class: string;

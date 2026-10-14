@@ -12,6 +12,7 @@ import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 import { umami } from "oddmisc";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeCodeGroup from "rehype-code-group";
 import rehypeComponents from "rehype-components";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeKatex from "rehype-katex";
@@ -19,6 +20,10 @@ import rehypeSlug from "rehype-slug";
 import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
+
+// 注册 KaTeX 化学式扩展 mhchem（上游 #513）：与 rehype-katex 共用同一 katex 单例，
+// 纯 side-effect import，放这里保证首次渲染前完成注册。
+import "katex/contrib/mhchem";
 
 import { permalinkConfig, siteConfig } from "./src/config.ts";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
@@ -286,6 +291,9 @@ export default defineConfig({
 		],
 		rehypePlugins: [
 			rehypeKatex,
+			// Tab 代码组（上游 #513 采用的 rehype-code-group）：带 tab="标题" 的相邻
+			// 代码块自动合成页签；交互 client 在 Layout.astro 初始化。
+			rehypeCodeGroup,
 			[
 				rehypeExternalLinks,
 				{
@@ -307,6 +315,19 @@ export default defineConfig({
 							AdmonitionComponent(x, y, "important"),
 						caution: (x, y) => AdmonitionComponent(x, y, "caution"),
 						warning: (x, y) => AdmonitionComponent(x, y, "warning"),
+						// 提示块别名（上游 #513 别名表精简版）：常用同义词落到五种基础样式，
+						// 自定义标题仍用 :::note[标题] 的 label 语法
+						info: (x, y) => AdmonitionComponent(x, y, "note"),
+						todo: (x, y) => AdmonitionComponent(x, y, "note"),
+						question: (x, y) => AdmonitionComponent(x, y, "note"),
+						quote: (x, y) => AdmonitionComponent(x, y, "note"),
+						example: (x, y) => AdmonitionComponent(x, y, "tip"),
+						success: (x, y) => AdmonitionComponent(x, y, "tip"),
+						hint: (x, y) => AdmonitionComponent(x, y, "tip"),
+						danger: (x, y) => AdmonitionComponent(x, y, "caution"),
+						error: (x, y) => AdmonitionComponent(x, y, "caution"),
+						failure: (x, y) => AdmonitionComponent(x, y, "caution"),
+						bug: (x, y) => AdmonitionComponent(x, y, "caution"),
 					},
 				},
 			],

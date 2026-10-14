@@ -25,14 +25,22 @@
 		font-size: 0.875rem;
 		background-color: var(--btn-plain-bg-hover);
 		color: var(--btn-content);
-		transition: all 0.2s ease;
+		/* 悬停「描边扩散 + 文字上浮」（视觉方案 P1-10⑤）：不再整块填色，更克制 */
+		transition:
+			transform 0.25s var(--tech-ease-out, ease),
+			box-shadow 0.25s var(--tech-ease-out, ease),
+			color 0.2s ease,
+			background-color 0.2s ease;
 		text-decoration: none;
 		cursor: pointer;
 	}
 
 	.tag-chip:hover {
-		background-color: var(--primary);
-		color: white;
+		transform: translateY(-2px);
+		box-shadow:
+			0 0 0 1.5px var(--primary),
+			0 6px 16px rgb(var(--tech-accent, 120 170 255) / 0.15);
+		color: var(--primary);
 	}
 
 	:global(.dark) .tag-chip {

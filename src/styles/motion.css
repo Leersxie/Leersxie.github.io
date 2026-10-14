@@ -264,6 +264,32 @@
 	}
 }
 
+/* ==================================================================
+   ⑥b 卡片聚光（.spotlight-card，配合 src/scripts/effects/card-spotlight.ts）
+   与 .tilt-card::before 同款指针高光，但**不做 3D 倾斜** —— 文章列表卡片
+   密集，倾斜会引入布局抖动，这里只要「温度」。仅精细指针设备生效。
+   ================================================================== */
+@media (hover: hover) and (pointer: fine) {
+	.spotlight-card::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.28s ease;
+		background: radial-gradient(
+			180px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+			color-mix(in oklch, var(--primary) 14%, transparent),
+			transparent 70%
+		);
+	}
+
+	.spotlight-card:hover::before {
+		opacity: 1;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.card-flow:hover::after {
 		animation: none;

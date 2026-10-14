@@ -415,3 +415,14 @@ const kbdPostUrls = kbdPosts.map((p) => getPostUrl(p));
 <script>
 	import "../scripts/effects/card-tilt.ts";
 </script>
+
+<!-- 卡片聚光跟随（配合 motion.css 的 .spotlight-card） -->
+<script>
+	import "../scripts/effects/card-spotlight.ts";
+</script>
+
+<!-- Tab 代码组交互（rehype-code-group client：事件委托 + MutationObserver，天然兼容 Swup 换页） -->
+<script>
+	import { initCodeGroups } from "rehype-code-group/client";
+	initCodeGroups();
+</script>
