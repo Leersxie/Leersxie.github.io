@@ -8,6 +8,9 @@
  * 3D 倾斜会引入布局抖动，这里只要「温度」。
  */
 
+// 纯副作用模块：显式 export 让它成为模块，避免与其他副作用脚本的顶层声明冲突
+export {};
+
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 
 if (finePointer.matches) {

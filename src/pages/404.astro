@@ -18,6 +18,9 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
 	<div
 		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-96"
 	>
+		<!-- Aurora 氛围底（纯 CSS 渐变，零图片、零请求；404 是少数没有 banner 的页面，
+		     用它替代纯色底提供层次。pointer-events:none + aria-hidden，不干扰交互） -->
+		<div class="aurora-bg" aria-hidden="true"></div>
 		<div
 			class="card-base z-10 px-9 py-12 relative w-full flex flex-col items-center justify-center text-center"
 		>
@@ -73,6 +76,77 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
 </MainGridLayout>
 
 <style>
+	/* —— Aurora 氛围底：两团缓慢漂移的模糊光斑，纯 CSS —— */
+	.aurora-bg {
+		position: absolute;
+		inset: 0;
+		overflow: hidden;
+		pointer-events: none;
+	}
+
+	.aurora-bg::before,
+	.aurora-bg::after {
+		content: "";
+		position: absolute;
+		border-radius: 50%;
+		filter: blur(60px);
+		opacity: 0.3;
+	}
+
+	.aurora-bg::before {
+		left: -12%;
+		top: -22%;
+		width: 62%;
+		aspect-ratio: 1;
+		background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+		animation: aurora-drift-a 18s var(--tech-ease-ui, ease-in-out) infinite
+			alternate;
+	}
+
+	.aurora-bg::after {
+		right: -10%;
+		bottom: -20%;
+		width: 54%;
+		aspect-ratio: 1;
+		background: radial-gradient(
+			circle,
+			rgb(var(--tech-accent, 120 170 255)) 0%,
+			transparent 70%
+		);
+		animation: aurora-drift-b 24s var(--tech-ease-ui, ease-in-out) infinite
+			alternate;
+	}
+
+	:global(.dark) .aurora-bg::before,
+	:global(.dark) .aurora-bg::after {
+		opacity: 0.24;
+	}
+
+	@keyframes aurora-drift-a {
+		from {
+			transform: translate3d(0, 0, 0) scale(1);
+		}
+		to {
+			transform: translate3d(12%, 9%, 0) scale(1.16);
+		}
+	}
+
+	@keyframes aurora-drift-b {
+		from {
+			transform: translate3d(0, 0, 0) scale(1.08);
+		}
+		to {
+			transform: translate3d(-10%, -7%, 0) scale(0.94);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.aurora-bg::before,
+		.aurora-bg::after {
+			animation: none;
+		}
+	}
+
 	/* 添加一些动画效果 */
 	.card-base {
 		animation: fadeInUp 0.6s ease-out;

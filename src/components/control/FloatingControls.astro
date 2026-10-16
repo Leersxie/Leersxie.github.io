@@ -19,22 +19,22 @@ const { headings = [] } = Astro.props;
 		musicPlayerConfig.enable &&
 			musicPlayerConfig.showFloatingPlayer &&
 			(musicPlayerConfig.floatingEntryMode ?? "default") === "fab" && (
-				<div class="floating-control-item" data-control-key="music">
+				<div class="floating-control-item" data-control-key="music" data-magnetic>
 					<MusicFabButton client:idle />
 				</div>
 			)
 	}
 	{
 		siteConfig.toc.enable && siteConfig.toc.floating && (
-			<div class="floating-control-item" data-control-key="toc">
+			<div class="floating-control-item" data-control-key="toc" data-magnetic>
 				<FloatingTOC headings={headings} />
 			</div>
 		)
 	}
-	<div class="floating-control-item" data-control-key="home">
+	<div class="floating-control-item" data-control-key="home" data-magnetic>
 		<BackToHome />
 	</div>
-	<div class="floating-control-item" data-control-key="top">
+	<div class="floating-control-item" data-control-key="top" data-magnetic>
 		<BackToTop />
 	</div>
 </div>
@@ -71,10 +71,14 @@ const { headings = [] } = Astro.props;
 		opacity: 1;
 		transform: translateY(0) scale(1);
 		transform-origin: bottom right;
+		/* 磁性偏移走独立的 translate 属性（与 transform 叠加，互不覆盖），
+		   变量由 scripts/effects/magnetic.ts 写入 */
+		translate: var(--magnetic-x, 0px) var(--magnetic-y, 0px);
 		transition:
 			max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1),
 			opacity 0.2s ease,
 			transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+			translate 0.3s cubic-bezier(0.16, 1, 0.3, 1),
 			margin-top 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 		overflow: visible;
 	}
@@ -87,6 +91,7 @@ const { headings = [] } = Astro.props;
 		max-height: 0;
 		opacity: 0;
 		transform: translateY(0.25rem) scale(0.92);
+		translate: 0px 0px;
 		margin-top: 0 !important;
 		pointer-events: none;
 	}

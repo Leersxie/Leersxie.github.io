@@ -26,8 +26,10 @@ import remarkSectionize from "remark-sectionize";
 import "katex/contrib/mhchem";
 
 import { permalinkConfig, siteConfig } from "./src/config.ts";
+import { pluginAutoCollapseSections } from "./src/plugins/expressive-code/auto-collapse-sections.mjs";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
+import { rehypeImageGrid } from "./src/plugins/rehype-image-grid.mjs";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
 import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
 import { rehypeImageWidth } from "./src/plugins/rehype-image-width.mjs";
@@ -226,6 +228,8 @@ export default defineConfig({
 		expressiveCode({
 			themes: ["github-light", "github-dark"],
 			plugins: [
+				// 必须排在 collapsibleSections 之前：本插件先给超长代码块补 collapse 属性
+				pluginAutoCollapseSections(),
 				pluginCollapsibleSections(),
 				pluginLineNumbers(),
 				pluginLanguageBadge(),
@@ -349,6 +353,8 @@ export default defineConfig({
 					},
 				},
 			],
+			// 连续图片自动网格（在 rehypeImageWidth 之前跑，避免宽度属性干扰判断）
+			rehypeImageGrid,
 			rehypeImageWidth,
 		],
 	},
