@@ -13,9 +13,21 @@
 	font-display: swap;
 }
 @font-face {
-	font-family: "Space Grotesk";
-	src: url("/fonts/SpaceGrotesk.woff2") format("woff2");
-	font-weight: 300 700;
+	font-family: "Instrument Sans";
+	src: url("/fonts/InstrumentSans-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Instrument Sans";
+	src: url("/fonts/InstrumentSans-SemiBold.woff2") format("woff2");
+	font-weight: 600;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Jost";
+	src: url("/fonts/Jost-Regular.woff2") format("woff2");
+	font-weight: 400;
 	font-display: swap;
 }
 @font-face {
@@ -44,7 +56,7 @@
 	--color-muted: #8b90a0;
 
 	/* --- 字体 --- */
-	--font-body: "Noto Sans SC", system-ui, -apple-system, sans-serif;
+	--font-body: "Jost", "Noto Sans SC", system-ui, sans-serif;
 	--font-display: "Space Grotesk", "Noto Sans SC", system-ui, sans-serif;
 	--font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
 
@@ -395,33 +407,42 @@ body {
 	transition: width 80ms linear;
 }
 
+
+
 /* ==========================================================================
-   科学美学装饰层：曲线描线漂移 + 元素缓浮
+   融球有机色块（ignoredone 动效词汇）+ 英雄彩底面板
    ========================================================================== */
 
-@keyframes sci-dash {
-	to {
-		stroke-dashoffset: -200;
-	}
-}
-
-.sci-dash {
-	stroke-dasharray: 6 10;
-	animation: sci-dash 9s linear infinite;
-}
-
-@keyframes sci-float {
+@keyframes blob-morph {
 	0%,
 	100% {
-		transform: translateY(0);
+		border-radius: 58% 42% 55% 45% / 52% 56% 44% 48%;
 	}
-	50% {
-		transform: translateY(-8px);
+	33% {
+		border-radius: 45% 55% 48% 52% / 60% 42% 58% 40%;
+	}
+	66% {
+		border-radius: 52% 48% 62% 38% / 44% 58% 42% 56%;
 	}
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.sci-dash {
-		animation: none;
-	}
+.blob-morph {
+	animation: blob-morph 14s ease-in-out infinite;
+}
+
+/* 英雄彩底：无论明暗模式，英雄区是一整块蓝紫渐变面板，
+   文字体系切到面板上的薄荷白（ignoredone 分类页做法） */
+.hero-panel {
+	--color-ink: #eef1ff;
+	--color-ink-soft: #aab4e0;
+	--color-muted: #7d88b8;
+	--color-line: rgb(255 255 255 / 0.14);
+	--color-line-strong: rgb(255 255 255 / 0.28);
+	--color-panel: #191b2e;
+	background: linear-gradient(
+		135deg,
+		#141227 0%,
+		#181a30 48%,
+		#1b2140 100%
+	);
 }

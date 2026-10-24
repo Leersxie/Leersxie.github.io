@@ -4,7 +4,6 @@ import DecryptText from "@/components/DecryptText";
 import HeroVisual from "@/components/HeroVisual";
 import Reveal from "@/components/Reveal";
 import RollingNumber from "@/components/RollingNumber";
-import SciDecor from "@/components/SciDecor";
 import TypeLine from "@/components/TypeLine";
 import { docId, getPosts, postPath, type Post } from "@/lib/posts";
 
@@ -51,15 +50,20 @@ export default async function HomePage() {
 
 	return (
 		<div>
-			{/* —— 英雄区：三维档案阵列（CSS 兜底 + Three.js 玻璃接管）—— */}
-			<section className="relative overflow-hidden border-b border-[var(--color-line)]">
-				<HeroVisual labels={posts.map((p) => p.title)} />
+			{/* —— 英雄区：彩底面板（ignoredone 分类页做法）+ 三维档案阵列 —— */}
+			<section className="hero-panel relative overflow-hidden border-b border-[var(--color-line)]">
+				<HeroVisual labels={posts.map((p) => p.title)} forceDark />
 				<div className="os-grid absolute inset-0 opacity-60" aria-hidden />
+				{/* 融球有机色块（ignoredone 动效词汇：软性运动） */}
+				<div
+					className="blob-morph absolute -right-16 top-10 h-64 w-64 bg-gradient-to-br from-[var(--color-primary)]/25 to-[var(--color-indigo-line)]/15 blur-[2px]"
+					aria-hidden
+				/>
 				{/* 几何装饰：四角十字 + 角注 */}
-				<span className="absolute left-4 top-4 font-mono text-xs text-[var(--color-line-strong)]" aria-hidden>+</span>
-				<span className="absolute right-4 top-4 font-mono text-xs text-[var(--color-line-strong)]" aria-hidden>+</span>
-				<span className="absolute bottom-4 left-4 font-mono text-xs text-[var(--color-line-strong)]" aria-hidden>+</span>
-				<span className="absolute bottom-4 right-4 font-mono text-xs text-[var(--color-line-strong)]" aria-hidden>+</span>
+				<span className="absolute left-4 top-4 font-mono text-xs text-white/25" aria-hidden>+</span>
+				<span className="absolute right-4 top-4 font-mono text-xs text-white/25" aria-hidden>+</span>
+				<span className="absolute bottom-4 left-4 font-mono text-xs text-white/25" aria-hidden>+</span>
+				<span className="absolute bottom-4 right-4 font-mono text-xs text-white/25" aria-hidden>+</span>
 				<p className="mono-tag absolute right-8 top-5 hidden md:block">SYS.VER 2.0 // STABLE</p>
 				<p className="mono-tag absolute bottom-5 left-8 hidden md:block">ARRAY.ACTIVE · 15 UNITS</p>
 				<div className="relative mx-auto max-w-5xl px-6 pb-14 pt-16">
@@ -70,14 +74,14 @@ export default async function HomePage() {
 							"读你想读的，剩下的交给时间。",
 						]}
 					/>
-					<h1 className="mt-5 font-display text-5xl font-bold tracking-tight md:text-7xl">
+					<h1 className="mt-5 font-display text-5xl font-normal tracking-tight text-white md:text-7xl">
 						RHINE
-						<span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-indigo-line)] bg-clip-text text-transparent">
+						<span className="bg-gradient-to-r from-[var(--color-primary-soft)] to-[#7ea2ff] bg-clip-text text-transparent">
 							{" "}
 							ARCHIVE OS
 						</span>
 					</h1>
-					<p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-ink-soft)]">
+					<p className="mt-3 max-w-xl text-sm leading-relaxed text-[#aab4e0]">
 						{`把思考归档成可以被再次找到的东西。玄学、项目、生活记录，都在这份阵列里。`}
 					</p>
 
@@ -99,18 +103,14 @@ export default async function HomePage() {
 			</section>
 
 			{/* —— 档案阵列 —— */}
-			<section className="relative overflow-hidden">
-				<div className="pointer-events-none absolute inset-0" aria-hidden>
-					<SciDecor variant="hero" />
-				</div>
-				<div className="relative mx-auto max-w-5xl px-6 py-12">
-					<div className="mb-6 flex items-center justify-between">
-						<div>
-							<p className="mono-tag">// ARCHIVE ARRAY</p>
-							<h2 className="font-display text-xl font-bold">
-								<DecryptText text="档案阵列" autoplay />
-							</h2>
-						</div>
+			<section className="mx-auto max-w-5xl px-6 py-12">
+				<div className="mb-6 flex items-center justify-between">
+					<div>
+						<p className="mono-tag">// ARCHIVE ARRAY</p>
+						<h2 className="font-display text-xl font-bold">
+							<DecryptText text="档案阵列" autoplay />
+						</h2>
+					</div>
 					<Link
 						href="/archive/"
 						className="font-mono text-xs text-[var(--color-muted)] transition hover:text-[var(--color-primary)]"
@@ -129,7 +129,6 @@ export default async function HomePage() {
 							暂无公开档案。NO RECORDS YET.
 						</p>
 					)}
-				</div>
 				</div>
 			</section>
 		</div>

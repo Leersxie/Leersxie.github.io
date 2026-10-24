@@ -14,13 +14,24 @@ const ArchiveArrayGL = dynamic(() => import("@/components/ArchiveArrayGL"), {
  * 英雄视觉编排：CSS 3D 阵列作底（立即可见、无条件可用），
  * 能力检测通过的桌面设备上，Three.js 玻璃阵列淡入接管；
  * 移动端 / 触屏 / reduced-motion / WebGL 失败 → 永远停在 CSS 版本。
+ * forceDark：英雄彩底面板（.hero-panel）恒为深底，GL 场景按暗色渲染。
  */
-export default function HeroVisual({ labels }: { labels: string[] }) {
-	const [dark, setDark] = useState(true);
+export default function HeroVisual({
+	labels,
+	forceDark = false,
+}: {
+	labels: string[];
+	forceDark?: boolean;
+}) {
+	const [dark, setDark] = useState(forceDark);
 	const [capable, setCapable] = useState(false);
 	const [glVisible, setGlVisible] = useState(false);
 
 	useEffect(() => {
+		if (forceDark) {
+			setDark(true);
+			return;
+		}
 		const sync = () =>
 			setDark(document.documentElement.classList.contains("dark"));
 		sync();
@@ -29,7 +40,10 @@ export default function HeroVisual({ labels }: { labels: string[] }) {
 			attributes: true,
 			attributeFilter: ["class"],
 		});
+		return () => mo.disconnect();
+	}, [forceDark]);
 
+	useEffect(() => {
 		const ok =
 			window.matchMedia("(pointer: fine)").matches &&
 			window.innerWidth >= 768 &&
@@ -40,10 +54,8 @@ export default function HeroVisual({ labels }: { labels: string[] }) {
 			return () => {
 				clearTimeout(t1);
 				clearTimeout(t2);
-				mo.disconnect();
 			};
 		}
-		return () => mo.disconnect();
 	}, []);
 
 	return (

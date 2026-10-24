@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import Giscus from "@/components/Giscus";
+import CoverArt from "@/components/CoverArt";
 import ReadingProgress from "@/components/ReadingProgress";
 import { docId, getPosts, getPostBySlug, postPath } from "@/lib/posts";
 
@@ -80,19 +81,7 @@ export default async function PostPage({
 					className="mb-10 w-full rounded-xl border border-[var(--color-line)]"
 				/>
 			) : (
-				<div className="os-grid relative mb-10 h-28 overflow-hidden rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]">
-					<div className="absolute inset-0 flex items-center justify-between px-6">
-						<div>
-							<p className="mono-tag mb-1">ARCHIVED DOCUMENT</p>
-							<p className="font-display text-lg font-bold tracking-wide text-[var(--color-ink-soft)]">
-								{docId(post)}
-							</p>
-						</div>
-						<p className="font-display text-4xl font-bold text-[var(--color-line-strong)]">
-							{post.category}
-						</p>
-					</div>
-				</div>
+				<CoverArt slug={post.slug} title={post.title} published={post.published} />
 			)}
 
 			<div

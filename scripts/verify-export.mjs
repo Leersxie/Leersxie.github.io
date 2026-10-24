@@ -16,7 +16,7 @@ const mustExist = [
 	"rss.xml",
 	"sitemap.xml",
 	"fonts/NotoSansSC-Regular.woff2",
-	"fonts/SpaceGrotesk.woff2",
+	"fonts/InstrumentSans-Regular.woff2",
 	"fonts/JetBrainsMono-Regular.woff2",
 ];
 

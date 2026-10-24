@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import { NAV_ITEMS, SITE, SOCIALS } from "@/lib/site";
 import { isSoundEnabled, playConfirm, playTick, setSoundEnabled } from "@/lib/sound";
-import SciDecor from "@/components/SciDecor";
 
 export interface ShellPost {
 	slug: string;
@@ -322,11 +321,7 @@ export default function AppShell({
 
 	return (
 		<div className="min-h-dvh">
-			{/* 全站科学美学环境层：函数曲线/公式/几何，只在留白处可见 */}
-			<div className="pointer-events-none fixed inset-0 -z-10" aria-hidden>
-				<SciDecor variant="ambient" />
-			</div>
-			<ThemeInitScript />
+				<ThemeInitScript />
 
 			{/* 桌面侧栏 */}
 			<aside
@@ -401,23 +396,76 @@ export default function AppShell({
 
 				<main className="min-h-[calc(100dvh-8rem)]">{children}</main>
 
-				<footer className="border-t border-[var(--color-line)] px-6 py-6">
-					<div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 text-xs text-[var(--color-muted)] sm:flex-row">
-						<p className="font-mono">
-							© 2026 {SITE.name} · {SITE.osName} v2
+				<footer className="border-t border-[var(--color-line)] px-6 pb-8 pt-14">
+					<div className="mx-auto max-w-5xl">
+						{/* 大字站名（ignoredone 的「DESIGN EVERYDAY.」式收束） */}
+						<p className="font-display text-[clamp(2.5rem,7vw,5rem)] font-semibold leading-none tracking-tight">
+							{SITE.name}
+							<span className="text-[var(--color-primary)]">.</span>
 						</p>
-						<p className="font-mono">
-							<a href="/rss.xml" className="hover:text-[var(--color-primary)]">
-								RSS
-							</a>{" "}
-							/{" "}
-							<a
-								href="/sitemap.xml"
-								className="hover:text-[var(--color-primary)]"
-							>
-								SITEMAP
-							</a>
-						</p>
+
+						<div className="mt-10 grid gap-8 sm:grid-cols-3">
+							<div>
+								<p className="mono-tag mb-3">NAVIGATE</p>
+								<ul className="space-y-1.5">
+									{NAV_ITEMS.map((n) => (
+										<li key={n.href}>
+											<Link href={n.href} className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-primary-deep)]">
+												{n.label}
+											</Link>
+										</li>
+									))}
+								</ul>
+							</div>
+							<div>
+								<p className="mono-tag mb-3">RECENT</p>
+								<ul className="space-y-1.5">
+									{posts.slice(0, 4).map((p) => (
+										<li key={p.slug}>
+											<Link
+												href={p.slug === "guestbook" ? "/guestbook/" : `/posts/${p.slug}/`}
+												className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-primary-deep)]"
+											>
+												{p.title}
+											</Link>
+										</li>
+									))}
+								</ul>
+							</div>
+							<div>
+								<p className="mono-tag mb-3">CONNECT</p>
+								<ul className="space-y-1.5">
+									{SOCIALS.map((s) => (
+										<li key={s.label}>
+											<a
+												href={s.href}
+												target="_blank"
+												rel="noreferrer"
+												className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-primary-deep)]"
+											>
+												{s.label} ↗
+											</a>
+										</li>
+									))}
+									<li>
+										<a href="/rss.xml" className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-primary-deep)]">
+											RSS ↗
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+						<div className="mt-12 flex flex-col items-start justify-between gap-2 border-t border-[var(--color-line)] pt-5 text-xs text-[var(--color-muted)] sm:flex-row sm:items-center">
+							<p className="font-mono">
+								© 2026 {SITE.name} · {SITE.osName} v2
+							</p>
+							<p className="font-mono">
+								<a href="/sitemap.xml" className="hover:text-[var(--color-primary)]">
+									SITEMAP
+								</a>
+							</p>
+						</div>
 					</div>
 				</footer>
 			</div>

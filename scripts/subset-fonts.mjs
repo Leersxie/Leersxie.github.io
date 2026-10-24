@@ -46,8 +46,18 @@ const JOBS = [
 		family: "cjk",
 	},
 	{
-		src: "SpaceGrotesk-VF.ttf",
-		out: "SpaceGrotesk.woff2",
+		src: "instrument-sans-v4-latin-regular.ttf",
+		out: "InstrumentSans-Regular.woff2",
+		family: "latin",
+	},
+	{
+		src: "instrument-sans-v4-latin-600.ttf",
+		out: "InstrumentSans-SemiBold.woff2",
+		family: "latin",
+	},
+	{
+		src: "jost-v20-latin-regular.ttf",
+		out: "Jost-Regular.woff2",
 		family: "latin",
 	},
 	{
