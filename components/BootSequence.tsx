@@ -39,7 +39,7 @@ export default function BootSequence() {
 				sessionStorage.setItem("raos-boot", "1");
 			} catch {}
 			document.body.style.overflow = "";
-			import("animejs").then(({ animate, stagger }) => {
+			import("animejs").then(({ animate }) => {
 				animate(el, {
 					translateY: ["0%", "-100%"],
 					duration: 520,
@@ -52,7 +52,7 @@ export default function BootSequence() {
 		window.addEventListener("keydown", onSkip);
 		el.addEventListener("pointerdown", onSkip);
 
-		import("animejs").then(({ animate, stagger }) => {
+		import("animejs").then(({ animate, createDrawable, stagger }) => {
 			// 启动日志逐行浮现
 			animate(".boot-line", {
 				opacity: [0, 1],
@@ -61,9 +61,9 @@ export default function BootSequence() {
 				duration: 420,
 				ease: "outExpo",
 			});
-			// LX 标识描线（pathLength=100 归一化）
-			animate(".boot-logo path", {
-				strokeDashoffset: [100, 0],
+			// LX 标识描线（B5：createDrawable 自动管理 dash 与总长，免归一化 hack）
+			animate(createDrawable(".boot-logo path"), {
+				draw: ["0 0", "0 1"],
 				delay: stagger(160, { start: 420 }),
 				duration: 640,
 				ease: "outQuart",
@@ -104,8 +104,6 @@ export default function BootSequence() {
 					d="M32 4 58 18v28L32 60 6 46V18z"
 					stroke="var(--color-brand)"
 					strokeWidth="2"
-					pathLength={100}
-					strokeDasharray={100}
 				/>
 				<path
 					d="M22 26l8 12 12-18"
@@ -113,8 +111,6 @@ export default function BootSequence() {
 					strokeWidth="2.5"
 					strokeLinecap="round"
 					strokeLinejoin="round"
-					pathLength={100}
-					strokeDasharray={100}
 				/>
 			</svg>
 			<div className="relative space-y-1.5 font-mono text-xs text-[var(--color-ink-soft)]">

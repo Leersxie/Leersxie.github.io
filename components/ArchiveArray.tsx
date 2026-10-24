@@ -16,52 +16,82 @@ export default function ArchiveArray({ labels }: { labels: string[] }) {
 		const wrapper = wrap.current;
 		const pl = plane.current;
 		if (!wrapper || !pl) return;
-		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-		// —— 指针视差（lerp 平滑）——
-		const state = { rx: 58, rz: 0, tx: 58, tz: 0, raf: 0, playing: true };
-		const loop = () => {
-			state.rx += (state.tx - state.rx) * 0.06;
-			state.rz += (state.tz - state.rz) * 0.06;
-			pl.style.transform = `rotateX(${state.rx.toFixed(2)}deg) rotateZ(${state.rz.toFixed(2)}deg)`;
-			if (state.playing) state.raf = requestAnimationFrame(loop);
-		};
-		const onMove = (e: PointerEvent) => {
-			const r = wrapper.getBoundingClientRect();
-			const nx = (e.clientX - r.left) / r.width - 0.5;
-			const ny = (e.clientY - r.top) / r.height - 0.5;
-			state.tz = nx * 10; // 左右摆
-			state.tx = 58 - ny * 8; // 上下俯仰
-		};
-		const onLeave = () => {
-			state.tx = 58;
-			state.tz = 0;
-		};
+		// B5-2：createScope 收敛媒体查询（reduced/desktop），
+		// scope.revert() 统一清理。CSS 漂移动画保持原样（零视觉变化）。
+		let cleanup: (() => void) | undefined;
+		let disposed = false;
 
-		// —— 离屏暂停（含标签页隐藏）——
-		const setPlaying = (v: boolean) => {
-			if (state.playing === v) return;
-			state.playing = v;
-			wrapper.style.setProperty("--array-play", v ? "running" : "paused");
-			if (v) state.raf = requestAnimationFrame(loop);
-			else cancelAnimationFrame(state.raf);
-		};
-		const io = new IntersectionObserver((entries) => {
-			setPlaying(entries[0].isIntersecting && !document.hidden);
-		});
-		const onVis = () => setPlaying(!document.hidden);
-		io.observe(wrapper);
-		document.addEventListener("visibilitychange", onVis);
-		wrapper.addEventListener("pointermove", onMove);
-		wrapper.addEventListener("pointerleave", onLeave);
-		state.raf = requestAnimationFrame(loop);
+		(async () => {
+			const { createScope } = await import("animejs");
+			if (disposed || !wrapper || !pl) return;
+
+			const scope = createScope({
+				root: wrapper,
+				mediaQueries: {
+					reduced: "(prefers-reduced-motion: reduce)",
+					desktop: "(min-width: 768px)",
+				},
+			}).add((self) => {
+				const matches = self?.matches ?? { reduced: false, desktop: true };
+				if (matches.reduced) return; // 减少动态：视差与漂移全停（CSS 层同样静止）
+
+				// —— 指针视差（lerp 平滑）——
+				const state = { rx: 58, rz: 0, tx: 58, tz: 0, raf: 0, playing: true };
+				const loop = () => {
+					state.rx += (state.tx - state.rx) * 0.06;
+					state.rz += (state.tz - state.rz) * 0.06;
+					pl.style.transform = `rotateX(${state.rx.toFixed(2)}deg) rotateZ(${state.rz.toFixed(2)}deg)`;
+					if (state.playing) state.raf = requestAnimationFrame(loop);
+				};
+				const onMove = (e: PointerEvent) => {
+					const r = wrapper.getBoundingClientRect();
+					const nx = (e.clientX - r.left) / r.width - 0.5;
+					const ny = (e.clientY - r.top) / r.height - 0.5;
+					state.tz = nx * 10; // 左右摆
+					state.tx = 58 - ny * 8; // 上下俯仰
+				};
+				const onLeave = () => {
+					state.tx = 58;
+					state.tz = 0;
+				};
+
+				// —— 离屏暂停（含标签页隐藏）——
+				const setPlaying = (v: boolean) => {
+					if (state.playing === v) return;
+					state.playing = v;
+					wrapper.style.setProperty("--array-play", v ? "running" : "paused");
+					if (v) state.raf = requestAnimationFrame(loop);
+					else cancelAnimationFrame(state.raf);
+				};
+				const io = new IntersectionObserver((entries) => {
+					setPlaying(entries[0].isIntersecting && !document.hidden);
+				});
+				const onVis = () => setPlaying(!document.hidden);
+				io.observe(wrapper);
+				document.addEventListener("visibilitychange", onVis);
+				wrapper.addEventListener("pointermove", onMove);
+				wrapper.addEventListener("pointerleave", onLeave);
+				state.raf = requestAnimationFrame(loop);
+
+				cleanup = () => {
+					cancelAnimationFrame(state.raf);
+					io.disconnect();
+					document.removeEventListener("visibilitychange", onVis);
+					wrapper.removeEventListener("pointermove", onMove);
+					wrapper.removeEventListener("pointerleave", onLeave);
+				};
+			});
+
+			cleanup = ((prev) => () => {
+				prev?.();
+				scope.revert();
+			})(cleanup);
+		})();
 
 		return () => {
-			cancelAnimationFrame(state.raf);
-			io.disconnect();
-			document.removeEventListener("visibilitychange", onVis);
-			wrapper.removeEventListener("pointermove", onMove);
-			wrapper.removeEventListener("pointerleave", onLeave);
+			disposed = true;
+			cleanup?.();
 		};
 	}, []);
 
