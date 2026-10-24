@@ -6,11 +6,13 @@ export const SITE = {
 } as const;
 
 export const NAV_ITEMS = [
-	{ href: "/", label: "首页", tag: "HOME" },
-	{ href: "/archive/", label: "归档", tag: "ARCHIVE" },
-	{ href: "/projects/", label: "项目", tag: "PROJECTS" },
-	{ href: "/friends/", label: "友链", tag: "LINKS" },
-	{ href: "/about/", label: "关于", tag: "ABOUT" },
+	// 板块专属主题色：同系蓝紫→靛→蓝→青家族（学 ignoredone「每板块一套性格色」，
+	// 但限定同族保证品牌统一）。路由切换时 accent 以 800ms 缓动过渡。
+	{ href: "/", label: "首页", tag: "HOME", accent: "#7c5cff" },
+	{ href: "/archive/", label: "归档", tag: "ARCHIVE", accent: "#4f6bff" },
+	{ href: "/projects/", label: "项目", tag: "PROJECTS", accent: "#3d8bff" },
+	{ href: "/friends/", label: "友链", tag: "LINKS", accent: "#2fb8d8" },
+	{ href: "/about/", label: "关于", tag: "ABOUT", accent: "#a06bff" },
 ] as const;
 
 export const SOCIALS = [

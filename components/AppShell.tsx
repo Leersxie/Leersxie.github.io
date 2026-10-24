@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { NAV_ITEMS, SITE, SOCIALS } from "@/lib/site";
 import { isSoundEnabled, playConfirm, playTick, setSoundEnabled } from "@/lib/sound";
@@ -246,6 +246,30 @@ export default function AppShell({
 	const isActive = (href: string) =>
 		href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+	// 板块专属主题色：当前板块的 accent 写入 CSS 变量，
+	// 环境底色 / 激活胶囊 / 强调元素随路由 800ms 缓动过渡
+	const activeItem = NAV_ITEMS.find((n) => isActive(n.href));
+	const accent = activeItem?.accent ?? "#7c5cff";
+
+	// 板块切换缓动：路由变化时主内容 outExpo 上浮淡入
+	const mainRef = useRef<HTMLElement>(null);
+	useEffect(() => {
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		let cancelled = false;
+		import("animejs").then(({ animate }) => {
+			if (cancelled || !mainRef.current) return;
+			animate(mainRef.current, {
+				opacity: [0, 1],
+				y: [14, 0],
+				duration: 550,
+				ease: "outExpo",
+			});
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, [pathname]);
+
 	const sidebarBody = (
 		<>
 			<div className="flex items-center gap-2 px-3 py-4">
@@ -320,7 +344,21 @@ export default function AppShell({
 	);
 
 	return (
-		<div className="min-h-dvh">
+		<div
+			className="min-h-dvh"
+			style={
+				{
+					"--accent": accent,
+					"--accent-dim": `${accent}1f`,
+				} as React.CSSProperties
+			}
+		>
+				{/* 板块主题环境层：底色随当前板块 accent 800ms 缓动过渡 */}
+				<div
+					className="pointer-events-none fixed inset-0 -z-10 transition-colors duration-[800ms] ease-out"
+					style={{ backgroundColor: "var(--accent)" , opacity: 0.05 }}
+					aria-hidden
+				/>
 				<ThemeInitScript />
 
 			{/* 桌面侧栏 */}
@@ -354,7 +392,7 @@ export default function AppShell({
 					<button
 						onClick={() => setDrawer(true)}
 						aria-label="打开菜单"
-						className="rounded-md border border-[var(--color-line)] p-1.5"
+						className="rounded-full border border-[var(--color-line)] p-1.5"
 					>
 						<Icon d="M4 7h16M4 12h16M4 17h16" />
 					</button>
@@ -386,7 +424,7 @@ export default function AppShell({
 						<Clock />
 						<button
 							onClick={() => setPaletteOpen(true)}
-							className="flex items-center gap-2 rounded-md border border-[var(--color-line)] px-2.5 py-1 text-xs text-[var(--color-muted)] transition hover:border-[var(--color-line-strong)] hover:text-[var(--color-ink)]"
+							className="flex items-center gap-2 rounded-full border border-[var(--color-line)] px-3.5 py-1 text-xs text-[var(--color-muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
 						>
 							检索档案
 							<kbd className="font-mono text-[10px]">⌘K</kbd>
@@ -394,7 +432,7 @@ export default function AppShell({
 					</div>
 				</header>
 
-				<main className="min-h-[calc(100dvh-8rem)]">{children}</main>
+				<main ref={mainRef} className="min-h-[calc(100dvh-8rem)]">{children}</main>
 
 				<footer className="border-t border-[var(--color-line)] px-6 pb-8 pt-14">
 					<div className="mx-auto max-w-5xl">

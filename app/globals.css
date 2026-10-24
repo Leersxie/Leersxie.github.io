@@ -154,8 +154,8 @@ body {
 	display: flex;
 	align-items: center;
 	gap: 0.625rem;
-	padding: 0.5rem 0.75rem;
-	border-radius: 0.5rem;
+	padding: 0.5rem 0.875rem;
+	border-radius: 999px;
 	font-size: 0.875rem;
 	color: var(--color-ink-soft);
 	transition:
@@ -167,9 +167,9 @@ body {
 	color: var(--color-ink);
 }
 .nav-item.is-active {
-	background: var(--color-primary-dim);
-	color: var(--color-primary-deep);
-	font-weight: 500;
+	background: var(--accent-dim, var(--color-primary-dim));
+	color: var(--accent, var(--color-primary-deep));
+	font-weight: 600;
 }
 
 /* 档案卡：解密线扫过 + 边框点亮 */
