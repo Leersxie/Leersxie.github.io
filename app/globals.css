@@ -258,14 +258,18 @@ body {
 	color: var(--color-primary-deep);
 }
 .prose-os pre {
-	background: #101218;
-	border: 1px solid var(--color-line);
+	background: #0c0e15;
+	border: 1px solid #232735;
 	border-radius: 0.5rem;
 	padding: 1rem 1.25rem;
 	overflow-x: auto;
 	margin: 1.25em 0;
 	font-size: 0.84rem;
 	line-height: 1.7;
+	transition: border-color 200ms var(--ease-os);
+}
+.prose-os pre:hover {
+	border-color: rgb(124 92 255 / 0.45);
 }
 .prose-os pre code {
 	background: transparent;
@@ -328,6 +332,20 @@ body {
 .hljs-built_in,
 .hljs-type {
 	color: #ff9ec7;
+}
+.hljs-meta,
+.hljs-selector-attr {
+	color: #b7a4ff;
+}
+.hljs-variable,
+.hljs-template-variable {
+	color: #8fd0ff;
+}
+.hljs-deletion {
+	color: #ff9ec7;
+}
+.hljs-addition {
+	color: #7ee0c0;
 }
 
 @media (prefers-reduced-motion: reduce) {

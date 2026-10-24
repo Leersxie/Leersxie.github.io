@@ -72,6 +72,29 @@ export default async function PostPage({
 				<hr className="mt-8 border-dashed border-[var(--color-line-strong)]" />
 			</header>
 
+			{post.cover ? (
+				// eslint-disable-next-line @next/next/no-img-element
+				<img
+					src={post.cover}
+					alt=""
+					className="mb-10 w-full rounded-xl border border-[var(--color-line)]"
+				/>
+			) : (
+				<div className="os-grid relative mb-10 h-28 overflow-hidden rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)]">
+					<div className="absolute inset-0 flex items-center justify-between px-6">
+						<div>
+							<p className="mono-tag mb-1">ARCHIVED DOCUMENT</p>
+							<p className="font-display text-lg font-bold tracking-wide text-[var(--color-ink-soft)]">
+								{docId(post)}
+							</p>
+						</div>
+						<p className="font-display text-4xl font-bold text-[var(--color-line-strong)]">
+							{post.category}
+						</p>
+					</div>
+				</div>
+			)}
+
 			<div
 				className="prose-os"
 				dangerouslySetInnerHTML={{ __html: post.html ?? "" }}

@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import ArchiveArray from "@/components/ArchiveArray";
 import DecryptText from "@/components/DecryptText";
+import HeroVisual from "@/components/HeroVisual";
+import Reveal from "@/components/Reveal";
 import RollingNumber from "@/components/RollingNumber";
 import TypeLine from "@/components/TypeLine";
 import { docId, getPosts, postPath, type Post } from "@/lib/posts";
@@ -49,10 +50,17 @@ export default async function HomePage() {
 
 	return (
 		<div>
-			{/* —— 英雄区：三维档案阵列 —— */}
+			{/* —— 英雄区：三维档案阵列（CSS 兜底 + Three.js 玻璃接管）—— */}
 			<section className="relative overflow-hidden border-b border-[var(--color-line)]">
-				<ArchiveArray labels={posts.map((p) => p.title)} />
+				<HeroVisual labels={posts.map((p) => p.title)} />
 				<div className="os-grid absolute inset-0 opacity-60" aria-hidden />
+				{/* 几何装饰：四角十字 + 角注 */}
+				<span className="absolute left-4 top-4 font-mono text-xs text-[var(--color-line-strong)]" aria-hidden>+</span>
+				<span className="absolute right-4 top-4 font-mono text-xs text-[var(--color-line-strong)]" aria-hidden>+</span>
+				<span className="absolute bottom-4 left-4 font-mono text-xs text-[var(--color-line-strong)]" aria-hidden>+</span>
+				<span className="absolute bottom-4 right-4 font-mono text-xs text-[var(--color-line-strong)]" aria-hidden>+</span>
+				<p className="mono-tag absolute right-8 top-5 hidden md:block">SYS.VER 2.0 // STABLE</p>
+				<p className="mono-tag absolute bottom-5 left-8 hidden md:block">ARRAY.ACTIVE · 15 UNITS</p>
 				<div className="relative mx-auto max-w-5xl px-6 pb-14 pt-16">
 					<TypeLine
 						lines={[
@@ -107,7 +115,9 @@ export default async function HomePage() {
 				</div>
 				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{posts.map((post, i) => (
-						<ArchiveCard key={post.slug} post={post} index={i} />
+						<Reveal key={post.slug} delay={i * 70}>
+							<ArchiveCard post={post} index={i} />
+						</Reveal>
 					))}
 					{posts.length === 0 && (
 						<p className="font-mono text-sm text-[var(--color-muted)]">

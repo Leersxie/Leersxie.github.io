@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import AppShell from "@/components/AppShell";
+import BootSequence from "@/components/BootSequence";
 import { getPosts } from "@/lib/posts";
 import { SITE } from "@/lib/site";
 import "./globals.css";
@@ -40,6 +41,7 @@ export default async function RootLayout({
 				/>
 			</head>
 			<body>
+				<BootSequence />
 				<AppShell posts={shellPosts}>{children}</AppShell>
 			</body>
 		</html>

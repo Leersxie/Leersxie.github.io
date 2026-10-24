@@ -22,6 +22,8 @@ export interface Post {
 	draft: boolean;
 	/** frontmatter.permalink：旧站兼容，规范地址为 /<permalink>/ */
 	permalink?: string;
+	/** frontmatter.cover：封面图 URL（可选） */
+	cover?: string;
 	/** 渲染后的 HTML */
 	html?: string;
 	wordCount: number;
@@ -48,6 +50,7 @@ export async function getAllPostsRaw(): Promise<Post[]> {
 			tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
 			draft: data.draft === true,
 			permalink: data.permalink ? String(data.permalink) : undefined,
+			cover: data.cover ? String(data.cover) : undefined,
 			wordCount: content.replace(/\s/g, "").length,
 		});
 	}
