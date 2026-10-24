@@ -58,6 +58,12 @@ export function playTick(): void {
 	blip(2400, 0.03, 0.015, "square");
 }
 
+export function playFlap(): void {
+	// 翻牌：两段短促的纸片摩擦感（方波快速下滑）
+	blip(880, 0.04, 0.02, "square");
+	setTimeout(() => blip(660, 0.05, 0.018, "square"), 40);
+}
+
 export function playConfirm(): void {
 	blip(660, 0.07, 0.03, "square");
 	setTimeout(() => blip(990, 0.09, 0.03, "square"), 55);

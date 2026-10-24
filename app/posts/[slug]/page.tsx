@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import FlipText from "@/components/FlipText";
 import Giscus from "@/components/Giscus";
 import CoverArt from "@/components/CoverArt";
 import ReadingProgress from "@/components/ReadingProgress";
@@ -60,7 +61,9 @@ export default async function PostPage({
 			<article className="min-w-0">
 				<ReadingProgress />
 				<header className="mb-10">
-					<p className="mono-tag mb-3">{docId(post)} // ARCHIVED</p>
+					<p className="mono-tag mb-3">
+						<FlipText text={docId(post)} duration={0.7} sound={false} /> // ARCHIVED
+					</p>
 					<h1 className="font-display text-3xl font-bold leading-[1.05] tracking-[-0.025em] md:text-4xl">
 						{post.title}
 					</h1>

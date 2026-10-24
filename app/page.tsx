@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import DecryptText from "@/components/DecryptText";
 import HeroCTA from "@/components/HeroCTA";
+import DotFieldBackdrop from "@/components/DotFieldBackdrop";
 import HeroVisual from "@/components/HeroVisual";
 import Reveal from "@/components/Reveal";
 import RollingNumber from "@/components/RollingNumber";
@@ -62,16 +63,12 @@ export default async function HomePage() {
 			{/* —— B3-1 英雄区三段式：状态带 / 主体（阵列剪影+雾化带+数据+CTA）/ 刻度线 —— */}
 			<section className="hero-panel relative overflow-x-clip border-b border-[var(--color-line)]">
 				<HeroVisual labels={posts.map((p) => p.title)} forceDark />
+				{/* B6：Dot Field 点阵透镜（移动端降级为无交互） */}
+				<DotFieldBackdrop dark />
 
 				{/* 雾化带：保护标题可读性 */}
 				<div
 					className="pointer-events-none absolute inset-x-0 bottom-0 h-[72%] bg-[linear-gradient(to_top,#141227_12%,rgb(20_18_39/0.86)_46%,transparent_100%)]"
-					aria-hidden
-				/>
-
-				{/* 融球色块：移到右上外沿，不穿标题 */}
-				<div
-					className="blob-morph pointer-events-none absolute -right-28 -top-20 h-80 w-80 bg-[var(--color-brand)]/10 blur-[48px]"
 					aria-hidden
 				/>
 

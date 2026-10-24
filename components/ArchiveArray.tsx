@@ -114,7 +114,7 @@ export default function ArchiveArray({ labels }: { labels: string[] }) {
 	return (
 		<div
 			ref={wrap}
-			className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.38] [contain:paint] [perspective:1100px] [--array-play:running]"
+			className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.25] [contain:paint] [perspective:1100px] [--array-play:running]"
 			aria-hidden
 		>
 			<div
