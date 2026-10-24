@@ -7,40 +7,13 @@ export const DEFAULT_VOLUME = 0.7;
 /** 外部歌单（Meting 等）可能缺封面，用它兜底，避免 img src="" 误请求当前文档（上游 cb1fc5036） */
 export const DEFAULT_COVER_URL = "/favicon/favicon.ico";
 
-export const LOCAL_PLAYLIST: Song[] = [
-	{
-		id: 1,
-		title: "口笛で愛は歌えない",
-		artist: "Dazbee",
-		cover: "assets/music/cover/dazbee.webp",
-		url: "assets/music/url/dazbee.mp3",
-		duration: 0,
-	},
-	{
-		id: 2,
-		title: "ひとり上手",
-		artist: "Kaya",
-		cover: "assets/music/cover/hitori.webp",
-		url: "assets/music/url/hitori.mp3",
-		duration: 240,
-	},
-	{
-		id: 3,
-		title: "眩耀夜行",
-		artist: "ス리즈ブーケ",
-		cover: "assets/music/cover/xryx.webp",
-		url: "assets/music/url/xryx.mp3",
-		duration: 180,
-	},
-	{
-		id: 4,
-		title: "春雷の頃",
-		artist: "22/7",
-		cover: "assets/music/cover/cl.webp",
-		url: "assets/music/url/cl.mp3",
-		duration: 200,
-	},
-];
+/**
+ * 本地播放列表（mode: "local" 时使用）。
+ * 当前 mode 为 "meting"（网易云歌单），此前配套的 4 首 mp3（约 22MB）与封面
+ * 已从 public/assets/music/ 移除，避免作为死重部署上线；需要本地模式时，
+ * 把文件放回该目录并在下方按 Song 结构补回条目即可（旧文件可从 git 历史找回）。
+ */
+export const LOCAL_PLAYLIST: Song[] = [];
 
 export const DEFAULT_SONG: Song = {
 	title: "Sample Song",

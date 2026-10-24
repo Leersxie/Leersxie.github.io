@@ -119,7 +119,9 @@ export class TOCManager {
 	}
 
 	private getEmptyStateHTML(): string {
-		return `<div class="text-center py-8 text-gray-500 dark:text-gray-400"><p>${i18n(I18nKey.tocEmpty)}</p></div>`;
+		// toc-empty-state 供 card-toc 判断「本页没有可展示的目录」，
+		// 从而把整张目录卡片隐藏而不是留一张空状态卡。
+		return `<div class="toc-empty-state text-center py-8 text-gray-500 dark:text-gray-400"><p>${i18n(I18nKey.tocEmpty)}</p></div>`;
 	}
 
 	public generateTOCHTML(): string {

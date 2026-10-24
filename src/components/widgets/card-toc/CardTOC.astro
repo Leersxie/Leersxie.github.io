@@ -56,6 +56,20 @@ const { class: className, style } = Astro.props;
 	const cardTocManagers = new WeakMap();
 
 	/**
+	 * 页面没有可展示的目录时（空状态），把整张 card-toc 卡片隐藏，
+	 * 避免首页、归档等页面常驻一张「当前页面没有目录」的空卡；
+	 * 加密文章解密出标题后重新初始化会再次同步，卡片随之恢复显示。
+	 */
+	function syncCardTocVisibility(tocContent: HTMLElement) {
+		const card = tocContent.closest("widget-layout");
+		if (!(card instanceof HTMLElement)) {
+			return;
+		}
+		const isEmpty = tocContent.querySelector(".toc-empty-state") !== null;
+		card.style.display = isEmpty ? "none" : "";
+	}
+
+	/**
 	 * 为单个 card-toc 实例初始化目录。
 	 * 目录绑定当前组件自己的内容容器，避免左侧多断点并存时命中隐藏实例。
 	 */
@@ -86,6 +100,7 @@ const { class: className, style } = Astro.props;
 
 			cardTocManagers.set(root, manager);
 			manager.init();
+			syncCardTocVisibility(tocContent);
 		} catch (error) {
 			if (typeof reportError === "function" && error instanceof Error) {
 				reportError(error);

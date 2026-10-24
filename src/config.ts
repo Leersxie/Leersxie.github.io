@@ -146,7 +146,6 @@ export const siteConfig: SiteConfig = {
 				"横扫饥饿，做回自己",
 				"心灵终结3.3.7什么时候更新...",
 				"跑得好远，好累好累~",
-				"点击下方链接查看大结局",
 			],
 			typewriter: {
 				enable: true,
@@ -289,7 +288,7 @@ export const navBarConfig: NavBarConfig = {
 			],
 		},
 		{
-			name: "关于介绍",
+			name: "关于",
 			url: "/about/",
 			icon: "material-symbols:info",
 		},

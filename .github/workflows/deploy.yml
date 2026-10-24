@@ -94,6 +94,20 @@ jobs:
           ENABLE_CONTENT_SYNC: "false"
           BILI_SESSDATA: ${{ secrets.BILI_SESSDATA }}
 
+      # public/ 里的字体源 TTF（共约 14.6MB）只供 compress-fonts 子集化读取，
+      # 构建产物实际引用的是子集化后的 woff2；这里把已有 woff2 对应的 TTF
+      # 从部署产物中剔除，避免 Pages 构带死重。
+      # 仅在 woff2 确实存在时才删，保留「子集化失败 → 回退 TTF」的原有降级路径。
+      - name: Strip source fonts from artifact
+        run: |
+          for ttf in dist/assets/font/*.ttf; do
+            [ -e "$ttf" ] || continue
+            if [ -e "${ttf%.ttf}.woff2" ]; then
+              rm -f "$ttf"
+              echo "removed $ttf (woff2 subset shipped instead)"
+            fi
+          done
+
       # 仅在实际部署时上传 Pages 产物（PR 上无需）
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
@@ -126,10 +140,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build site
-        run: pnpm run build
-        env:
-          ENABLE_CONTENT_SYNC: "false"
+      # 复用 build job 的产物：astro preview 只需要 dist 目录，
+      # 不必为采集指标再完整构建一次（含 pagefind 索引与字体子集化）。
+      - name: Download Pages artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: pages-artifact
+
+      - name: Extract Pages artifact
+        run: |
+          mkdir -p dist
+          tar -xf pages-artifact/artifact.tar -C dist
 
       - name: Check Chrome availability
         run: |

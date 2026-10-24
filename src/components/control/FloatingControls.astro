@@ -57,9 +57,30 @@ const { headings = [] } = Astro.props;
 		align-items: flex-end;
 		pointer-events: none;
 
-		right: var(--fab-group-right);
+		/* 视口足够宽时（内容两侧出现留白），把悬浮组挪进右侧留白，
+		   避免压住右侧边栏卡片；留白不足时回退到 --fab-group-right。
+		   --page-width 由 Layout.astro 定义（90rem）。 */
+		right: max(
+			var(--fab-group-right),
+			calc(
+				(100vw - var(--page-width)) / 2 - var(--fab-button-size) - 2rem
+			)
+		);
 		bottom: var(--fab-group-bottom);
 		transition: bottom 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	/* 中等宽度下没有留白可用，悬浮按钮仍会扫过侧栏/卡片内容。
+	   玻璃化处理让被压住的文字仍可辨认（与 .wallpaper-transparent .btn-card
+	   的既有做法一致；壁纸模式下该场景已有自己的玻璃样式，这里跳过）。 */
+	:global(
+		body:not(.wallpaper-transparent)
+			.floating-control-item
+			.btn-card:not(:hover)
+	) {
+		background: color-mix(in srgb, var(--card-bg) 82%, transparent);
+		-webkit-backdrop-filter: blur(6px);
+		backdrop-filter: blur(6px);
 	}
 
 	.floating-control-item {

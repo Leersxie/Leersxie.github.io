@@ -4,6 +4,7 @@ published: 2026-03-28
 description: 这是我用 Mizuki 主题写的第一篇文章
 category: 日常
 tags: [测试]
+draft: true
 ---
 
 # 点击输入文本
