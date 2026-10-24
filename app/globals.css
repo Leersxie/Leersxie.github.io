@@ -1,0 +1,341 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   RHINE ARCHIVE OS · 设计令牌
+   布局与交互 = Claude.ai 应用壳；视觉 = 莱茵生命终端（白底玻璃 + 解密动效）；
+   配色 = 蓝紫（紫罗兰主色 + 靛蓝辅色）。明暗两态。
+   ========================================================================== */
+
+@font-face {
+	font-family: "Noto Sans SC";
+	src: url("/fonts/NotoSansSC-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Space Grotesk";
+	src: url("/fonts/SpaceGrotesk.woff2") format("woff2");
+	font-weight: 300 700;
+	font-display: swap;
+}
+@font-face {
+	font-family: "JetBrains Mono";
+	src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-display: swap;
+}
+
+@theme {
+	/* --- 色：蓝紫体系 --- */
+	--color-primary: #7c5cff;
+	--color-primary-deep: #6540f0;
+	--color-primary-soft: #9b85ff;
+	--color-indigo-line: #4f6bff;
+	--color-primary-dim: rgb(124 92 255 / 0.09);
+
+	/* --- 色：基底（亮 = 莱茵白，暗 = 蓝黑终端） --- */
+	--color-bg: #f4f5f7;
+	--color-panel: #ffffff;
+	--color-panel-2: #eef0f4;
+	--color-line: #e4e7ec;
+	--color-line-strong: #c9cdd6;
+	--color-ink: #171a21;
+	--color-ink-soft: #4a4f5a;
+	--color-muted: #8b90a0;
+
+	/* --- 字体 --- */
+	--font-body: "Noto Sans SC", system-ui, -apple-system, sans-serif;
+	--font-display: "Space Grotesk", "Noto Sans SC", system-ui, sans-serif;
+	--font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+	/* --- 动效 --- */
+	--ease-os: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+	color-scheme: light;
+}
+:root.dark {
+	color-scheme: dark;
+	--color-bg: #0a0c12;
+	--color-panel: #12141c;
+	--color-panel-2: #191c26;
+	--color-line: #242833;
+	--color-line-strong: #343947;
+	--color-ink: #e8eaf0;
+	--color-ink-soft: #a8adba;
+	--color-muted: #6b7080;
+	--color-primary: #9b85ff;
+	--color-primary-deep: #b7a4ff;
+	--color-primary-dim: rgb(155 133 255 / 0.12);
+}
+
+/* ==========================================================================
+   基础
+   ========================================================================== */
+
+html {
+	scrollbar-gutter: stable;
+	scroll-behavior: smooth;
+}
+
+body {
+	background: var(--color-bg);
+	color: var(--color-ink);
+	font-family: var(--font-body);
+	-webkit-font-smoothing: antialiased;
+}
+
+::selection {
+	background: rgb(124 92 255 / 0.25);
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+::-webkit-scrollbar-thumb {
+	background: var(--color-line-strong);
+	border: 3px solid var(--color-bg);
+	border-radius: 6px;
+}
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+/* ==========================================================================
+   原子类
+   ========================================================================== */
+
+/* 等宽编号行：DOC.260331-GUEST // ARCHIVE */
+@utility mono-tag {
+	font-family: var(--font-mono);
+	font-size: 0.6875rem;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--color-muted);
+}
+
+/* 玻璃面板：莱茵终端的白底玻璃 */
+@utility glass-panel {
+	background: color-mix(in srgb, var(--color-panel) 88%, transparent);
+	border: 1px solid var(--color-line);
+	backdrop-filter: blur(14px);
+	-webkit-backdrop-filter: blur(14px);
+}
+
+/* 网格底纹（档案阵列环境层） */
+@utility os-grid {
+	background-image:
+		linear-gradient(to right, var(--color-line) 1px, transparent 1px),
+		linear-gradient(to bottom, var(--color-line) 1px, transparent 1px);
+	background-size: 48px 48px;
+	mask-image: radial-gradient(80% 60% at 50% 0%, black 30%, transparent 100%);
+}
+
+/* ==========================================================================
+   组件级
+   ========================================================================== */
+
+/* 侧栏项：Claude 式导航 + 悬停态 */
+.nav-item {
+	display: flex;
+	align-items: center;
+	gap: 0.625rem;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.5rem;
+	font-size: 0.875rem;
+	color: var(--color-ink-soft);
+	transition:
+		background-color 140ms var(--ease-os),
+		color 140ms var(--ease-os);
+}
+.nav-item:hover {
+	background: var(--color-panel-2);
+	color: var(--color-ink);
+}
+.nav-item.is-active {
+	background: var(--color-primary-dim);
+	color: var(--color-primary-deep);
+	font-weight: 500;
+}
+
+/* 档案卡：解密线扫过 + 边框点亮 */
+.archive-card {
+	position: relative;
+	border: 1px solid var(--color-line);
+	background: var(--color-panel);
+	overflow: hidden;
+	transition:
+		border-color 200ms var(--ease-os),
+		transform 200ms var(--ease-os);
+}
+.archive-card::before {
+	/* 解密线：对角扫过 */
+	content: "";
+	position: absolute;
+	inset: -40%;
+	background: linear-gradient(
+		115deg,
+		transparent 42%,
+		rgb(124 92 255 / 0.14) 50%,
+		transparent 58%
+	);
+	transform: translateX(-60%);
+	transition: transform 600ms var(--ease-os);
+	pointer-events: none;
+}
+.archive-card:hover::before {
+	transform: translateX(60%);
+}
+.archive-card:hover {
+	border-color: rgb(124 92 255 / 0.45);
+}
+
+/* 文章正文（prose） */
+.prose-os {
+	line-height: 1.85;
+	font-size: 0.9375rem;
+	color: var(--color-ink-soft);
+}
+.prose-os h1,
+.prose-os h2,
+.prose-os h3,
+.prose-os h4 {
+	color: var(--color-ink);
+	font-weight: 600;
+	line-height: 1.4;
+	margin: 2em 0 0.75em;
+	scroll-margin-top: 5rem;
+}
+.prose-os h2 {
+	font-size: 1.25rem;
+	padding-left: 0.75rem;
+	border-left: 3px solid var(--color-primary);
+}
+.prose-os h3 {
+	font-size: 1.0625rem;
+}
+.prose-os p {
+	margin: 1em 0;
+}
+.prose-os a {
+	color: var(--color-primary-deep);
+	text-decoration: underline;
+	text-decoration-color: rgb(124 92 255 / 0.35);
+	text-underline-offset: 3px;
+}
+.prose-os a:hover {
+	text-decoration-color: var(--color-primary);
+}
+.prose-os ul,
+.prose-os ol {
+	margin: 1em 0;
+	padding-left: 1.5em;
+}
+.prose-os ul {
+	list-style: disc;
+}
+.prose-os ol {
+	list-style: decimal;
+}
+.prose-os li {
+	margin: 0.4em 0;
+}
+.prose-os blockquote {
+	border-left: 3px solid var(--color-line-strong);
+	padding: 0.25em 1em;
+	margin: 1.25em 0;
+	color: var(--color-muted);
+}
+.prose-os code {
+	font-family: var(--font-mono);
+	font-size: 0.84em;
+	background: var(--color-panel-2);
+	border: 1px solid var(--color-line);
+	padding: 0.1em 0.4em;
+	border-radius: 4px;
+	color: var(--color-primary-deep);
+}
+.prose-os pre {
+	background: #101218;
+	border: 1px solid var(--color-line);
+	border-radius: 0.5rem;
+	padding: 1rem 1.25rem;
+	overflow-x: auto;
+	margin: 1.25em 0;
+	font-size: 0.84rem;
+	line-height: 1.7;
+}
+.prose-os pre code {
+	background: transparent;
+	border: none;
+	padding: 0;
+	color: #cdd3e0;
+}
+.prose-os img {
+	border-radius: 0.5rem;
+	border: 1px solid var(--color-line);
+	margin: 1.25em 0;
+}
+.prose-os table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1.25em 0;
+	font-size: 0.875rem;
+}
+.prose-os th,
+.prose-os td {
+	border: 1px solid var(--color-line);
+	padding: 0.5em 0.75em;
+}
+.prose-os th {
+	background: var(--color-panel-2);
+}
+.prose-os hr {
+	border: none;
+	border-top: 1px dashed var(--color-line-strong);
+	margin: 2em 0;
+}
+
+/* highlight.js 主题：紫调终端（预配暗色底，亮色模式同底） */
+.hljs {
+	color: #cdd3e0;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal {
+	color: #b7a4ff;
+}
+.hljs-string,
+.hljs-attr {
+	color: #8fd0ff;
+}
+.hljs-title,
+.hljs-name,
+.hljs-section {
+	color: #7ee0c0;
+}
+.hljs-comment,
+.hljs-quote {
+	color: #5d6478;
+	font-style: italic;
+}
+.hljs-number,
+.hljs-symbol {
+	color: #ffb86b;
+}
+.hljs-built_in,
+.hljs-type {
+	color: #ff9ec7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}

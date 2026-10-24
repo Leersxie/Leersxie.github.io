@@ -1,15 +1,13 @@
 name: CI & Deploy
 
-# 统一流水线：质量检查 → 构建 → （仅 master 推送时）部署到 GitHub Pages
-#
-# 历史上存在四个工作流（build.yml / CI.yml / lint.yml / deploy.yml）：
-#   - build.yml 的触发分支是 main（仓库实际默认分支为 master），永不执行；
-#   - CI.yml、lint.yml、deploy.yml 在同一分支上各跑一次 install + build，重复消耗额度。
-# 现合并为单条流水线，用 job 依赖表达先后关系。
+# v2（RHINE ARCHIVE OS）：Next.js 静态导出 → GitHub Pages
+# master 保持 v1（Astro/Mizuki）；v2 分支推送时也跑构建做验证，
+# 合并到 master 后自动部署 out/ 产物。
 
 on:
   push:
-    branches: [master]
+    branches: [master, v2]
+    paths-ignore: ["**.md", "docs/**"]
   pull_request:
     branches: [master]
   workflow_dispatch:
@@ -26,52 +24,12 @@ env:
   NODE_VERSION: 22
 
 jobs:
-  quality:
-    name: Lint & Type Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run ESLint
-        run: pnpm lint
-        env:
-          ENABLE_CONTENT_SYNC: "false"
-
-      - name: Run Astro Check
-        run: pnpm check
-        env:
-          ENABLE_CONTENT_SYNC: "false"
-
-      - name: Run unit tests
-        run: pnpm test
-        env:
-          ENABLE_CONTENT_SYNC: "false"
-
   build:
-    name: Build
-    needs: quality
+    name: Build (Next.js SSG)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -89,96 +47,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build site
-        run: pnpm run build
-        env:
-          ENABLE_CONTENT_SYNC: "false"
-          BILI_SESSDATA: ${{ secrets.BILI_SESSDATA }}
+        run: pnpm build
 
-      # public/ 里的字体源 TTF（共约 14.6MB）只供 compress-fonts 子集化读取，
-      # 构建产物实际引用的是子集化后的 woff2；这里把已有 woff2 对应的 TTF
-      # 从部署产物中剔除，避免 Pages 构带死重。
-      # 仅在 woff2 确实存在时才删，保留「子集化失败 → 回退 TTF」的原有降级路径。
-      - name: Strip source fonts from artifact
-        run: |
-          for ttf in dist/assets/font/*.ttf; do
-            [ -e "$ttf" ] || continue
-            if [ -e "${ttf%.ttf}.woff2" ]; then
-              rm -f "$ttf"
-              echo "removed $ttf (woff2 subset shipped instead)"
-            fi
-          done
-
-      # 仅在实际部署时上传 Pages 产物（PR 上无需）
       - name: Upload Pages artifact
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
-
-  lighthouse:
-    name: Lighthouse
-    needs: build
-    runs-on: ubuntu-latest
-    # 只在推送与手动触发时跑，避免 PR 上消耗过多额度
-    if: github.event_name != 'pull_request'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      # 复用 build job 的产物：astro preview 只需要 dist 目录，
-      # 不必为采集指标再完整构建一次（含 pagefind 索引与字体子集化）。
-      - name: Download Pages artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages
-          path: pages-artifact
-
-      - name: Extract Pages artifact
-        run: |
-          mkdir -p dist
-          tar -xf pages-artifact/artifact.tar -C dist
-
-      - name: Check Chrome availability
-        run: |
-          google-chrome --version || google-chrome-stable --version || echo "WARNING: 未找到 Chrome，Lighthouse 将无法运行"
-
-      # 拆成 collect / upload / assert 三段执行：
-      # 之前用 `lhci autorun` 时，断言失败会导致整个进程提前退出，
-      # 报告来不及落盘，CI 里只看得到「exit code 1」，无法判断是哪一项不达标。
-      - name: Lighthouse collect
-        run: pnpm lhci collect
-
-      - name: Lighthouse upload reports
-        if: always()
-        continue-on-error: true
-        run: pnpm lhci upload
-
-      - name: Upload Lighthouse reports
-        if: always()
-        continue-on-error: true
-        uses: actions/upload-artifact@v4
-        with:
-          name: lighthouse-reports-${{ github.run_id }}
-          path: .lighthouseci/
-          retention-days: 7
-
-      - name: Lighthouse assert
-        run: pnpm lhci assert
+          path: ./out
 
   deploy:
     name: Deploy to GitHub Pages
