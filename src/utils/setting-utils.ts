@@ -9,27 +9,42 @@ import { siteConfig } from "@/config";
 import type { LIGHT_DARK_MODE, WALLPAPER_MODE } from "@/types/config";
 
 export function getDefaultHue(): number {
-	const fallback = "250";
 	const configCarrier = document.getElementById("config-carrier");
-	// 在Swup页面切换时，config-carrier可能不存在，使用默认值
+	// 在Swup页面切换时，config-carrier可能不存在，退回配置默认值
 	if (!configCarrier) {
-		return Number.parseInt(fallback);
+		return siteConfig.themeColor.hue;
 	}
-	return Number.parseInt(configCarrier.dataset.hue || fallback);
+	const fromCarrier = Number.parseInt(configCarrier.dataset.hue || "");
+	return Number.isNaN(fromCarrier) ? siteConfig.themeColor.hue : fromCarrier;
 }
 
+// v2：设置面板挂载时会把当前 hue 响应式写回存储，导致旧默认 287（紫罗兰）
+// 被全体老访客持久化；换键让 2026-10 的暖纸色重制对所有人生效一次。
+const HUE_STORAGE_KEY = "hue-v2";
+
 export function getHue(): number {
-	const stored = localStorage.getItem("hue");
+	const stored = localStorage.getItem(HUE_STORAGE_KEY);
 	return stored ? Number.parseInt(stored) : getDefaultHue();
 }
 
-export function setHue(hue: number): void {
-	localStorage.setItem("hue", String(hue));
+/** 只把 hue 应用到文档（滑块拖动的实时预览用），不写入存储 */
+export function applyHue(hue: number): void {
 	const r = document.querySelector(":root") as HTMLElement;
 	if (!r) {
 		return;
 	}
 	r.style.setProperty("--hue", String(hue));
+}
+
+/** 用户主动改色（拖滑块）时才持久化 */
+export function setHue(hue: number): void {
+	localStorage.setItem(HUE_STORAGE_KEY, String(hue));
+	applyHue(hue);
+}
+
+/** 重置为配置默认：清除存储，让未来调整 config 默认色相时能自动生效 */
+export function clearHue(): void {
+	localStorage.removeItem(HUE_STORAGE_KEY);
 }
 
 export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {

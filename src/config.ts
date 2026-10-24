@@ -38,9 +38,10 @@ export const siteConfig: SiteConfig = {
 	lang: SITE_LANG,
 
 	themeColor: {
-		// 品牌紫罗兰：与 design/icon-source.png 的「LX」标识对齐
-		// （标识实测 oklch(0.61 0.17 287)，原值 210 为蓝色，偏差 77°）
-		hue: 287,
+		// Claude 风暖纸色重制：赤陶橙（Anthropic Clay #D97757 ≈ oklch(0.68 0.12 45)）。
+		// 全站 token 均由 --hue 派生（见 variables.styl），换 hue 即整体换肤；
+		// 原紫罗兰 287（对齐 design/icon-source.png 的 LX 标识）可从 git 历史找回。
+		hue: 45,
 		fixed: false,
 	},
 
@@ -192,11 +193,13 @@ export const siteConfig: SiteConfig = {
 			// 开启后由 scripts/compress-fonts.js 在构建时按实际用字子集化为 woff2
 			enableCompress: true,
 		},
-		// CJK 回退字体，仅在 ASCII 字体缺字时生效
+		// CJK 回退字体（全站中文正文 + 标题）：霞鹜文楷 Medium——
+		// 带书卷气的手写楷体，配合暖纸色底构成「Claude 风暖纸编辑」版面；
+		// 仅在 ASCII 字体缺字时生效，构建时按实际用字子集化为 woff2
 		cjkFont: {
-			fontFamily: "萝莉体 第二版",
+			fontFamily: "LXGW WenKai",
 			fontWeight: "400",
-			localFonts: ["loli.ttf"],
+			localFonts: ["LXGWWenKai-Medium.ttf"],
 			enableCompress: true,
 		},
 	},

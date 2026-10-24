@@ -2,7 +2,8 @@ export const PAGE_SIZE = 8;
 
 export const LIGHT_MODE = "light",
 	DARK_MODE = "dark";
-export const DEFAULT_THEME = DARK_MODE;
+// 默认亮色：Claude 风暖纸版面的主舞台是奶油底；dark 仍是完整可用的暖深灰主题
+export const DEFAULT_THEME = LIGHT_MODE;
 
 // Banner height unit: vh
 export const BANNER_HEIGHT = 35;

@@ -60,48 +60,42 @@
 	   卡片底 0.62→0.70 / strong 0.78→0.84（网格增强后文字对比更稳）；
 	   高光描边 0.06→0.08。 */
 	--tech-glass-blur: blur(20px) saturate(180%);
-	/* 深蓝黑卡片底，与 --tech-page-bg 同色系、略提亮 */
-	--tech-glass-bg: rgb(17 22 41 / 0.7);
-	--tech-glass-bg-strong: rgb(15 19 37 / 0.84);
+	/* 暖深灰卡片底，与 --tech-page-bg 同色系、略提亮
+	   2026-10-24：随「Claude 风暖纸色」重制整体调暖（原为深蓝黑玻璃） */
+	--tech-glass-bg: rgb(43 39 34 / 0.7);
+	--tech-glass-bg-strong: rgb(36 32 28 / 0.84);
 	--tech-glass-border: rgb(255 255 255 / 0.1);
 	--tech-glass-highlight: rgb(255 255 255 / 0.08);
 	--tech-glass-shadow: 0 8px 32px rgb(0 0 0 / 0.32);
 
-	/* --- 科技感装饰色（蓝色系）---
+	/* --- 氛围装饰色（赤陶橙系）---
 	   只作用于「环境层」：网格 / 点阵 / 曲线 / 氛围光 / 悬停辉光。
-	   交互层（链接、按钮、标题竖条、选中态）仍由品牌主色 --primary 驱动 ——
-	   这样既拿到「深蓝黑 + 蓝色发光点缀」的科技感，又不动品牌色。
+	   交互层（链接、按钮、标题竖条、选中态）仍由品牌主色 --primary 驱动。
+	   写成 rgb 三元组是为了能自由拼 alpha：rgb(var(--tech-accent) / 0.05)。
+	   2026-10-24：原为 120 170 255（蓝），随暖纸重制改为赤陶橙（#E07A5F 附近）。 */
+	--tech-accent: 224 122 95;
 
-	   2026-10-10 决策：主色 hue 维持 287（品牌紫罗兰，对齐 design/icon-source.png），
-	   蓝色独立成装饰层。**想让整站都变蓝，只需把 src/config.ts 的 hue 改成 240**，
-	   本文件的装饰色不受影响（仍是同一族蓝，不会打架）。
-	   写成 rgb 三元组是为了能自由拼 alpha：rgb(var(--tech-accent) / 0.05)。 */
-	--tech-accent: 120 170 255;
-
-	/* --- 蓝图网格（低饱和蓝，只做纹理不抢色） ---
-	   2026-10-10 微调：细线 0.05→0.07、主线 0.09→0.13、点 0.09→0.13，
-	   底色从主题紫黑换成深蓝黑 #0b1020 后原值偏淡，网格几乎看不见。 */
-	--tech-grid-line: rgb(var(--tech-accent) / 0.07);
-	--tech-grid-line-major: rgb(var(--tech-accent) / 0.13);
-	--tech-dot: rgb(var(--tech-accent) / 0.13);
+	/* --- 蓝图网格 → 米棕图纸网格（低饱和暖棕，只做纹理不抢色） ---
+	   底色从深蓝黑 #0b1020 换成暖深灰 #272320 后按对比度微调。 */
+	--tech-grid-line: rgb(var(--tech-accent) / 0.05);
+	--tech-grid-line-major: rgb(var(--tech-accent) / 0.1);
+	--tech-dot: rgb(var(--tech-accent) / 0.1);
 	--tech-grid-size: 24px; /* 细线格距 */
 	--tech-grid-major: 120px; /* 主线格距 = 5 格 */
 
-	/* --- 深色页底（深蓝黑） --- */
-	--tech-page-bg: #0b1020;
+	/* --- 深色页底（暖深灰，对应 oklch(0.22 0.009 45)） --- */
+	--tech-page-bg: #272320;
 
-	/* --- 顶部氛围光 + 曲线描边（同属蓝色装饰层） ---
-	   2026-10-10 微调：氛围光 0.16→0.22、曲线描边 0.35→0.45 */
-	--tech-glow-soft: rgb(var(--tech-accent) / 0.22);
+	/* --- 顶部氛围光 + 曲线描边（同属赤陶装饰层） --- */
+	--tech-glow-soft: rgb(var(--tech-accent) / 0.16);
 	--tech-curve-stroke: rgb(var(--tech-accent) / 0.45);
 }
 
-/* 浅色模式：网格改用低饱和深蓝，否则白底线几乎看不见
-   2026-10-10 微调：与暗色同步增强（0.045→0.06 / 0.08→0.12 / 0.08→0.12） */
+/* 浅色模式：网格改用低饱和暖棕（米色图纸感），否则奶油底上几乎看不见 */
 :root:not(.dark) {
-	--tech-grid-line: rgb(30 60 120 / 0.06);
-	--tech-grid-line-major: rgb(30 60 120 / 0.12);
-	--tech-dot: rgb(30 60 120 / 0.12);
+	--tech-grid-line: rgb(148 118 82 / 0.05);
+	--tech-grid-line-major: rgb(148 118 82 / 0.09);
+	--tech-dot: rgb(148 118 82 / 0.09);
 }
 
 
@@ -393,9 +387,9 @@ a {
 		/* 抽稀：细线 48px、主线 240px，点阵随之变稀；手机屏上原密度会像噪点 */
 		--tech-grid-size: 48px;
 		--tech-grid-major: 240px;
-		--tech-grid-line: rgb(120 170 255 / 0.04);
-		--tech-grid-line-major: rgb(120 170 255 / 0.07);
-		--tech-dot: rgb(150 190 255 / 0.07);
+		--tech-grid-line: rgb(var(--tech-accent) / 0.04);
+		--tech-grid-line-major: rgb(var(--tech-accent) / 0.07);
+		--tech-dot: rgb(var(--tech-accent) / 0.07);
 	}
 
 	/* 移动端卡片不做模糊，改用近似不透明底（视觉几乎无差，省掉大量重绘） */

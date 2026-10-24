@@ -2,7 +2,13 @@
 	import I18nKey from "@i18n/i18nKey";
 	import { i18n } from "@i18n/translation";
 	import Icon from "@iconify/svelte";
-	import { getDefaultHue, getHue, setHue } from "@utils/setting-utils";
+	import {
+		applyHue,
+		clearHue,
+		getDefaultHue,
+		getHue,
+		setHue,
+	} from "@utils/setting-utils";
 	import { onMount } from "svelte";
 
 	import type { DisplaySettingsProps } from "./types";
@@ -15,16 +21,21 @@
 
 	function resetHue() {
 		hue = defaultHue;
+		// 清除存储而不是写入默认值：以后调整 config 默认色相时能自动生效
+		clearHue();
+		applyHue(hue);
 	}
 
 	onMount(() => {
 		isMounted = true;
 		defaultHue = getDefaultHue();
+		// 只读取应用，不回写——避免把「当前默认值」持久化成用户偏好
 		hue = getHue();
 	});
 
+	// 拖动滑块时实时预览；持久化只发生在下面的 on:input
 	$: if (isMounted && (hue || hue === 0)) {
-		setHue(hue);
+		applyHue(hue);
 	}
 </script>
 
@@ -74,6 +85,7 @@
 			min="0"
 			max="360"
 			bind:value={hue}
+			on:input={() => setHue(hue)}
 			class="slider"
 			id="colorSlider"
 			step="5"

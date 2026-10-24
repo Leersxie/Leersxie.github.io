@@ -38,10 +38,10 @@
   font-display: swap;
 }
 
-/* 导入 萝莉体 第二版 字体 */
+/* 导入 霞鹜文楷 Medium 字体（CJK 正文 + 标题；构建时子集化为 woff2） */
 @font-face {
-  font-family: "萝莉体 第二版";
-  src: url("/assets/font/loli.ttf") format("truetype");
+  font-family: "LXGW WenKai";
+  src: url("/assets/font/LXGWWenKai-Medium.ttf") format("truetype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -247,6 +247,9 @@ html {
 
   .card-base {
     @apply rounded-(--radius-large) overflow-hidden bg-(--card-bg) transition-colors duration-150;
+    /* Claude 风卡片语言：不用投影，靠 1px 暖发丝线 + 面色阶抬升
+       （Anthropic 设计体系：「 absence of shadows is the design move」） */
+    border: 1px solid var(--line-color);
   }
   .card-base-transparent {
     @apply rounded-(--radius-large) overflow-hidden bg-(--card-bg-transparent) backdrop-blur-sm transition-colors duration-150;
@@ -728,4 +731,67 @@ html {
 }
 :root:not(.dark) .custom-md spoiler {
   --_spoiler-mask: color-mix(in oklch, var(--primary) 55%, white 45%);
+}
+
+/* ==========================================================================
+   Claude 风暖纸质感（Anthropic 设计语言映射）
+   ========================================================================== */
+
+/* 1) 纸面颗粒：极低透明度的静态噪点覆层，给奶油底加一点「纸」的触感。
+      SVG feTurbulence data-URI，position:fixed 无重绘开销；
+      壁纸/暗色下自动减弱，不抢内容。 */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+:root.dark body::after {
+  opacity: 0.05;
+}
+
+/* 2) 标题排版：拉丁字符走 Georgia 衬线（Anthropic Serif 的替代位），
+      中文落到霞鹜文楷——衬线 x 书卷气构成站点的「标题声部」 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.banner-title {
+  font-family: var(--font-heading);
+}
+
+/* 3) 等宽 eyebrow（PROJECTS / FRIENDS 这类大写小标签） */
+.page-header-eyebrow,
+.banner-eyebrow {
+  font-family: var(--font-mono);
+}
+
+/* 4) Claude 星标（footer 装饰）：缓慢自转，prefers-reduced-motion 时静止 */
+@keyframes spark-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.claude-spark {
+  display: inline-flex;
+  color: var(--primary);
+  animation: spark-spin 16s linear infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .claude-spark {
+    animation: none;
+  }
 }
