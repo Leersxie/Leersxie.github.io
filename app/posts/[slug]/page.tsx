@@ -61,7 +61,7 @@ export default async function PostPage({
 					{post.tags.map((t) => (
 						<span
 							key={t}
-							className="font-mono text-[10px] text-[var(--color-primary-deep)]"
+							className="font-mono text-[10px] text-[var(--color-brand)]"
 						>
 							#{t}
 						</span>
@@ -78,7 +78,7 @@ export default async function PostPage({
 				<img
 					src={post.cover}
 					alt=""
-					className="mb-10 w-full rounded-xl border border-[var(--color-line)]"
+					className="mb-10 w-full rounded-[var(--radius-card)] border border-[var(--color-line)]"
 				/>
 			) : (
 				<CoverArt slug={post.slug} title={post.title} published={post.published} />
@@ -93,7 +93,7 @@ export default async function PostPage({
 				{older ? (
 					<Link
 						href={postPath(older)}
-						className="archive-card rounded-lg p-4 no-underline"
+						className="archive-card p-4 no-underline"
 					>
 						<p className="mono-tag mb-1">◂ PREV</p>
 						<p className="truncate text-sm font-medium">{older.title}</p>
@@ -104,7 +104,7 @@ export default async function PostPage({
 				{newer && (
 					<Link
 						href={postPath(newer)}
-						className="archive-card rounded-lg p-4 text-right no-underline sm:col-start-2"
+						className="archive-card p-4 text-right no-underline sm:col-start-2"
 					>
 						<p className="mono-tag mb-1">NEXT ▸</p>
 						<p className="truncate text-sm font-medium">{newer.title}</p>

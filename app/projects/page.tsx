@@ -8,7 +8,7 @@ export default function ProjectsPage() {
 	return (
 		<div className="mx-auto max-w-3xl px-6 py-12">
 			<p className="mono-tag mb-2">// WORKBENCH</p>
-			<h1 className="font-display text-3xl font-bold">项目工作台</h1>
+			<h1 className="font-display text-3xl font-bold tracking-[-0.025em] leading-[1.05]">项目工作台</h1>
 			<div className="mt-8 grid gap-4 sm:grid-cols-2">
 				{projectsData.map((p) => (
 					<a
@@ -16,14 +16,14 @@ export default function ProjectsPage() {
 						href={p.url}
 						target="_blank"
 						rel="noreferrer"
-						className="archive-card group flex flex-col rounded-xl p-5 no-underline"
+						className="archive-card group flex flex-col p-5 no-underline"
 					>
 						<div className="mb-3 flex items-center justify-between">
 							<h2 className="font-semibold">{p.title}</h2>
 							<span
 								className={`rounded px-1.5 py-0.5 font-mono text-[10px] ${
 									p.status === "进行中"
-										? "bg-[var(--color-primary-dim)] text-[var(--color-primary-deep)]"
+										? "bg-[var(--color-brand-dim)] text-[var(--color-brand)]"
 										: "border border-[var(--color-line)] text-[var(--color-muted)]"
 								}`}
 							>

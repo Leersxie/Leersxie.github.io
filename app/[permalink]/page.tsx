@@ -58,7 +58,7 @@ export default async function PermalinkPostPage({
 					{post.tags.map((t) => (
 						<span
 							key={t}
-							className="font-mono text-[10px] text-[var(--color-primary-deep)]"
+							className="font-mono text-[10px] text-[var(--color-brand)]"
 						>
 							#{t}
 						</span>

@@ -6,7 +6,7 @@ export default function NotFound() {
 			<p className="mono-tag mb-4">// ERROR 404 · SIGNAL LOST</p>
 			<h1 className="font-display text-6xl font-bold tracking-tight md:text-8xl">
 				4
-				<span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-indigo-line)] bg-clip-text text-transparent">
+				<span className="bg-gradient-to-r from-[var(--color-brand)] to-[var(--color-data)] bg-clip-text text-transparent">
 					0
 				</span>
 				4

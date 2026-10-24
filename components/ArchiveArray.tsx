@@ -95,7 +95,7 @@ export default function ArchiveArray({ labels }: { labels: string[] }) {
 							{[...col, ...col].map((box, bi) => (
 									<div
 										key={`${box.key}-${bi}`}
-										className="array-box rounded-md border border-[var(--color-line)] bg-[var(--color-panel)]/70 p-3"
+										className="array-box rounded-[var(--radius-menu)] border border-[var(--color-line)] bg-[var(--color-panel)]/70 p-3"
 									>
 										<div className="mb-2 flex items-center justify-between">
 											<span
@@ -103,7 +103,7 @@ export default function ArchiveArray({ labels }: { labels: string[] }) {
 												style={{
 													background:
 														bi % 3 === 0
-															? "var(--color-primary)"
+															? "var(--color-brand)"
 															: "var(--color-line-strong)",
 												}}
 											/>

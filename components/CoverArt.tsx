@@ -36,7 +36,7 @@ export default function CoverArt({
 	return (
 		<svg
 			viewBox="0 0 1200 320"
-			className="mb-10 h-auto w-full rounded-xl border border-[var(--color-line)]"
+			className="mb-10 h-auto w-full rounded-[var(--radius-card)] border border-[var(--color-line)]"
 			role="img"
 			aria-label={`${title} 封面`}
 		>

@@ -49,48 +49,75 @@
 }
 
 @theme {
-	/* --- 色：蓝紫体系 --- */
-	--color-primary: #7c5cff;
-	--color-primary-deep: #6540f0;
-	--color-primary-soft: #9b85ff;
-	--color-indigo-line: #4f6bff;
-	--color-primary-dim: rgb(124 92 255 / 0.09);
+	/* ============ 色：三层骨架（B2-1 方案 A）============ */
+	/* 品牌（紫蓝，削到 2 档） */
+	--color-brand: #7c5cff;
+	--color-brand-soft: #9b85ff;
+	--color-brand-dim: rgb(124 92 255 / 0.1);
 
-	/* --- 色：基底（亮 = 莱茵白，暗 = 蓝黑终端） --- */
-	--color-bg: #f4f5f7;
+	/* 信号（唯一饱和强调） */
+	--color-signal: #f1c644;
+	--color-signal-dim: rgb(241 198 68 / 0.12);
+
+	/* 数据（只用于链接/进度/图表） */
+	--color-data: #4aabea;
+
+	/* 骨架：明 */
+	--color-bg: #f6f6f7;
 	--color-panel: #ffffff;
-	--color-panel-2: #eef0f4;
-	--color-line: #e4e7ec;
-	--color-line-strong: #c9cdd6;
-	--color-ink: #171a21;
-	--color-ink-soft: #4a4f5a;
-	--color-muted: #8b90a0;
+	--color-panel-2: #eff0f2;
+	--color-line: #e5e6e9;
+	--color-line-strong: #c8cad0;
+	--color-ink: #111318;
+	--color-ink-soft: #4b4f58;
+	--color-muted: #8b8f9a;
 
-	/* --- 字体 --- */
+	/* ============ 圆角：四档制（B2-4）============ */
+	--radius-pill: 999px;
+	--radius-card: 14px;
+	--radius-menu: 10px;
+	--radius-tag: 4px;
+	--radius-code: 8px;
+
+	/* ============ 字体 ============ */
 	--font-body: "Jost", "Noto Sans SC", system-ui, sans-serif;
-	--font-display: "Space Grotesk", "Noto Sans SC", system-ui, sans-serif;
+	--font-display: "Space Grotesk", "Instrument Sans", "Noto Sans SC", system-ui, sans-serif;
+	--font-serif: "Noto Serif SC", "Songti SC", serif;
 	--font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
 
-	/* --- 动效 --- */
+	/* ============ 动效 ============ */
 	--ease-os: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-hover: cubic-bezier(0.22, 0.61, 0.36, 1);
+	--dur-fast: 160ms;
+	--dur-base: 260ms;
+	--dur-slow: 480ms;
+
+	/* ============ 阴影：两档 ============ */
+	--shadow-rest: 0 1px 2px rgb(0 0 0 / 0.04);
+	--shadow-lift: 0 14px 30px rgb(0 0 0 / 0.1);
 }
 
 :root {
 	color-scheme: light;
 }
+
 :root.dark {
 	color-scheme: dark;
-	--color-bg: #0a0c12;
-	--color-panel: #12141c;
-	--color-panel-2: #191c26;
-	--color-line: #242833;
-	--color-line-strong: #343947;
-	--color-ink: #e8eaf0;
-	--color-ink-soft: #a8adba;
-	--color-muted: #6b7080;
-	--color-primary: #9b85ff;
-	--color-primary-deep: #b7a4ff;
-	--color-primary-dim: rgb(155 133 255 / 0.12);
+	--color-bg: #0b0d11;
+	--color-panel: #12141a;
+	--color-panel-2: #191c23;
+	--color-line: #23262e;
+	--color-line-strong: #343945;
+	--color-ink: #e9eaee;
+	--color-ink-soft: #a6aab4;
+	--color-muted: #6b707b;
+	--color-brand: #9b85ff;
+	--color-brand-soft: #b7a4ff;
+	--color-brand-dim: rgb(155 133 255 / 0.12);
+	--color-signal: #f1c644;
+	--color-data: #5fb8f0;
+	--shadow-rest: 0 1px 2px rgb(0 0 0 / 0.4);
+	--shadow-lift: 0 16px 34px rgb(0 0 0 / 0.5);
 }
 
 /* ==========================================================================
@@ -134,10 +161,19 @@ body {
 /* 等宽编号行：DOC.260331-GUEST // ARCHIVE */
 @utility mono-tag {
 	font-family: var(--font-mono);
-	font-size: 0.6875rem;
-	letter-spacing: 0.14em;
+	font-size: 0.75rem;
+	letter-spacing: 0.1em;
 	text-transform: uppercase;
 	color: var(--color-muted);
+	line-height: 1.4;
+}
+
+/* B2-5：大标题统一负字距（负字距大字 / 正字距小签 的排印规则） */
+@utility display-title {
+	font-family: var(--font-display);
+	font-weight: 600;
+	letter-spacing: -0.035em;
+	line-height: 0.96;
 }
 
 /* 玻璃面板：莱茵终端的白底玻璃 */
@@ -179,8 +215,8 @@ body {
 	color: var(--color-ink);
 }
 .nav-item.is-active {
-	background: var(--accent-dim, var(--color-primary-dim));
-	color: var(--accent, var(--color-primary-deep));
+	background: var(--accent-dim, var(--color-brand-dim));
+	color: var(--accent, var(--color-brand));
 	font-weight: 600;
 }
 
@@ -188,29 +224,37 @@ body {
 .archive-card {
 	position: relative;
 	border: 1px solid var(--color-line);
+	border-radius: var(--radius-card);
 	background: var(--color-panel);
 	overflow: hidden;
+	box-shadow: var(--shadow-rest);
 	transition:
-		border-color 200ms var(--ease-os),
-		transform 200ms var(--ease-os);
+		border-color var(--dur-base) var(--ease-hover),
+		background var(--dur-base) var(--ease-hover),
+		box-shadow var(--dur-base) var(--ease-hover),
+		transform var(--dur-base) var(--ease-hover);
 }
+.archive-card:hover {
+	border-color: var(--color-line-strong);
+	box-shadow: var(--shadow-lift);
+	transform: translateY(-3px);
+}
+
+/* 扫描光：降级为极淡白光，只桌面启用 */
 .archive-card::before {
-	/* 解密线：对角扫过 */
 	content: "";
 	position: absolute;
 	inset: -40%;
-	background: linear-gradient(
-		115deg,
-		transparent 42%,
-		rgb(124 92 255 / 0.14) 50%,
-		transparent 58%
-	);
+	background: linear-gradient(115deg, transparent 44%, rgb(255 255 255 / 0.06) 50%, transparent 56%);
 	transform: translateX(-60%);
-	transition: transform 600ms var(--ease-os);
 	pointer-events: none;
 }
-.archive-card:hover::before {
-	transform: translateX(60%);
+@media (pointer: fine) {
+	.archive-card::before { transition: transform 380ms var(--ease-os); }
+	.archive-card:hover::before { transform: translateX(60%); }
+}
+@media (pointer: coarse) {
+	.archive-card::before { display: none; }
 }
 .archive-card:hover {
 	border-color: rgb(124 92 255 / 0.45);
@@ -235,7 +279,7 @@ body {
 .prose-os h2 {
 	font-size: 1.25rem;
 	padding-left: 0.75rem;
-	border-left: 3px solid var(--color-primary);
+	border-left: 3px solid var(--color-brand);
 }
 .prose-os h3 {
 	font-size: 1.0625rem;
@@ -244,13 +288,13 @@ body {
 	margin: 1em 0;
 }
 .prose-os a {
-	color: var(--color-primary-deep);
+	color: var(--color-brand);
 	text-decoration: underline;
 	text-decoration-color: rgb(124 92 255 / 0.35);
 	text-underline-offset: 3px;
 }
 .prose-os a:hover {
-	text-decoration-color: var(--color-primary);
+	text-decoration-color: var(--color-brand);
 }
 .prose-os ul,
 .prose-os ol {
@@ -278,13 +322,13 @@ body {
 	background: var(--color-panel-2);
 	border: 1px solid var(--color-line);
 	padding: 0.1em 0.4em;
-	border-radius: 4px;
-	color: var(--color-primary-deep);
+	border-radius: var(--radius-tag);
+	color: var(--color-brand);
 }
 .prose-os pre {
 	background: #0c0e15;
 	border: 1px solid #232735;
-	border-radius: 0.5rem;
+	border-radius: var(--radius-code);
 	padding: 1rem 1.25rem;
 	overflow-x: auto;
 	margin: 1.25em 0;
@@ -413,8 +457,8 @@ body {
 	z-index: 60;
 	background: linear-gradient(
 		90deg,
-		var(--color-primary),
-		var(--color-indigo-line)
+		var(--color-brand),
+		var(--color-data)
 	);
 	transition: width 80ms linear;
 }
@@ -461,7 +505,7 @@ body {
 
 /* B1-7：键盘可达性 —— 全站统一 focus-visible */
 :focus-visible {
-	outline: 2px solid var(--color-primary);
+	outline: 2px solid var(--color-brand);
 	outline-offset: 2px;
 }
 

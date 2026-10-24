@@ -17,7 +17,7 @@ export default async function ArchivePage() {
 	return (
 		<div className="mx-auto max-w-3xl px-6 py-12">
 			<p className="mono-tag mb-2">// OPERATION LOG</p>
-			<h1 className="font-display text-3xl font-bold">归档 · 作战记录</h1>
+			<h1 className="font-display text-3xl font-bold tracking-[-0.025em] leading-[1.05]">归档 · 作战记录</h1>
 
 			{[...byYear.entries()].map(([year, list]) => (
 				<section key={year} className="mt-10">
@@ -29,12 +29,12 @@ export default async function ArchivePage() {
 							<li key={p.slug}>
 								<Link
 									href={p.permalink ? `/${p.permalink}/` : `/posts/${p.slug}/`}
-									className="group flex items-baseline gap-4 rounded-lg px-3 py-2.5 transition-colors hover:bg-[var(--color-panel-2)]"
+									className="group flex items-baseline gap-4 rounded-[var(--radius-menu)] px-3 py-2.5 transition-colors hover:bg-[var(--color-panel-2)]"
 								>
 									<span className="font-mono text-xs tabular-nums text-[var(--color-muted)]">
 										{p.published.slice(5)}
 									</span>
-									<span className="truncate text-sm font-medium transition-colors group-hover:text-[var(--color-primary-deep)]">
+									<span className="truncate text-sm font-medium transition-colors group-hover:text-[var(--color-brand)]">
 										{p.title}
 									</span>
 									<span className="mono-tag ml-auto hidden sm:inline">

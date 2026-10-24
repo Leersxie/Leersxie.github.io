@@ -41,9 +41,9 @@ export default function TypeLine({
 
 	return (
 		<span className="font-mono text-xs text-[var(--color-ink-soft)]">
-			<span className="text-[var(--color-primary)]">▸ </span>
+			<span className="text-[var(--color-brand)]">▸ </span>
 			{text}
-			<span className="animate-pulse text-[var(--color-primary)]">▌</span>
+			<span className="animate-pulse text-[var(--color-brand)]">▌</span>
 		</span>
 	);
 }

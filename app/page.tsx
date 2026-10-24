@@ -11,7 +11,7 @@ function ArchiveCard({ post, index }: { post: Post; index: number }) {
 	return (
 		<Link
 			href={postPath(post)}
-			className="archive-card group flex flex-col rounded-xl p-5"
+			className="archive-card group flex flex-col p-5"
 			style={{ animationDelay: `${index * 60}ms` }}
 		>
 			<div className="mb-3 flex items-center justify-between">
@@ -20,7 +20,7 @@ function ArchiveCard({ post, index }: { post: Post; index: number }) {
 					{post.published}
 				</span>
 			</div>
-			<h2 className="mb-2 font-semibold leading-snug text-[var(--color-ink)] transition-colors group-hover:text-[var(--color-primary-deep)]">
+			<h2 className="mb-2 font-semibold leading-snug text-[var(--color-ink)] transition-colors group-hover:text-[var(--color-brand)]">
 				<DecryptText text={post.title} />
 			</h2>
 			<p className="mb-4 line-clamp-2 text-sm leading-relaxed text-[var(--color-ink-soft)]">
@@ -35,7 +35,7 @@ function ArchiveCard({ post, index }: { post: Post; index: number }) {
 						{tag}
 					</span>
 				))}
-				<span className="ml-auto font-mono text-xs text-[var(--color-primary)] opacity-0 transition-opacity group-hover:opacity-100">
+				<span className="ml-auto font-mono text-xs text-[var(--color-brand)] opacity-0 transition-opacity group-hover:opacity-100">
 					OPEN ▸
 				</span>
 			</div>
@@ -56,7 +56,7 @@ export default async function HomePage() {
 				{/* B1-6：os-grid 层已删（P0-04：网格线 + 3D 阵列 + 大标题三层结构线互殴） */}
 				{/* 融球有机色块（ignoredone 动效词汇：软性运动） */}
 				<div
-					className="blob-morph absolute -right-16 top-10 h-64 w-64 bg-gradient-to-br from-[var(--color-primary)]/25 to-[var(--color-indigo-line)]/15 blur-[2px]"
+					className="blob-morph absolute -right-16 top-10 h-64 w-64 bg-gradient-to-br from-[var(--color-brand)]/25 to-[var(--color-data)]/15 blur-[2px]"
 					aria-hidden
 				/>
 				{/* 几何装饰：四角十字 + 角注 */}
@@ -76,7 +76,7 @@ export default async function HomePage() {
 					/>
 					<h1 className="mt-5 font-display text-[clamp(1.9rem,7vw,4.5rem)] font-normal leading-[0.94] tracking-[-0.03em] text-white">
 						RHINE
-						<span className="bg-gradient-to-r from-[var(--color-primary-soft)] to-[#7ea2ff] bg-clip-text text-transparent">
+						<span className="bg-gradient-to-r from-[var(--color-brand-soft)] to-[#7ea2ff] bg-clip-text text-transparent">
 							{" "}
 							ARCHIVE OS
 						</span>
@@ -107,13 +107,13 @@ export default async function HomePage() {
 				<div className="mb-6 flex items-center justify-between">
 					<div>
 						<p className="mono-tag">// ARCHIVE ARRAY</p>
-						<h2 className="font-display text-xl font-bold">
+						<h2 className="font-display text-xl font-bold tracking-[-0.02em]">
 							<DecryptText text="档案阵列" autoplay />
 						</h2>
 					</div>
 					<Link
 						href="/archive/"
-						className="font-mono text-xs text-[var(--color-muted)] transition hover:text-[var(--color-primary)]"
+						className="font-mono text-xs text-[var(--color-muted)] transition hover:text-[var(--color-brand)]"
 					>
 						全部记录 ▸
 					</Link>

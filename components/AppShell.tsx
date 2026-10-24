@@ -131,11 +131,11 @@ function CommandPalette({
 			onClick={onClose}
 		>
 			<div
-				className="glass-panel w-[min(92vw,560px)] overflow-hidden rounded-xl shadow-2xl"
+				className="glass-panel w-[min(92vw,560px)] overflow-hidden rounded-[var(--radius-card)] shadow-2xl"
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="flex items-center gap-3 border-b border-[var(--color-line)] px-4 py-3">
-					<span className="font-mono text-xs text-[var(--color-primary)]">
+					<span className="font-mono text-xs text-[var(--color-brand)]">
 						▸
 					</span>
 					<input
@@ -246,10 +246,11 @@ export default function AppShell({
 	const isActive = (href: string) =>
 		href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-	// 板块专属主题色：当前板块的 accent 写入 CSS 变量，
-	// 环境底色 / 激活胶囊 / 强调元素随路由 800ms 缓动过渡
+	// B2-3 板块色收敛：同色不同浓度（sig），色相锁死品牌紫蓝。
+	// 环境层浓度 = 0.02 + sig × 0.045（首页 6.5% → 关于 2.9%），
+	// 用户感知是「这个板块更安静」，而不是「换了个网站」。
 	const activeItem = NAV_ITEMS.find((n) => isActive(n.href));
-	const accent = activeItem?.accent ?? "#7c5cff";
+	const sig = activeItem?.sig ?? 1;
 
 	// 板块切换缓动：路由变化时主内容 outExpo 上浮淡入。
 	// 用 CSS 关键帧而非 anime.js —— JS 引擎在标签页隐藏等场景被 rAF 节流时
@@ -267,7 +268,7 @@ export default function AppShell({
 	const sidebarBody = (
 		<>
 			<div className="flex items-center gap-2 px-3 py-4">
-				<div className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-indigo-line)] font-display text-sm font-bold text-white">
+				<div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-menu)] bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-data)] font-display text-sm font-bold text-white">
 					LX
 				</div>
 				{!collapsed && (
@@ -342,15 +343,18 @@ export default function AppShell({
 			className="min-h-dvh"
 			style={
 				{
-					"--accent": accent,
-					"--accent-dim": `${accent}1f`,
+					"--accent": "var(--color-brand)",
+					"--accent-dim": `rgb(124 92 255 / ${(0.06 + sig * 0.06).toFixed(2)})`,
 				} as React.CSSProperties
 			}
 		>
-				{/* 板块主题环境层：底色随当前板块 accent 800ms 缓动过渡 */}
+				{/* B2-3 板块环境层：同色不同浓度，随路由 600ms 缓动（transition-opacity） */}
 				<div
-					className="pointer-events-none fixed inset-0 -z-10 transition-colors duration-[800ms] ease-out"
-					style={{ backgroundColor: "var(--accent)" , opacity: 0.05 }}
+					className="pointer-events-none fixed inset-0 -z-10 transition-opacity duration-[600ms] ease-out"
+					style={{
+						backgroundColor: "var(--color-brand)",
+						opacity: 0.02 + sig * 0.045,
+					}}
 					aria-hidden
 				/>
 				<ThemeInitScript />
@@ -364,7 +368,7 @@ export default function AppShell({
 				{sidebarBody}
 				<button
 					onClick={() => setCollapsed((v) => !v)}
-					className="absolute -right-3 top-20 z-40 flex h-6 w-6 items-center justify-center rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] text-[10px] text-[var(--color-muted)] transition hover:text-[var(--color-primary)]"
+					className="absolute -right-3 top-20 z-40 flex h-6 w-6 items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-line)] bg-[var(--color-panel)] text-[10px] text-[var(--color-muted)] transition hover:text-[var(--color-brand)]"
 					aria-label="折叠侧栏"
 				>
 					{collapsed ? "▸" : "◂"}
@@ -374,7 +378,7 @@ export default function AppShell({
 			{/* 移动端顶条 + 抽屉 */}
 			<div className="sticky top-0 z-40 flex items-center justify-between border-b border-[var(--color-line)] bg-[var(--color-panel)]/90 px-4 py-2.5 backdrop-blur md:hidden">
 				<div className="flex items-center gap-2">
-					<div className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-indigo-line)] font-display text-xs font-bold text-white">
+					<div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-menu)] bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-data)] font-display text-xs font-bold text-white">
 						LX
 					</div>
 					<span className="font-display text-sm font-semibold">
@@ -386,7 +390,7 @@ export default function AppShell({
 					<button
 						onClick={() => setDrawer(true)}
 						aria-label="打开菜单"
-						className="rounded-full border border-[var(--color-line)] p-1.5"
+						className="rounded-[var(--radius-pill)] border border-[var(--color-line)] p-1.5"
 					>
 						<Icon d="M4 7h16M4 12h16M4 17h16" />
 					</button>
@@ -418,7 +422,7 @@ export default function AppShell({
 						<Clock />
 						<button
 							onClick={() => setPaletteOpen(true)}
-							className="flex items-center gap-2 rounded-full border border-[var(--color-line)] px-3.5 py-1 text-xs text-[var(--color-muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+							className="flex items-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-line)] px-3.5 py-1 text-xs text-[var(--color-muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
 						>
 							检索档案
 							<kbd className="font-mono text-[10px]">⌘K</kbd>
@@ -431,9 +435,9 @@ export default function AppShell({
 				<footer className="border-t border-[var(--color-line)] px-6 pb-8 pt-14">
 					<div className="mx-auto max-w-5xl">
 						{/* 大字站名（ignoredone 的「DESIGN EVERYDAY.」式收束） */}
-						<p className="font-display text-[clamp(2.5rem,7vw,5rem)] font-semibold leading-none tracking-tight">
+						<p className="font-display text-[clamp(2.5rem,7vw,5rem)] font-semibold leading-[0.82] tracking-[-0.045em]">
 							{SITE.name}
-							<span className="text-[var(--color-primary)]">.</span>
+							<span className="text-[var(--color-brand)]">.</span>
 						</p>
 
 						<div className="mt-10 grid gap-8 sm:grid-cols-3">
@@ -442,7 +446,7 @@ export default function AppShell({
 								<ul className="space-y-1.5">
 									{NAV_ITEMS.map((n) => (
 										<li key={n.href}>
-											<Link href={n.href} className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-primary-deep)]">
+											<Link href={n.href} className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-brand)]">
 												{n.label}
 											</Link>
 										</li>
@@ -456,7 +460,7 @@ export default function AppShell({
 										<li key={p.slug}>
 											<Link
 												href={p.slug === "guestbook" ? "/guestbook/" : `/posts/${p.slug}/`}
-												className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-primary-deep)]"
+												className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-brand)]"
 											>
 												{p.title}
 											</Link>
@@ -473,14 +477,14 @@ export default function AppShell({
 												href={s.href}
 												target="_blank"
 												rel="noreferrer"
-												className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-primary-deep)]"
+												className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-brand)]"
 											>
 												{s.label} ↗
 											</a>
 										</li>
 									))}
 									<li>
-										<a href="/rss.xml" className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-primary-deep)]">
+										<a href="/rss.xml" className="text-sm text-[var(--color-ink-soft)] transition hover:text-[var(--color-brand)]">
 											RSS ↗
 										</a>
 									</li>
@@ -493,7 +497,7 @@ export default function AppShell({
 								© 2026 {SITE.name} · {SITE.osName} v2
 							</p>
 							<p className="font-mono">
-								<a href="/sitemap.xml" className="hover:text-[var(--color-primary)]">
+								<a href="/sitemap.xml" className="hover:text-[var(--color-brand)]">
 									SITEMAP
 								</a>
 							</p>

@@ -102,14 +102,14 @@ export default function BootSequence() {
 			>
 				<path
 					d="M32 4 58 18v28L32 60 6 46V18z"
-					stroke="var(--color-primary)"
+					stroke="var(--color-brand)"
 					strokeWidth="2"
 					pathLength={100}
 					strokeDasharray={100}
 				/>
 				<path
 					d="M22 26l8 12 12-18"
-					stroke="var(--color-primary)"
+					stroke="var(--color-brand)"
 					strokeWidth="2.5"
 					strokeLinecap="round"
 					strokeLinejoin="round"
@@ -119,20 +119,20 @@ export default function BootSequence() {
 			</svg>
 			<div className="relative space-y-1.5 font-mono text-xs text-[var(--color-ink-soft)]">
 				<p className="boot-line opacity-0">
-					<span className="text-[var(--color-primary)]">▸</span> RHINE ARCHIVE
+					<span className="text-[var(--color-brand)]">▸</span> RHINE ARCHIVE
 					OS // BOOT SEQUENCE
 				</p>
 				<p className="boot-line opacity-0">
-					<span className="text-[var(--color-primary)]">▸</span> LOADING
+					<span className="text-[var(--color-brand)]">▸</span> LOADING
 					ARCHIVES ...... <span className="text-[var(--color-ink)]">OK</span>
 				</p>
 				<p className="boot-line opacity-0">
-					<span className="text-[var(--color-primary)]">▸</span>{" "}
+					<span className="text-[var(--color-brand)]">▸</span>{" "}
 					AUTHENTICATING ▓▓▓{" "}
 					<span className="text-[var(--color-ink)]">OK</span>
 				</p>
 			</div>
-			<p className="boot-grant relative mt-6 rounded border border-[var(--color-primary)] bg-[var(--color-primary-dim)] px-3 py-1 font-mono text-[11px] tracking-[0.2em] text-[var(--color-primary-deep)] opacity-0">
+			<p className="boot-grant relative mt-6 rounded border border-[var(--color-brand)] bg-[var(--color-brand-dim)] px-3 py-1 font-mono text-[11px] tracking-[0.2em] text-[var(--color-brand)] opacity-0">
 				ACCESS GRANTED
 			</p>
 			<p className="absolute bottom-6 font-mono text-[10px] text-[var(--color-muted)]">
