@@ -77,7 +77,7 @@ export default function ArchiveArray({ labels }: { labels: string[] }) {
 	return (
 		<div
 			ref={wrap}
-			className="pointer-events-none absolute inset-0 overflow-hidden [perspective:1100px] [--array-play:running]"
+			className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.45] [contain:paint] [perspective:1100px] [--array-play:running]"
 			aria-hidden
 		>
 			<div
@@ -93,38 +93,34 @@ export default function ArchiveArray({ labels }: { labels: string[] }) {
 							style={{ animationDuration: `${22 + ci * 5}s` }}
 						>
 							{[...col, ...col].map((box, bi) => (
-								<div
-									key={`${box.key}-${bi}`}
-									className="array-box rounded-md border border-[var(--color-line)] bg-[var(--color-panel)]/70 p-3"
-								>
-									<div className="mb-2 flex items-center justify-between">
-										<span className="font-mono text-[9px] tracking-widest text-[var(--color-muted)]">
-											{box.id}
-										</span>
-										<span
-											className="h-2 w-2 rounded-[2px]"
-											style={{
-												background:
-													bi % 3 === 0
-														? "var(--color-primary)"
-														: "var(--color-line-strong)",
-											}}
-										/>
+									<div
+										key={`${box.key}-${bi}`}
+										className="array-box rounded-md border border-[var(--color-line)] bg-[var(--color-panel)]/70 p-3"
+									>
+										<div className="mb-2 flex items-center justify-between">
+											<span
+												className="h-2 w-2 rounded-[2px]"
+												style={{
+													background:
+														bi % 3 === 0
+															? "var(--color-primary)"
+															: "var(--color-line-strong)",
+												}}
+											/>
+											<span className="h-[3px] w-8 rounded-[1px] bg-[var(--color-line-strong)]/40" />
+										</div>
+										<p className="truncate text-xs font-medium text-[var(--color-ink-soft)]/30">
+											{box.label}
+										</p>
+										<div className="mt-2 h-1.5 w-full opacity-40 [background:repeating-linear-gradient(90deg,var(--color-line-strong)_0_2px,transparent_2px_5px)]" />
 									</div>
-									<p className="truncate text-xs font-medium text-[var(--color-ink-soft)]">
-										{box.label}
-									</p>
-									<div className="mt-2 h-1.5 w-full opacity-40 [background:repeating-linear-gradient(90deg,var(--color-line-strong)_0_2px,transparent_2px_5px)]" />
-								</div>
 							))}
 						</div>
 					))}
 				</div>
 			</div>
 
-			{/* 上下渐隐：保证标题可读 */}
-			<div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[var(--color-bg)] to-transparent" />
-			<div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[var(--color-bg)] to-transparent" />
+			{/* B1-5：原上下渐隐层已删（P0-05 渐隐色与面板底色耦合产生亮/暗条带） */}
 		</div>
 	);
 }

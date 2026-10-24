@@ -65,6 +65,11 @@ const JOBS = [
 		out: "JetBrainsMono-Regular.woff2",
 		family: "mono",
 	},
+	{
+		src: "SpaceGrotesk-VF.ttf",
+		out: "SpaceGrotesk.woff2",
+		family: "latin",
+	},
 ];
 
 async function main() {

@@ -37,6 +37,17 @@
 	font-display: swap;
 }
 
+/* B1-3（P0-02）：--font-display 首位声明了 Space Grotesk，
+   但此前没有任何 @font-face 加载它 → display 层全部 fallback 到中文黑体。
+   源文件为 Google Fonts 可变字体（source-assets/fonts/SpaceGrotesk-VF.ttf），
+   子集化后保留 400–700 全轴，与下方 font-weight 声明一致。 */
+@font-face {
+	font-family: "Space Grotesk";
+	src: url("/fonts/SpaceGrotesk.woff2") format("woff2");
+	font-weight: 400 700;
+	font-display: swap;
+}
+
 @theme {
 	/* --- 色：蓝紫体系 --- */
 	--color-primary: #7c5cff;
@@ -96,19 +107,20 @@ body {
 	color: var(--color-ink);
 	font-family: var(--font-body);
 	-webkit-font-smoothing: antialiased;
+	overflow-x: clip; /* B1-4：横向溢出保险（clip 不破坏 sticky，hidden 会） */
 }
 
 ::selection {
-	background: rgb(124 92 255 / 0.25);
+	background: rgb(124 92 255 / 0.42); /* B1-7：0.25 → 0.42，选中态可感知 */
 }
 
 ::-webkit-scrollbar {
-	width: 10px;
-	height: 10px;
+	width: 6px; /* B1-7：10px → 6px */
+	height: 6px;
 }
 ::-webkit-scrollbar-thumb {
 	background: var(--color-line-strong);
-	border: 3px solid var(--color-bg);
+	border: 2px solid var(--color-bg); /* B1-7：3px → 2px */
 	border-radius: 6px;
 }
 ::-webkit-scrollbar-track {
@@ -445,4 +457,32 @@ body {
 		#181a30 48%,
 		#1b2140 100%
 	);
+}
+
+/* B1-7：键盘可达性 —— 全站统一 focus-visible */
+:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+}
+
+/* 板块切换缓动（CSS 时间轴驱动，避免 JS 引擎节流导致页面停在首帧） */
+@keyframes route-enter {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.route-enter {
+	animation: route-enter 550ms var(--ease-os) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.route-enter {
+		animation: none;
+	}
 }

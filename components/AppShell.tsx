@@ -251,23 +251,17 @@ export default function AppShell({
 	const activeItem = NAV_ITEMS.find((n) => isActive(n.href));
 	const accent = activeItem?.accent ?? "#7c5cff";
 
-	// 板块切换缓动：路由变化时主内容 outExpo 上浮淡入
+	// 板块切换缓动：路由变化时主内容 outExpo 上浮淡入。
+	// 用 CSS 关键帧而非 anime.js —— JS 引擎在标签页隐藏等场景被 rAF 节流时
+	// 会永远停在首帧（opacity:0），整页空白；CSS 动画走文档时间轴，必然完成。
 	const mainRef = useRef<HTMLElement>(null);
 	useEffect(() => {
+		const el = mainRef.current;
+		if (!el) return;
 		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-		let cancelled = false;
-		import("animejs").then(({ animate }) => {
-			if (cancelled || !mainRef.current) return;
-			animate(mainRef.current, {
-				opacity: [0, 1],
-				y: [14, 0],
-				duration: 550,
-				ease: "outExpo",
-			});
-		});
-		return () => {
-			cancelled = true;
-		};
+		el.classList.remove("route-enter");
+		void el.offsetWidth; // 强制 reflow 重启动画
+		el.classList.add("route-enter");
 	}, [pathname]);
 
 	const sidebarBody = (
