@@ -32,7 +32,7 @@ export default function Reveal({
 					animate(el, {
 						y: [y, 0],
 						opacity: [0, 1],
-						duration: 700,
+						duration: 520,
 						delay,
 						ease: "outExpo",
 					});

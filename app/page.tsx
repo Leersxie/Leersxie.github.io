@@ -98,12 +98,11 @@ export default async function HomePage() {
 						]}
 					/>
 
-					<h1 className="mt-5 font-display text-[clamp(1.9rem,7vw,4.5rem)] font-normal leading-[0.94] tracking-[-0.03em] text-white">
-						RHINE
-						<span className="bg-gradient-to-r from-[var(--color-brand-soft)] to-[#7ea2ff] bg-clip-text text-transparent">
-							{" "}
-							ARCHIVE OS
-						</span>
+					<h1
+						className="type-pressed mt-5 font-serif text-[clamp(2rem,7vw,4.5rem)] font-semibold leading-[0.94] tracking-[-0.03em] text-white"
+					>
+						RHINE ARCHIVE OS
+						<span className="text-[var(--color-signal)]">.</span>
 					</h1>
 
 					<p className="mt-4 max-w-lg text-sm leading-[1.75] text-[#aab4e0]">
@@ -111,20 +110,21 @@ export default async function HomePage() {
 					</p>
 
 					{/* 数据三件套 */}
-					<div className="mt-9 flex flex-wrap items-end gap-x-10 gap-y-4">
+					{/* v5 5.5：仪表读数——数据是小字等宽，排在角落 */}
+					<div className="mt-9 flex flex-wrap items-baseline gap-x-8 gap-y-3 font-mono">
 						{[
-							{ label: "ARCHIVES", value: posts.length },
-							{ label: "WORDS", value: totalWords },
-							{ label: "CATEGORIES", value: categories.size },
+							{ k: "ARCH", v: posts.length },
+							{ k: "WORD", v: totalWords },
+							{ k: "CATG", v: categories.size },
 						].map((s) => (
-							<div key={s.label} className="flex flex-col gap-1">
-								<span className="font-display text-[2rem] font-semibold leading-none tabular-nums text-white">
-									<RollingNumber value={s.value} />
+							<span key={s.k} className="inline-flex items-baseline gap-1.5">
+								<span className="text-[10px] uppercase tracking-[0.16em] text-white/35">
+									{s.k}
 								</span>
-								<span className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/35">
-									{s.label}
+								<span className="text-sm tabular-nums text-white/70">
+									{String(s.v).padStart(2, "0")}
 								</span>
-							</div>
+							</span>
 						))}
 					</div>
 

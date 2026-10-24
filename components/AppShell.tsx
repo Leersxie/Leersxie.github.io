@@ -483,7 +483,7 @@ export default function AppShell({
 				<footer className="border-t border-[var(--color-line)] px-6 pb-8 pt-14">
 					<div className="mx-auto max-w-5xl">
 						{/* 大字站名（ignoredone 的「DESIGN EVERYDAY.」式收束） */}
-						<p className="font-display text-[clamp(2.5rem,7vw,5rem)] font-semibold leading-[0.82] tracking-[-0.045em]">
+						<p className="type-pressed font-serif text-[clamp(2.5rem,7vw,5rem)] font-semibold leading-[0.82] tracking-[-0.045em]">
 							{SITE.name}
 							<span className="text-[var(--color-brand)]">.</span>
 						</p>

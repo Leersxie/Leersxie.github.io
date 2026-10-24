@@ -24,7 +24,7 @@ export default async function ArchivePage() {
 				<div className="grid gap-8 border-b border-[var(--color-line)] pb-8 md:grid-cols-[1fr_auto] md:items-end md:gap-16">
 					<div>
 						<p className="mono-tag mb-2">// OPERATION LOG</p>
-						<h1 className="font-display text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.02em]">
+						<h1 className="font-serif text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.02em]">
 							归档 · 作战记录
 						</h1>
 					</div>

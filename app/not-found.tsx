@@ -4,7 +4,7 @@ export default function NotFound() {
 	return (
 		<div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
 			<p className="mono-tag mb-4">// ERROR 404 · SIGNAL LOST</p>
-			<h1 className="font-display text-6xl font-bold tracking-tight md:text-8xl">
+			<h1 className="type-pressed font-display text-6xl font-bold tracking-tight md:text-8xl">
 				4
 				<span className="bg-gradient-to-r from-[var(--color-brand)] to-[var(--color-data)] bg-clip-text text-transparent">
 					0

@@ -41,6 +41,15 @@ export default async function RootLayout({
 				/>
 			</head>
 			<body>
+				{/* v5 P0-1：全站噪点材质（单层 fixed，overlay 混合） */}
+				<div className="grain-paper" aria-hidden />
+				{/* v5 P1 2.2：活字压印滤镜（只给 h1 类静态大字用，scale≤5） */}
+				<svg width="0" height="0" aria-hidden style={{ position: "absolute" }}>
+					<filter id="press" x="-5%" y="-5%" width="110%" height="110%">
+						<feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="1" seed="7" result="n" />
+						<feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G" />
+					</filter>
+				</svg>
 				<BootSequence />
 				<AppShell posts={shellPosts}>{children}</AppShell>
 			</body>

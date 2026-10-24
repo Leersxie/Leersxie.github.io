@@ -64,7 +64,7 @@ export default async function PostPage({
 					<p className="mono-tag mb-3">
 						<FlipText text={docId(post)} duration={0.7} sound={false} /> // ARCHIVED
 					</p>
-					<h1 className="font-display text-3xl font-bold leading-[1.05] tracking-[-0.025em] md:text-4xl">
+					<h1 className="type-pressed font-serif text-3xl font-semibold leading-[1.05] tracking-[-0.02em] md:text-4xl">
 						{post.title}
 					</h1>
 					<div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">

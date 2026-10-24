@@ -277,9 +277,10 @@ body {
 	scroll-margin-top: 5rem;
 }
 .prose-os h2 {
+	font-family: var(--font-serif);
 	font-size: 1.25rem;
 	padding-left: 0.75rem;
-	border-left: 3px solid var(--color-brand);
+	border-left: 2px solid var(--color-brand);
 }
 .prose-os h3 {
 	font-size: 1.0625rem;
@@ -288,7 +289,7 @@ body {
 	margin: 1em 0;
 }
 .prose-os a {
-	color: var(--color-brand);
+	color: var(--color-data);
 	text-decoration: underline;
 	text-decoration-color: rgb(124 92 255 / 0.35);
 	text-underline-offset: 3px;
@@ -495,17 +496,28 @@ body {
 	--color-line: rgb(255 255 255 / 0.14);
 	--color-line-strong: rgb(255 255 255 / 0.28);
 	--color-panel: #191b2e;
-	background: linear-gradient(
-		135deg,
-		#141227 0%,
-		#181a30 48%,
-		#1b2140 100%
-	);
+	background: var(--color-panel);
+}
+
+/* v5 P0-1：全站噪点材质——单层 fixed，overlay 混合（只加质感不改明度） */
+.grain-paper {
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 50;
+	opacity: 0.055;
+	mix-blend-mode: overlay;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.62' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (max-width: 768px) {
+	.grain-paper {
+		opacity: 0.035;
+	}
 }
 
 /* B1-7：键盘可达性 —— 全站统一 focus-visible */
 :focus-visible {
-	outline: 2px solid var(--color-brand);
+	outline: 2px solid var(--color-data);
 	outline-offset: 2px;
 }
 
@@ -528,5 +540,17 @@ body {
 @media (prefers-reduced-motion: reduce) {
 	.route-enter {
 		animation: none;
+	}
+}
+
+
+/* v5 P1 2.2：活字压印——filter 不携带排版信息，元素必须自带完整字体样式 */
+.type-pressed {
+	filter: url(#press);
+	display: inline-block;
+}
+@media (prefers-reduced-motion: reduce) {
+	.type-pressed {
+		filter: none;
 	}
 }
