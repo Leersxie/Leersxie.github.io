@@ -214,8 +214,13 @@ export default function AppShell({
 			}
 			if (e.key === "Escape") setPaletteOpen(false);
 		};
+		const onOpenPalette = () => setPaletteOpen(true);
 		window.addEventListener("keydown", onKey);
-		return () => window.removeEventListener("keydown", onKey);
+		window.addEventListener("raos:open-palette", onOpenPalette);
+		return () => {
+			window.removeEventListener("keydown", onKey);
+			window.removeEventListener("raos:open-palette", onOpenPalette);
+		};
 	}, []);
 
 	useEffect(() => {

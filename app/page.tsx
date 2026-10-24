@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import DecryptText from "@/components/DecryptText";
+import HeroCTA from "@/components/HeroCTA";
 import HeroVisual from "@/components/HeroVisual";
 import Reveal from "@/components/Reveal";
 import RollingNumber from "@/components/RollingNumber";
@@ -50,23 +51,40 @@ export default async function HomePage() {
 
 	return (
 		<div>
-			{/* —— 英雄区：彩底面板（ignoredone 分类页做法）+ 三维档案阵列 —— */}
+			{/* —— B3-1 英雄区三段式：状态带 / 主体（阵列剪影+雾化带+数据+CTA）/ 刻度线 —— */}
 			<section className="hero-panel relative overflow-x-clip border-b border-[var(--color-line)]">
 				<HeroVisual labels={posts.map((p) => p.title)} forceDark />
-				{/* B1-6：os-grid 层已删（P0-04：网格线 + 3D 阵列 + 大标题三层结构线互殴） */}
-				{/* 融球有机色块（ignoredone 动效词汇：软性运动） */}
+
+				{/* 雾化带：保护标题可读性 */}
 				<div
-					className="blob-morph absolute -right-16 top-10 h-64 w-64 bg-gradient-to-br from-[var(--color-brand)]/25 to-[var(--color-data)]/15 blur-[2px]"
+					className="pointer-events-none absolute inset-x-0 bottom-0 h-[72%] bg-[linear-gradient(to_top,#141227_12%,rgb(20_18_39/0.86)_46%,transparent_100%)]"
 					aria-hidden
 				/>
-				{/* 几何装饰：四角十字 + 角注 */}
-				<span className="absolute left-4 top-4 font-mono text-xs text-white/25" aria-hidden>+</span>
-				<span className="absolute right-4 top-4 font-mono text-xs text-white/25" aria-hidden>+</span>
-				<span className="absolute bottom-4 left-4 font-mono text-xs text-white/25" aria-hidden>+</span>
-				<span className="absolute bottom-4 right-4 font-mono text-xs text-white/25" aria-hidden>+</span>
-				<p className="mono-tag absolute right-8 top-5 hidden md:block">SYS.VER 2.0 // STABLE</p>
-				<p className="mono-tag absolute bottom-5 left-8 hidden md:block">ARRAY.ACTIVE · 15 UNITS</p>
-				<div className="relative mx-auto max-w-5xl px-6 pb-14 pt-16">
+
+				{/* 融球色块：移到右上外沿，不穿标题 */}
+				<div
+					className="blob-morph pointer-events-none absolute -right-28 -top-20 h-80 w-80 bg-[var(--color-brand)]/10 blur-[48px]"
+					aria-hidden
+				/>
+
+				{/* 四角准星 */}
+				{["left-5 top-5", "right-5 top-5", "left-5 bottom-5", "right-5 bottom-5"].map((p) => (
+					<span key={p} className={`absolute ${p} font-mono text-xs text-white/20`} aria-hidden>+</span>
+				))}
+
+				{/* 顶部状态带 */}
+				<div className="relative mx-auto flex max-w-6xl items-center justify-between px-6 pt-5">
+					<span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white/45">
+						<span className="h-1.5 w-1.5 rounded-full bg-[var(--color-signal)] shadow-[0_0_8px_var(--color-signal)]" />
+						SYS.ONLINE
+					</span>
+					<span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/30">
+						ARCHIVE / HOME
+					</span>
+				</div>
+
+				{/* 主体 */}
+				<div className="relative mx-auto max-w-6xl px-6 pb-14 pt-14">
 					<TypeLine
 						lines={[
 							"欢迎访问 LX 的档案库。这里存放随笔、项目与记录。",
@@ -74,6 +92,7 @@ export default async function HomePage() {
 							"读你想读的，剩下的交给时间。",
 						]}
 					/>
+
 					<h1 className="mt-5 font-display text-[clamp(1.9rem,7vw,4.5rem)] font-normal leading-[0.94] tracking-[-0.03em] text-white">
 						RHINE
 						<span className="bg-gradient-to-r from-[var(--color-brand-soft)] to-[#7ea2ff] bg-clip-text text-transparent">
@@ -81,24 +100,42 @@ export default async function HomePage() {
 							ARCHIVE OS
 						</span>
 					</h1>
-					<p className="mt-3 max-w-xl text-sm leading-relaxed text-[#aab4e0]">
+
+					<p className="mt-4 max-w-lg text-sm leading-[1.75] text-[#aab4e0]">
 						{`把思考归档成可以被再次找到的东西。玄学、项目、生活记录，都在这份阵列里。`}
 					</p>
 
-					<div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
+					{/* 数据三件套 */}
+					<div className="mt-9 flex flex-wrap items-end gap-x-10 gap-y-4">
 						{[
 							{ label: "ARCHIVES", value: posts.length },
 							{ label: "WORDS", value: totalWords },
 							{ label: "CATEGORIES", value: categories.size },
 						].map((s) => (
-							<div key={s.label}>
-								<p className="font-display text-2xl font-bold">
+							<div key={s.label} className="flex flex-col gap-1">
+								<span className="font-display text-[2rem] font-semibold leading-none tabular-nums text-white">
 									<RollingNumber value={s.value} />
-								</p>
-								<p className="mono-tag">{s.label}</p>
+								</span>
+								<span className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/35">
+									{s.label}
+								</span>
 							</div>
 						))}
 					</div>
+
+						{/* CTA 双按钮（客户端组件：⌘K 事件桥接见 HeroCTA.tsx） */}
+					<HeroCTA />
+				</div>
+
+				{/* 底部刻度线 */}
+				<div className="relative mx-auto flex max-w-6xl items-center gap-4 px-6 pb-6">
+					<span className="font-mono text-[9px] tracking-[0.2em] text-white/25">+</span>
+					<div className="h-px flex-1 [background:repeating-linear-gradient(90deg,rgb(255_255_255/0.22)_0_1px,transparent_1px_8px)]" />
+					<span className="font-mono text-[9px] tracking-[0.2em] text-white/25">
+						ARRAY.ACTIVE · {posts.length} UNITS
+					</span>
+					<div className="h-px w-16 [background:repeating-linear-gradient(90deg,rgb(255_255_255/0.22)_0_1px,transparent_1px_8px)]" />
+					<span className="font-mono text-[9px] tracking-[0.2em] text-white/25">+</span>
 				</div>
 			</section>
 
