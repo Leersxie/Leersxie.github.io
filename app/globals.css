@@ -394,3 +394,34 @@ body {
 	);
 	transition: width 80ms linear;
 }
+
+/* ==========================================================================
+   科学美学装饰层：曲线描线漂移 + 元素缓浮
+   ========================================================================== */
+
+@keyframes sci-dash {
+	to {
+		stroke-dashoffset: -200;
+	}
+}
+
+.sci-dash {
+	stroke-dasharray: 6 10;
+	animation: sci-dash 9s linear infinite;
+}
+
+@keyframes sci-float {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-8px);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sci-dash {
+		animation: none;
+	}
+}

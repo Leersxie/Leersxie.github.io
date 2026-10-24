@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { NAV_ITEMS, SITE, SOCIALS } from "@/lib/site";
 import { isSoundEnabled, playConfirm, playTick, setSoundEnabled } from "@/lib/sound";
+import SciDecor from "@/components/SciDecor";
 
 export interface ShellPost {
 	slug: string;
@@ -321,6 +322,10 @@ export default function AppShell({
 
 	return (
 		<div className="min-h-dvh">
+			{/* 全站科学美学环境层：函数曲线/公式/几何，只在留白处可见 */}
+			<div className="pointer-events-none fixed inset-0 -z-10" aria-hidden>
+				<SciDecor variant="ambient" />
+			</div>
 			<ThemeInitScript />
 
 			{/* 桌面侧栏 */}

@@ -4,6 +4,7 @@ import DecryptText from "@/components/DecryptText";
 import HeroVisual from "@/components/HeroVisual";
 import Reveal from "@/components/Reveal";
 import RollingNumber from "@/components/RollingNumber";
+import SciDecor from "@/components/SciDecor";
 import TypeLine from "@/components/TypeLine";
 import { docId, getPosts, postPath, type Post } from "@/lib/posts";
 
@@ -69,11 +70,11 @@ export default async function HomePage() {
 							"读你想读的，剩下的交给时间。",
 						]}
 					/>
-					<h1 className="mt-5 font-display text-4xl font-bold tracking-tight md:text-6xl">
-						RHINE ARCHIVE
+					<h1 className="mt-5 font-display text-5xl font-bold tracking-tight md:text-7xl">
+						RHINE
 						<span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-indigo-line)] bg-clip-text text-transparent">
 							{" "}
-							OS
+							ARCHIVE OS
 						</span>
 					</h1>
 					<p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-ink-soft)]">
@@ -98,7 +99,11 @@ export default async function HomePage() {
 			</section>
 
 			{/* —— 档案阵列 —— */}
-			<section className="mx-auto max-w-5xl px-6 py-12">
+			<section className="relative overflow-hidden">
+				<div className="pointer-events-none absolute inset-0" aria-hidden>
+					<SciDecor variant="hero" />
+				</div>
+				<div className="relative mx-auto max-w-5xl px-6 py-12">
 					<div className="mb-6 flex items-center justify-between">
 						<div>
 							<p className="mono-tag">// ARCHIVE ARRAY</p>
@@ -124,6 +129,7 @@ export default async function HomePage() {
 							暂无公开档案。NO RECORDS YET.
 						</p>
 					)}
+				</div>
 				</div>
 			</section>
 		</div>
