@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import Giscus from "@/components/Giscus";
+import ReadingProgress from "@/components/ReadingProgress";
 import { docId, getPosts, getPostBySlug, postPath } from "@/lib/posts";
 
 export const dynamicParams = false;
@@ -43,6 +44,7 @@ export default async function PostPage({
 
 	return (
 		<article className="mx-auto max-w-3xl px-6 py-12">
+			<ReadingProgress />
 			<header className="mb-10">
 				<p className="mono-tag mb-3">{docId(post)} // ARCHIVED</p>
 				<h1 className="font-display text-3xl font-bold leading-tight md:text-4xl">

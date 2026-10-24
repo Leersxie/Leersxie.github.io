@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import ArchiveArray from "@/components/ArchiveArray";
+import DecryptText from "@/components/DecryptText";
 import RollingNumber from "@/components/RollingNumber";
 import TypeLine from "@/components/TypeLine";
 import { docId, getPosts, postPath, type Post } from "@/lib/posts";
@@ -18,7 +20,7 @@ function ArchiveCard({ post, index }: { post: Post; index: number }) {
 				</span>
 			</div>
 			<h2 className="mb-2 font-semibold leading-snug text-[var(--color-ink)] transition-colors group-hover:text-[var(--color-primary-deep)]">
-				{post.title}
+				<DecryptText text={post.title} />
 			</h2>
 			<p className="mb-4 line-clamp-2 text-sm leading-relaxed text-[var(--color-ink-soft)]">
 				{post.description}
@@ -47,9 +49,10 @@ export default async function HomePage() {
 
 	return (
 		<div>
-			{/* —— 英雄区：档案阵列环境 —— */}
+			{/* —— 英雄区：三维档案阵列 —— */}
 			<section className="relative overflow-hidden border-b border-[var(--color-line)]">
-				<div className="os-grid absolute inset-0" aria-hidden />
+				<ArchiveArray labels={posts.map((p) => p.title)} />
+				<div className="os-grid absolute inset-0 opacity-60" aria-hidden />
 				<div className="relative mx-auto max-w-5xl px-6 pb-14 pt-16">
 					<TypeLine
 						lines={[
@@ -88,11 +91,13 @@ export default async function HomePage() {
 
 			{/* —— 档案阵列 —— */}
 			<section className="mx-auto max-w-5xl px-6 py-12">
-				<div className="mb-6 flex items-center justify-between">
-					<div>
-						<p className="mono-tag">// ARCHIVE ARRAY</p>
-						<h2 className="font-display text-xl font-bold">档案阵列</h2>
-					</div>
+					<div className="mb-6 flex items-center justify-between">
+						<div>
+							<p className="mono-tag">// ARCHIVE ARRAY</p>
+							<h2 className="font-display text-xl font-bold">
+								<DecryptText text="档案阵列" autoplay />
+							</h2>
+						</div>
 					<Link
 						href="/archive/"
 						className="font-mono text-xs text-[var(--color-muted)] transition hover:text-[var(--color-primary)]"

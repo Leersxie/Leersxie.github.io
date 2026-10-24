@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { NAV_ITEMS, SITE, SOCIALS } from "@/lib/site";
+import { isSoundEnabled, playConfirm, playTick, setSoundEnabled } from "@/lib/sound";
 
 export interface ShellPost {
 	slug: string;
@@ -174,6 +175,25 @@ function CommandPalette({
 	);
 }
 
+function SoundToggle() {
+	const [on, setOn] = useState(false);
+	useEffect(() => {
+		setOn(isSoundEnabled());
+	}, []);
+	const flip = () => {
+		const next = !on;
+		setOn(next);
+		setSoundEnabled(next);
+		if (next) playConfirm();
+	};
+	return (
+		<button onClick={flip} className="nav-item w-full" aria-label="切换界面音效">
+			<Icon d={on ? "M4 12h2l2-6 4 12 2-6h6M4 12h2l2-6 4 12 2-6h6" : "M4 9h4l5-4v14l-5-4H4zM17 9l4 6M21 9l-4 6"} />
+			<span>{on ? "音效 开" : "音效 关"}</span>
+		</button>
+	);
+}
+
 export default function AppShell({
 	posts,
 	children,
@@ -201,6 +221,27 @@ export default function AppShell({
 	useEffect(() => {
 		setDrawer(false);
 	}, [pathname]);
+
+	// 音效：事件委托（进入导航项/档案卡 → tick；点击 → confirm）
+	useEffect(() => {
+		const over = (e: MouseEvent) => {
+			const t = (e.target as HTMLElement).closest?.(
+				".nav-item, .archive-card",
+			) as HTMLElement | null;
+			if (!t) return;
+			if (e.relatedTarget && t.contains(e.relatedTarget as Node)) return;
+			playTick();
+		};
+		const click = (e: MouseEvent) => {
+			if ((e.target as HTMLElement).closest?.("a, button")) playConfirm();
+		};
+		document.addEventListener("mouseover", over);
+		document.addEventListener("click", click);
+		return () => {
+			document.removeEventListener("mouseover", over);
+			document.removeEventListener("click", click);
+		};
+	}, []);
 
 	const isActive = (href: string) =>
 		href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -258,6 +299,7 @@ export default function AppShell({
 
 			<div className="border-t border-[var(--color-line)] p-2">
 				<ThemeToggle />
+				<SoundToggle />
 				{!collapsed && (
 					<div className="flex gap-1 px-2 pt-2">
 						{SOCIALS.map((s) => (

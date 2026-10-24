@@ -339,3 +339,40 @@ body {
 		transition-duration: 0.01ms !important;
 	}
 }
+
+/* ==========================================================================
+   档案阵列 / 阅读进度
+   ========================================================================== */
+
+@keyframes array-drift {
+	to {
+		transform: translateY(-50%);
+	}
+}
+
+.array-col {
+	animation: array-drift 24s linear infinite;
+	animation-play-state: var(--array-play, running);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.array-col {
+		animation: none;
+	}
+}
+
+/* 阅读进度条 */
+.reading-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 2px;
+	width: 0%;
+	z-index: 60;
+	background: linear-gradient(
+		90deg,
+		var(--color-primary),
+		var(--color-indigo-line)
+	);
+	transition: width 80ms linear;
+}
