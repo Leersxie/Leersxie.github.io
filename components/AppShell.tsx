@@ -44,6 +44,19 @@ const NAV_ICONS: Record<string, string> = {
 	关于: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 8h.01M11 12h1v5h1",
 };
 
+function StatusDot({ label, state = "ok" }: { label: string; state?: "ok" | "idle" }) {
+	return (
+		<span className="inline-flex items-center gap-1.5">
+			<span className={state === "ok"
+				? "h-1.5 w-1.5 rounded-full bg-[var(--color-signal)] shadow-[0_0_5px_var(--color-signal)]"
+				: "h-1.5 w-1.5 rounded-full bg-[var(--color-muted)]/40"} />
+			<span className="font-mono text-[9px] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+				{label}
+			</span>
+		</span>
+	);
+}
+
 function Clock() {
 	const [now, setNow] = useState<string | null>(null);
 	useEffect(() => {
@@ -306,7 +319,7 @@ export default function AppShell({
 			{!collapsed && (
 				<div className="mt-6 min-h-0 flex-1 overflow-y-auto px-2">
 					<p className="mono-tag px-3 pb-2">RECENT ARCHIVES</p>
-					{posts.slice(0, 6).map((p) => (
+					{posts.slice(0, 4).map((p) => (
 						<Link
 							key={p.slug}
 							href={p.slug === "guestbook" ? "/guestbook/" : `/posts/${p.slug}/`}
@@ -318,6 +331,28 @@ export default function AppShell({
 							</span>
 						</Link>
 					))}
+				</div>
+			)}
+
+			{!collapsed && (
+				<div className="mt-4 px-2 pb-2">
+					<p className="mono-tag px-3 pb-2">MODULES</p>
+					<div className="grid grid-cols-2 gap-1">
+						{NAV_ITEMS.map((n) => (
+							<Link
+								key={n.href}
+								href={n.href}
+								className="group rounded-[var(--radius-menu)] border border-[var(--color-line)] px-2.5 py-2 transition hover:border-[var(--accent)]"
+							>
+								<p className="font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--color-muted)]">
+									{n.tag}
+								</p>
+								<p className="mt-0.5 text-xs text-[var(--color-ink-soft)] transition group-hover:text-[var(--color-ink)]">
+									{n.label}
+								</p>
+							</Link>
+						))}
+					</div>
 				</div>
 			)}
 
@@ -419,10 +454,18 @@ export default function AppShell({
 			<div className={`transition-all duration-200 ${collapsed ? "md:pl-14" : "md:pl-64"}`}>
 				{/* 桌面顶条 */}
 				<header className="sticky top-0 z-30 hidden items-center justify-between border-b border-[var(--color-line)] bg-[var(--color-bg)]/80 px-6 py-2.5 backdrop-blur md:flex">
-					<p className="mono-tag">
-						{SITE.osName} //{" "}
-						{NAV_ITEMS.find((n) => isActive(n.href))?.tag ?? "OS"}
-					</p>
+					<div className="flex min-w-0 items-center gap-3">
+						<p className="mono-tag shrink-0">{SITE.osName}</p>
+						<span className="text-[var(--color-line-strong)]">/</span>
+						<p className="mono-tag truncate text-[var(--color-ink)]">
+							{NAV_ITEMS.find((n) => isActive(n.href))?.tag ?? "OS"}
+						</p>
+					</div>
+					<div className="hidden items-center gap-5 lg:flex">
+						<StatusDot label="SYS" />
+						<StatusDot label="ARCHIVE" />
+						<StatusDot label="GISCUS" state="idle" />
+					</div>
 					<div className="flex items-center gap-4">
 						<Clock />
 						<button

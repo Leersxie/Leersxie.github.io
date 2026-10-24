@@ -95,19 +95,26 @@ export default function ArchiveArray({ labels }: { labels: string[] }) {
 		};
 	}, []);
 
-	// 五列，每列两份盒子做无缝循环
+	// B3-2：剪影层——labels 不再渲染文本，只用长度做确定性条宽种子
+	void labels;
 	const columns = [0, 1, 2, 3, 4].map((c) =>
 		[0, 1, 2].map((r) => {
-			const label = labels[(c * 3 + r) % Math.max(1, labels.length)] ?? "ARCHIVE";
-			const id = `DOC.26${String(10 + ((c * 7 + r * 3) % 89)).padStart(2, "0")}-${String((c * 31 + r * 17) % 999).padStart(3, "0")}`;
-			return { label, id, key: `${c}-${r}` };
+			const seed = (c * 31 + r * 17) % 100;
+			return {
+				key: `${c}-${r}`,
+				h: 76 + (seed % 64), // 76–140px 参差感
+				w1: 28 + (seed % 34),
+				w2: 46 + ((seed * 7) % 40),
+				w3: 30 + ((seed * 13) % 40),
+				hot: seed % 5 === 0, // 每 5 个 1 个信号色块，像档案里的活跃项
+			};
 		}),
 	);
 
 	return (
 		<div
 			ref={wrap}
-			className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.45] [contain:paint] [perspective:1100px] [--array-play:running]"
+			className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.38] [contain:paint] [perspective:1100px] [--array-play:running]"
 			aria-hidden
 		>
 			<div
@@ -119,31 +126,35 @@ export default function ArchiveArray({ labels }: { labels: string[] }) {
 					{columns.map((col, ci) => (
 						<div
 							key={ci}
-							className="array-col flex w-40 flex-col gap-8 md:w-48"
+							className="array-col flex w-36 flex-col gap-6 md:w-44"
 							style={{ animationDuration: `${22 + ci * 5}s` }}
 						>
 							{[...col, ...col].map((box, bi) => (
-									<div
-										key={`${box.key}-${bi}`}
-										className="array-box rounded-[var(--radius-menu)] border border-[var(--color-line)] bg-[var(--color-panel)]/70 p-3"
-									>
-										<div className="mb-2 flex items-center justify-between">
-											<span
-												className="h-2 w-2 rounded-[2px]"
-												style={{
-													background:
-														bi % 3 === 0
-															? "var(--color-brand)"
-															: "var(--color-line-strong)",
-												}}
-											/>
-											<span className="h-[3px] w-8 rounded-[1px] bg-[var(--color-line-strong)]/40" />
-										</div>
-										<p className="truncate text-xs font-medium text-[var(--color-ink-soft)]/30">
-											{box.label}
-										</p>
-										<div className="mt-2 h-1.5 w-full opacity-40 [background:repeating-linear-gradient(90deg,var(--color-line-strong)_0_2px,transparent_2px_5px)]" />
+								<div
+									key={`${box.key}-${bi}`}
+									className="rounded-[3px] border border-white/[0.07] bg-white/[0.015] p-3"
+									style={{ height: `${box.h}px` }}
+								>
+									{/* 纯几何：三条数据线 + 一个状态块，无可读文字 */}
+									<div className="mb-2 flex items-center justify-between">
+										<span
+											className="h-[3px] rounded-[1px] bg-white/15"
+											style={{ width: `${box.w1}%` }}
+										/>
+										<span
+											className={`h-1.5 w-1.5 rounded-[1px] ${box.hot ? "bg-[var(--color-signal)]/70" : "bg-white/10"}`}
+										/>
 									</div>
+									<div
+										className="mb-1.5 h-[2px] rounded-[1px] bg-white/10"
+										style={{ width: `${box.w2}%` }}
+									/>
+									<div
+										className="h-[2px] rounded-[1px] bg-white/10"
+										style={{ width: `${box.w3}%` }}
+									/>
+									<div className="mt-auto h-1.5 w-full opacity-30 [background:repeating-linear-gradient(90deg,rgb(255_255_255/0.3)_0_2px,transparent_2px_5px)]" />
+								</div>
 							))}
 						</div>
 					))}
