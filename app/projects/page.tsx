@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import PageFooterBlock from "@/components/PageFooterBlock";
 import { projectsData } from "@/lib/data";
 
 export const metadata: Metadata = { title: "项目" };
@@ -8,7 +9,7 @@ export default function ProjectsPage() {
 	return (
 		<div className="mx-auto max-w-3xl px-6 py-12">
 			<p className="mono-tag mb-2">// WORKBENCH</p>
-			<h1 className="font-display text-3xl font-bold tracking-[-0.025em] leading-[1.05]">项目工作台</h1>
+			<h1 className="page-title">项目工作台</h1>
 			<div className="mt-8 grid gap-4 sm:grid-cols-2">
 				{projectsData.map((p) => (
 					<a
@@ -46,6 +47,7 @@ export default function ProjectsPage() {
 					</a>
 				))}
 			</div>
-		</div>
+		<PageFooterBlock next={{ href: "/friends/", label: "友链", tag: "LINKS" }} />
+	</div>
 	);
 }

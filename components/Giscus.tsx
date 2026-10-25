@@ -42,7 +42,19 @@ export default function Giscus() {
 	return (
 		<section className="mt-14">
 			<p className="mono-tag mb-4">// ACCESS LOG · 访问日志</p>
-			<div ref={ref} className="min-h-40" />
+			{/* v6 B4：加载骨架——3 行灰条 + 头像圆，animate-pulse */}
+			<div ref={ref} className="min-h-40 space-y-4" aria-hidden>
+				{[0, 1, 2].map((i) => (
+					<div key={i} className="flex animate-pulse gap-3">
+						<div className="h-9 w-9 shrink-0 rounded-full bg-[var(--color-panel-2)]" />
+						<div className="flex-1 space-y-2 pt-1">
+							<div className="h-2.5 w-28 rounded-[var(--radius-tag)] bg-[var(--color-panel-2)]" />
+							<div className="h-2.5 w-full rounded-[var(--radius-tag)] bg-[var(--color-panel-2)]" />
+							<div className="h-2.5 w-3/5 rounded-[var(--radius-tag)] bg-[var(--color-panel-2)]" />
+						</div>
+					</div>
+				))}
+			</div>
 		</section>
 	);
 }

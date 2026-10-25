@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+
+import PageFooterBlock from "@/components/PageFooterBlock";import Link from "next/link";
 
 import Stat from "@/components/Stat";
 import { docId, getPosts } from "@/lib/posts";
@@ -24,8 +25,8 @@ export default async function ArchivePage() {
 				<div className="grid gap-8 border-b border-[var(--color-line)] pb-8 md:grid-cols-[1fr_auto] md:items-end md:gap-16">
 					<div>
 						<p className="mono-tag mb-2">// OPERATION LOG</p>
-						<h1 className="font-serif text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.02em]">
-							归档 · 作战记录
+						<h1 className="page-title">
+							归档<span className="mx-1 text-[var(--color-line-strong)]">·</span>作战记录
 						</h1>
 					</div>
 					<div className="flex items-end gap-8">
@@ -70,6 +71,7 @@ export default async function ArchivePage() {
 					</p>
 				)}
 			</div>
-		</div>
+		<PageFooterBlock next={{ href: "/about/", label: "关于本站", tag: "ABOUT" }} />
+	</div>
 	);
 }

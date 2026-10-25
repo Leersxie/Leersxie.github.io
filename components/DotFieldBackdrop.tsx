@@ -32,7 +32,7 @@ export default function DotFieldBackdrop({ dark }: { dark: boolean }) {
 				speed={0.5}
 				interactive
 				intro
-				opacity={0.85}
+				opacity={0.5}
 			/>
 		</div>
 	) : (
@@ -52,7 +52,7 @@ export default function DotFieldBackdrop({ dark }: { dark: boolean }) {
 				speed={0.4}
 				interactive
 				intro
-				opacity={1}
+				opacity={0.6}
 			/>
 		</div>
 	);

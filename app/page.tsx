@@ -13,7 +13,7 @@ function ArchiveCard({ post }: { post: Post }) {
 	return (
 		<Link
 			href={postPath(post)}
-			className="archive-card group flex h-full flex-col p-5"
+			className="archive-card group flex h-full min-w-0 flex-col p-5"
 		>
 			{/* 元数据：极小 + 极淡 + 大字距（B4-2 悬崖式落差） */}
 			<div className="mb-3 flex items-center justify-between">
@@ -62,13 +62,13 @@ export default async function HomePage() {
 		<div>
 			{/* —— B3-1 英雄区三段式：状态带 / 主体（阵列剪影+雾化带+数据+CTA）/ 刻度线 —— */}
 			<section className="hero-panel relative overflow-x-clip border-b border-[var(--color-line)]">
-				<HeroVisual labels={posts.map((p) => p.title)} forceDark />
+				<HeroVisual labels={posts.map((p) => p.title)} />
 				{/* B6：Dot Field 点阵透镜（移动端降级为无交互） */}
 				<DotFieldBackdrop dark />
 
 				{/* 雾化带：保护标题可读性 */}
 				<div
-					className="pointer-events-none absolute inset-x-0 bottom-0 h-[72%] bg-[linear-gradient(to_top,#141227_12%,rgb(20_18_39/0.86)_46%,transparent_100%)]"
+					className="pointer-events-none absolute inset-x-0 bottom-0 h-[72%] bg-[linear-gradient(to_top,var(--color-panel)_12%,color-mix(in_srgb,var(--color-panel)_86%,transparent)_46%,transparent_100%)]"
 					aria-hidden
 				/>
 
@@ -118,10 +118,10 @@ export default async function HomePage() {
 							{ k: "CATG", v: categories.size },
 						].map((s) => (
 							<span key={s.k} className="inline-flex items-baseline gap-1.5">
-								<span className="text-[10px] uppercase tracking-[0.16em] text-white/35">
+								<span className="text-[9px] uppercase tracking-[0.16em] text-white/25">
 									{s.k}
 								</span>
-								<span className="text-sm tabular-nums text-white/70">
+								<span className="text-sm font-medium tabular-nums text-white/80">
 									{String(s.v).padStart(2, "0")}
 								</span>
 							</span>
@@ -136,7 +136,7 @@ export default async function HomePage() {
 				<div className="relative mx-auto flex max-w-6xl items-center gap-4 px-6 pb-6">
 					<span className="font-mono text-[9px] tracking-[0.2em] text-white/25">+</span>
 					<div className="h-px flex-1 [background:repeating-linear-gradient(90deg,rgb(255_255_255/0.22)_0_1px,transparent_1px_8px)]" />
-					<span className="font-mono text-[9px] tracking-[0.2em] text-white/25">
+					<span className="hidden font-mono text-[9px] tracking-[0.2em] text-white/25 sm:inline">
 						ARRAY.ACTIVE · {posts.length} UNITS
 					</span>
 					<div className="h-px w-16 [background:repeating-linear-gradient(90deg,rgb(255_255_255/0.22)_0_1px,transparent_1px_8px)]" />
@@ -168,29 +168,22 @@ export default async function HomePage() {
 							</div>
 						</Reveal>
 					))}
-					{/* B4-1：档案位待写入的占位卡——把「内容少」翻译成世界观 */}
-					{Array.from({ length: Math.max(0, 6 - posts.length) }).map((_, i) => (
+					{/* A5：占位改「档案格」——只有编号 + 刻度线，明显不像卡 */}
+					{Array.from({ length: Math.max(0, 8 - posts.length) }).map((_, i) => (
 						<div
-							key={"ph-" + i}
-							className="flex flex-col rounded-[var(--radius-card)] border border-dashed border-[var(--color-line)] p-5 opacity-50"
+							key={`ph-${i}`}
+							className="group relative flex min-h-[132px] flex-col justify-end rounded-[var(--radius-card)] border border-dashed border-[var(--color-line)]/60 p-4"
 							aria-hidden
 						>
-							<div className="mb-3 flex items-center justify-between">
-								<span className="font-mono text-[10px] tracking-[0.14em] text-[var(--color-muted)]">
-									DOC.——-PENDING
-								</span>
-							</div>
-							<p className="mb-1 font-mono text-sm text-[var(--color-muted)]">NO RECORD</p>
-							<p className="mb-4 font-mono text-[11px] leading-relaxed text-[var(--color-muted)]/70">
-								该档案位尚未写入。
-							</p>
-							<div className="mt-auto flex gap-2">
-								<span className="h-4 w-12 rounded-[var(--radius-tag)] border border-dashed border-[var(--color-line)]" />
-								<span className="h-4 w-10 rounded-[var(--radius-tag)] border border-dashed border-[var(--color-line)]" />
-							</div>
+							<span className="absolute left-4 top-4 font-mono text-[9px] tracking-[0.18em] text-[var(--color-muted)]/40">
+								{String(posts.length + i + 1).padStart(2, "0")}
+							</span>
+							<span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--color-muted)]/30">
+								PENDING
+							</span>
+							<div className="mt-2 h-px w-full opacity-40 [background:repeating-linear-gradient(90deg,var(--color-line-strong)_0_1px,transparent_1px_6px)]" />
 						</div>
-					))}
-					{posts.length === 0 && (
+					))}					{posts.length === 0 && (
 						<p className="font-mono text-sm text-[var(--color-muted)]">
 							暂无公开档案。NO RECORDS YET.
 						</p>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import AppShell from "@/components/AppShell";
+import BackToTop from "@/components/BackToTop";
 import BootSequence from "@/components/BootSequence";
 import { getPosts } from "@/lib/posts";
 import { SITE } from "@/lib/site";
@@ -50,6 +51,7 @@ export default async function RootLayout({
 						<feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G" />
 					</filter>
 				</svg>
+				<BackToTop />
 				<BootSequence />
 				<AppShell posts={shellPosts}>{children}</AppShell>
 			</body>

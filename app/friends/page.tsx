@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import PageFooterBlock from "@/components/PageFooterBlock";
 import Stat from "@/components/Stat";
 import { friendsData } from "@/lib/data";
 
@@ -41,8 +42,8 @@ export default function FriendsPage() {
 								<span className="absolute inset-0 flex items-center justify-center font-display text-[15px] font-semibold text-[var(--color-ink)]">
 									{f.title[0]}
 								</span>
-								<span className="absolute -bottom-2.5 -right-2.5 h-4 w-4 rotate-45 bg-[var(--color-brand)]/25" />
-								<span className="absolute left-0 top-0 h-[2px] w-4 bg-[var(--color-brand)]/60" />
+								<span className="absolute -bottom-2.5 -right-2.5 h-4 w-4 rotate-45 bg-[var(--color-line-strong)]/30" />
+								<span className="absolute left-0 top-0 h-[2px] w-4 bg-[var(--color-line-strong)]" />
 							</div>
 							<div className="min-w-0">
 								<p className="truncate text-sm font-medium transition-colors group-hover:text-[var(--color-brand)]">
@@ -56,6 +57,7 @@ export default function FriendsPage() {
 					))}
 				</div>
 			</div>
-		</div>
+		<PageFooterBlock next={{ href: "/archive/", label: "作战记录", tag: "ARCHIVE" }} />
+	</div>
 	);
 }

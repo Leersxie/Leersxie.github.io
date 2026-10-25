@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+
 import { NAV_ITEMS, SITE, SOCIALS } from "@/lib/site";
 import { isSoundEnabled, playConfirm, playTick, setSoundEnabled } from "@/lib/sound";
 
@@ -270,6 +271,14 @@ export default function AppShell({
 	const activeItem = NAV_ITEMS.find((n) => isActive(n.href));
 	const sig = activeItem?.sig ?? 1;
 
+	// v6 A2：非导航页面包屑——文章/留言板归 ARCHIVE 下的 READING，其余 NODE
+	const crumb = (() => {
+		if (activeItem) return activeItem.tag;
+		if (pathname.startsWith("/posts/") || pathname.startsWith("/guestbook"))
+			return "READING";
+		return "NODE";
+	})();
+
 	// 板块切换缓动：路由变化时主内容 outExpo 上浮淡入。
 	// 用 CSS 关键帧而非 anime.js —— JS 引擎在标签页隐藏等场景被 rAF 节流时
 	// 会永远停在首帧（opacity:0），整页空白；CSS 动画走文档时间轴，必然完成。
@@ -338,11 +347,11 @@ export default function AppShell({
 				<div className="mt-4 px-2 pb-2">
 					<p className="mono-tag px-3 pb-2">MODULES</p>
 					<div className="grid grid-cols-2 gap-1">
-						{NAV_ITEMS.map((n) => (
+						{NAV_ITEMS.map((n, i) => (
 							<Link
 								key={n.href}
 								href={n.href}
-								className="group rounded-[var(--radius-menu)] border border-[var(--color-line)] px-2.5 py-2 transition hover:border-[var(--accent)]"
+								className={`group rounded-[var(--radius-menu)] border border-[var(--color-line)] px-2.5 py-2 transition hover:border-[var(--accent)] ${NAV_ITEMS.length % 2 === 1 && i === NAV_ITEMS.length - 1 ? "col-span-2" : ""}`}
 							>
 								<p className="font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--color-muted)]">
 									{n.tag}
@@ -417,15 +426,15 @@ export default function AppShell({
 
 			{/* 移动端顶条 + 抽屉 */}
 			<div className="sticky top-0 z-40 flex items-center justify-between border-b border-[var(--color-line)] bg-[var(--color-panel)]/90 px-4 py-2.5 backdrop-blur md:hidden">
-				<div className="flex items-center gap-2">
-					<div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-menu)] bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-data)] font-display text-xs font-bold text-white">
+				<div className="flex min-w-0 items-center gap-2">
+					<div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-menu)] bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-data)] font-display text-xs font-bold text-white">
 						LX
 					</div>
-					<span className="font-display text-sm font-semibold">
+					<span className="truncate font-display text-sm font-semibold">
 						{SITE.name}
 					</span>
 				</div>
-				<div className="flex items-center gap-3">
+				<div className="flex shrink-0 items-center gap-3">
 					<Clock />
 					<button
 						onClick={() => setDrawer(true)}
@@ -458,7 +467,7 @@ export default function AppShell({
 						<p className="mono-tag shrink-0">{SITE.osName}</p>
 						<span className="text-[var(--color-line-strong)]">/</span>
 						<p className="mono-tag truncate text-[var(--color-ink)]">
-							{NAV_ITEMS.find((n) => isActive(n.href))?.tag ?? "OS"}
+							{crumb}
 						</p>
 					</div>
 					<div className="hidden items-center gap-5 lg:flex">
@@ -478,7 +487,7 @@ export default function AppShell({
 					</div>
 				</header>
 
-				<main ref={mainRef} className="min-h-[calc(100dvh-8rem)]">{children}</main>
+				<main ref={mainRef} className="min-h-[60dvh]">{children}</main>
 
 				<footer className="border-t border-[var(--color-line)] px-6 pb-8 pt-14">
 					<div className="mx-auto max-w-5xl">
